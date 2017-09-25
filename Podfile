@@ -8,7 +8,7 @@ plugin 'cocoapods-keys', {
 ]}
 
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://github.com/czechboy0/Podspecs.git'
+source 'https://github.com/s-faychatelard/Buildasaur-podspecs.git'
 
 project 'Buildasaur', 'Testing' => :debug
 
@@ -17,31 +17,31 @@ use_frameworks!
 inhibit_all_warnings!
 
 def pods_for_errbody
-    pod 'BuildaUtils', '~> 0.3.2'
+    pod 'BuildaUtils', '~> 0.4.1'
 end
 
 def rac
-    pod 'ReactiveCocoa', '~> 4.0.1'
+    pod 'ReactiveCocoa', '~> 6.0.1'
 end
 
 def also_xcode_pods
     pods_for_errbody
-    pod 'XcodeServerSDK', '~> 0.7.1'
-    pod 'ekgclient', '~> 0.3.2'
+    pod 'XcodeServerSDK', '~> 0.7.2'
+    pod 'ekgclient', '~> 0.3.3'
 end
 
 def buildasaur_app_pods
     also_xcode_pods
     rac
-    pod 'Ji', '~> 1.2.0'
-    pod 'CryptoSwift'
+    pod 'Ji', '~> 2.0.1'
+    pod 'CryptoSwift', '~> 0.7.2'
     pod 'Sparkle'
-    pod 'KeychainAccess'
+    pod 'KeychainAccess', '~> 3.1.0'
 end
 
 def test_pods
-    pod 'Nimble', :git => "https://github.com/Quick/Nimble.git", :commit => "1730543fcd8b7d7258a3270bb6d3118921d46f9d"
-    pod 'DVR', '~> 0.2.1-snap1'
+    pod 'Nimble', :git => 'https://github.com/Quick/Nimble.git', :commit => 'a63252b16eba6cdebec4e4936388c90552165a68'
+    pod 'DVR', '~> 1.1.0'
 end
 
 target 'Buildasaur' do

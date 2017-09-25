@@ -21,14 +21,14 @@ class SyncPair_Branch_NoBot: SyncPair {
         super.init()
     }
     
-    override func sync(completion: Completion) {
+    override func sync(completion: @escaping Completion) {
         
         //create a bot for this branch
         let syncer = self.syncer
         let branch = self.branch
         let repo = self.repo
         
-        SyncPair_Branch_NoBot.createBotForBranch(syncer: syncer, branch: branch, repo: repo, completion: completion)
+        SyncPair_Branch_NoBot.createBotForBranch(syncer: syncer!, branch: branch, repo: repo, completion: completion)
     }
     
     override func syncPairName() -> String {
@@ -37,10 +37,10 @@ class SyncPair_Branch_NoBot: SyncPair {
     
     //MARK: Internal
     
-    private class func createBotForBranch(syncer syncer: StandardSyncer, branch: BranchType, repo: RepoType, completion: Completion) {
+    private class func createBotForBranch(syncer: StandardSyncer, branch: BranchType, repo: RepoType, completion: @escaping Completion) {
         
-        syncer.createBotFromBranch(branch, repo: repo, completion: { () -> () in
-            completion(error: nil)
+        syncer.createBotFromBranch(branch: branch, repo: repo, completion: { () -> () in
+            completion(nil)
         })
     }
 }

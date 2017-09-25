@@ -8,12 +8,12 @@
 
 import Cocoa
 import BuildaKit
-import ReactiveCocoa
+import ReactiveSwift
 import BuildaUtils
 
 protocol EditorViewControllerFactoryType {
     
-    func supplyViewControllerForState(state: EditorState, context: EditorContext) -> EditableViewController?
+    func supplyViewControllerForState(_ state: EditorState, context: EditorContext) -> EditableViewController?
 }
 
 class MainEditorViewController: PresentableViewController {
@@ -28,28 +28,28 @@ class MainEditorViewController: PresentableViewController {
     @IBOutlet weak var cancelButton: NSButton!
     
     //state and animated?
-    let state = MutableProperty<(EditorState, Bool)>(.NoServer, false)
+    let state = MutableProperty<(EditorState, Bool)>((.noServer, false))
 
     var _contentViewController: EditableViewController?
     
-    @IBAction func previousButtonClicked(sender: AnyObject) {
+    @IBAction func previousButtonClicked(_ sender: AnyObject) {
         //state machine - will be disabled on the first page,
         //otherwise will say "Previous" and move one back in the flow
         self.previous(animated: false)
     }
     
-    @IBAction func nextButtonClicked(sender: AnyObject) {
+    @IBAction func nextButtonClicked(_ sender: AnyObject) {
         //state machine - will say "Save" and dismiss if on the last page,
         //otherwise will say "Next" and move one forward in the flow
         self.next(animated: true)
     }
     
-    @IBAction func cancelButtonClicked(sender: AnyObject) {
+    @IBAction func cancelButtonClicked(_ sender: AnyObject) {
         //just a cancel button.
         self.cancel()
     }
     
-    func loadInState(state: EditorState) {
+    func loadInState(_ state: EditorState) {
         self.state.value = (state, false)
     }
     
@@ -57,7 +57,7 @@ class MainEditorViewController: PresentableViewController {
         super.viewDidLoad()
         
         self.containerView.wantsLayer = true
-        self.containerView.layer!.backgroundColor = NSColor.lightGrayColor().CGColor
+        self.containerView.layer!.backgroundColor = NSColor.lightGray.cgColor
         
         self.setupBindings()
         
@@ -77,7 +77,7 @@ class MainEditorViewController: PresentableViewController {
     
     // moving forward and back
     
-    func previous(animated animated: Bool) {
+    func previous(animated: Bool) {
         
         //check with the current controller first
         if let content = self._contentViewController {
@@ -90,7 +90,7 @@ class MainEditorViewController: PresentableViewController {
     }
     
     //not verified that vc is okay with it
-    func _previous(animated animated: Bool) {
+    func _previous(animated: Bool) {
         
         if let previous = self.state.value.0.previous() {
             self.state.value = (previous, animated)
@@ -99,7 +99,7 @@ class MainEditorViewController: PresentableViewController {
         }
     }
     
-    func next(animated animated: Bool) {
+    func next(animated: Bool) {
         
         //check with the current controller first
         if let content = self._contentViewController {
@@ -111,7 +111,7 @@ class MainEditorViewController: PresentableViewController {
         self._next(animated: animated)
     }
     
-    func _next(animated animated: Bool) {
+    func _next(animated: Bool) {
         
         if let next = self.state.value.0.next() {
             self.state.value = (next, animated)
@@ -139,25 +139,25 @@ class MainEditorViewController: PresentableViewController {
     
     //setup RAC
     
-    private func setupBindings() {
+    fileprivate func setupBindings() {
         
         self.state
             .producer
-            .combinePrevious((.Initial, false)) //keep history
+            .combinePrevious((.initial, false)) //keep history
             .filter { $0.0.0 != $0.1.0 } //only take changes
-            .startWithNext { [weak self] in
+            .startWithValues { [weak self] in
                 self?.stateChanged(fromState: $0.0, toState: $1.0, animated: $1.1)
         }
         
-        self.state.producer.map { $0.0 == .NoServer }.startWithNext { [weak self] in
+        self.state.producer.map { $0.0 == .noServer }.startWithValues { [weak self] in
             if $0 {
-                self?.previousButton.enabled = false
+                self?.previousButton.isEnabled = false
             }
         }
         
         //create a title
         self.context.producer.map { context -> String in
-            let triplet = context.configTriplet
+            let triplet = context.configTriplet!
             var comps = [String]()
             if let host = triplet.server?.host {
                 comps.append(host)
@@ -174,15 +174,15 @@ class MainEditorViewController: PresentableViewController {
             } else {
                 comps.append("New Build Template")
             }
-            return comps.joinWithSeparator(" + ")
-        }.startWithNext { [weak self] in
+            return comps.joined(separator: " + ")
+        }.startWithValues { [weak self] in
             self?.title = $0
         }
     }
     
     //state manipulation
     
-    private func stateChanged(fromState fromState: EditorState, toState: EditorState, animated: Bool) {
+    fileprivate func stateChanged(fromState: EditorState, toState: EditorState, animated: Bool) {
 
         let context = self.context.value
         if let viewController = self.factory.supplyViewControllerForState(toState, context: context) {

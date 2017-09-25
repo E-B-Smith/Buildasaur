@@ -12,14 +12,12 @@ class MockHelpers {
     
     class func loadSampleIntegration() -> NSMutableDictionary {
         
-        let bundle = NSBundle(forClass: MockHelpers.self)
-        if
-            let url = bundle.URLForResource("sampleFinishedIntegration", withExtension: "json"),
-            let data = NSData(contentsOfURL: url),
-            let obj = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as? NSMutableDictionary
-        {
-            return obj
-            
+        let bundle = Bundle(for: MockHelpers.self)
+        if let url = bundle.url(forResource: "sampleFinishedIntegration", withExtension: "json") {
+            let data = try! Data(contentsOf: url)
+            if let obj = try! JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? NSMutableDictionary {
+                return obj
+            }
         } else {
             assertionFailure("no sample integration json")
         }

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import BuildaUtils
 import XcodeServerSDK
@@ -21,17 +21,17 @@ public class AvailabilityChecker {
             return SignalProducer {
                 sink, _ in
                 
-                sink.sendNext(.Checking)
+                sink.send(value: .checking)
                 
-                NetworkUtils.checkAvailabilityOfXcodeServerWithCurrentSettings(input, completion: { (success, error) -> () in
-                    NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+                NetworkUtils.checkAvailabilityOfXcodeServerWithCurrentSettings(config: input, completion: { (success, error) -> () in
+                    OperationQueue.main.addOperation {
                         if success {
-                            sink.sendNext(.Succeeded)
+                            sink.send(value: .succeeded)
                         } else {
-                            sink.sendNext(.Failed(error))
+                            sink.send(value: .failed(error))
                         }
                         sink.sendCompleted()
-                    })
+                    }
                 })
             }
         }
@@ -43,27 +43,27 @@ public class AvailabilityChecker {
             
             return SignalProducer { sink, _ in
                 
-                sink.sendNext(.Checking)
+                sink.send(value: .checking)
                 
                 var project: Project!
                 do {
                     project = try Project(config: input)
                 } catch {
-                    sink.sendNext(.Failed(error))
+                    sink.send(value: .failed(error))
                     return
                 }
                 
-                NetworkUtils.checkAvailabilityOfServiceWithProject(project, completion: { (success, error) -> () in
+                NetworkUtils.checkAvailabilityOfServiceWithProject(project: project, completion: { (success, error) -> () in
                     
-                    NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+                    OperationQueue.main.addOperation {
                         
                         if success {
-                            sink.sendNext(.Succeeded)
+                            sink.send(value: .succeeded)
                         } else {
-                            sink.sendNext(.Failed(error))
+                            sink.send(value: .failed(error))
                         }
                         sink.sendCompleted()
-                    })
+                    }
                 })
             }
         }

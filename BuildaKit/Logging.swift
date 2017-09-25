@@ -14,8 +14,8 @@ public class Logging {
     public class func setup(persistence: Persistence, alsoIntoFile: Bool) {
         
         let path = persistence
-            .fileURLWithName("Logs", intention: .Writing, isDirectory: true)
-            .URLByAppendingPathComponent("Builda.log", isDirectory: false)
+            .fileURLWithName(name: "Logs", intention: .Writing, isDirectory: true)
+            .appendingPathComponent("Builda.log", isDirectory: false)
         
         var loggers = [Logger]()
         
@@ -29,7 +29,7 @@ public class Logging {
         }
         
         Log.addLoggers(loggers)
-        let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as! String
+        let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
         let ascii =
         " ____        _ _     _\n" +
             "|  _ \\      (_) |   | |\n" +

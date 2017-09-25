@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import XcodeServerSDK
 
@@ -21,7 +21,7 @@ class SyncerProducerFactory {
         let buildTemplates = st.buildTemplates.producer
         let triggerConfigs = st.triggerConfigs.producer
         
-        let configs = combineLatest(
+        let configs = SignalProducer.combineLatest(
             syncerConfigs,
             serverConfigs,
             projectConfigs,
@@ -72,7 +72,7 @@ class SyncerProducerFactory {
     static func createSyncersProducer(factory: SyncerFactoryType, triplets: SignalProducer<[ConfigTriplet], NoError>) -> SignalProducer<[StandardSyncer], NoError> {
         
         let syncers = triplets.map { (tripletArray: [ConfigTriplet]) -> [StandardSyncer] in
-            return factory.createSyncers(tripletArray)
+            return factory.createSyncers(configs: tripletArray)
         }
         return syncers
     }
@@ -80,7 +80,7 @@ class SyncerProducerFactory {
     static func createProjectsProducer(factory: SyncerFactoryType, configs: SignalProducer<[ProjectConfig], NoError>) -> SignalProducer<[Project], NoError> {
         
         let projects = configs.map { configsArray in
-            return configsArray.map { factory.createProject($0) }
+            return configsArray.map { factory.createProject(config: $0) }
         }.map { $0.filter { $0 != nil } }.map { $0.map { $0! } }
         return projects
     }
@@ -88,7 +88,7 @@ class SyncerProducerFactory {
     static func createServersProducer(factory: SyncerFactoryType, configs: SignalProducer<[XcodeServerConfig], NoError>) -> SignalProducer<[XcodeServer], NoError> {
         
         let servers = configs.map { configsArray in
-            return configsArray.map { factory.createXcodeServer($0) }
+            return configsArray.map { factory.createXcodeServer(config: $0) }
         }
         return servers
     }
@@ -101,7 +101,7 @@ class SyncerProducerFactory {
     static func createTriggersProducer(factory: SyncerFactoryType, configs: SignalProducer<[TriggerConfig], NoError>) -> SignalProducer<[Trigger], NoError> {
         
         let triggers = configs.map { configsArray in
-            return configsArray.map { factory.createTrigger($0) }
+            return configsArray.map { factory.createTrigger(config: $0) }
         }
         return triggers
     }

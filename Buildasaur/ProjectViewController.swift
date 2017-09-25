@@ -12,11 +12,11 @@ import BuildaUtils
 import XcodeServerSDK
 import BuildaKit
 import BuildaGitServer
-import ReactiveCocoa
+import ReactiveSwift
 
 protocol ProjectViewControllerDelegate: class {
-    func didCancelEditingOfProjectConfig(config: ProjectConfig)
-    func didSaveProjectConfig(config: ProjectConfig)
+    func didCancelEditingOfProjectConfig(_ config: ProjectConfig)
+    func didSaveProjectConfig(_ config: ProjectConfig)
 }
 
 class ProjectViewController: ConfigEditViewController {
@@ -26,13 +26,13 @@ class ProjectViewController: ConfigEditViewController {
     
     var serviceAuthenticator: ServiceAuthenticator!
     
-    private var project: Project!
+    fileprivate var project: Project!
     
-    private let privateKeyUrl = MutableProperty<NSURL?>(nil)
-    private let publicKeyUrl = MutableProperty<NSURL?>(nil)
+    fileprivate let privateKeyUrl = MutableProperty<URL?>(nil)
+    fileprivate let publicKeyUrl = MutableProperty<URL?>(nil)
     
-    private let authenticator = MutableProperty<ProjectAuthenticator?>(nil)
-    private let userWantsTokenAuth = MutableProperty<Bool>(false)
+    fileprivate let authenticator = MutableProperty<ProjectAuthenticator?>(nil)
+    fileprivate let userWantsTokenAuth = MutableProperty<Bool>(false)
 
     //we have a project
     @IBOutlet weak var projectNameLabel: NSTextField!
@@ -73,7 +73,7 @@ class ProjectViewController: ConfigEditViewController {
         self.userWantsTokenAuth.value = projectAuth?.type == .PersonalToken
         
         //project
-        proj.startWithNext { [weak self] in self?.project = $0 }
+        proj.startWithValues { [weak self] in self?.project = $0 }
         
         //enabled
         self.selectSSHPrivateKeyButton.rac_enabled <~ editing
@@ -96,27 +96,27 @@ class ProjectViewController: ConfigEditViewController {
         }
         
         //dump whenever config changes
-        prod.startWithNext { [weak self] in
+        prod.startWithValues { [weak self] in
             
             let priv = $0.privateSSHKeyPath
-            self?.privateKeyUrl.value = priv.isEmpty ? nil : NSURL(fileURLWithPath: priv)
+            self?.privateKeyUrl.value = priv.isEmpty ? nil : URL(fileURLWithPath: priv)
             let pub = $0.publicSSHKeyPath
-            self?.publicKeyUrl.value = pub.isEmpty ? nil : NSURL(fileURLWithPath: pub)
+            self?.publicKeyUrl.value = pub.isEmpty ? nil : URL(fileURLWithPath: pub)
             self?.sshPassphraseTextField.stringValue = $0.sshPassphrase ?? ""
         }
         
         let meta = proj.map { $0.workspaceMetadata! }
         
-        combineLatest(
+        SignalProducer.combineLatest(
             proj,
             self.authenticator.producer,
             self.userWantsTokenAuth.producer
             )
-            .startWithNext { [weak self] (proj, auth, forceUseToken) in
+            .startWithValues { [weak self] (proj, auth, forceUseToken) in
                 self?.updateServiceMeta(proj, auth: auth, userWantsTokenAuth: forceUseToken)
         }
-        combineLatest(self.tokenTextField.rac_text, self.userWantsTokenAuth.producer)
-            .startWithNext { [weak self] token, forceToken in
+        SignalProducer.combineLatest(self.tokenTextField.rac_text, self.userWantsTokenAuth.producer)
+            .startWithValues { [weak self] token, forceToken in
                 if forceToken {
                     if token.isEmpty {
                         self?.authenticator.value = nil
@@ -128,7 +128,7 @@ class ProjectViewController: ConfigEditViewController {
         
         //fill data in
         self.projectNameLabel.rac_stringValue <~ meta.map { $0.projectName }
-        self.projectURLLabel.rac_stringValue <~ meta.map { $0.projectURL.absoluteString }
+        self.projectURLLabel.rac_stringValue <~ meta.map { $0.projectURL.absoluteString ?? "" }
         self.projectPathLabel.rac_stringValue <~ meta.map { $0.projectPath }
         
         //invalidate availability on change of any input
@@ -136,53 +136,57 @@ class ProjectViewController: ConfigEditViewController {
         let publicKeyVoid = publicKey.map { _ in }
         let githubTokenVoid = self.tokenTextField.rac_text.map { _ in }
         let sshPassphraseVoid = self.sshPassphraseTextField.rac_text.map { _ in }
-        let all = combineLatest(privateKeyVoid, publicKeyVoid, githubTokenVoid, sshPassphraseVoid)
-        all.startWithNext { [weak self] _ in self?.availabilityCheckState.value = .Unchecked }
+        let all = SignalProducer.combineLatest(privateKeyVoid, publicKeyVoid, githubTokenVoid, sshPassphraseVoid)
+        all.startWithValues { [weak self] _ in self?.availabilityCheckState.value = .unchecked }
         
         //listen for changes
         let privateKeyValid = privateKey.map { $0 != nil }
         let publicKeyValid = publicKey.map { $0 != nil }
         let githubTokenValid = self.authenticator.producer.map { $0 != nil }
         
-        let allInputs = combineLatest(privateKeyValid, publicKeyValid, githubTokenValid)
+        let allInputs = SignalProducer.combineLatest(privateKeyValid, publicKeyValid, githubTokenValid)
         let valid = allInputs.map { $0.0 && $0.1 && $0.2 }
         self.valid = valid
         
+        let checker = self.availabilityCheckState.producer.map { state -> Bool in
+            return state != .checking && state != AvailabilityCheckState.succeeded
+        }
+        
         //control buttons
-        let enableNext = combineLatest(self.valid, editing.producer)
-            .map { $0 && $1 }
-        self.nextAllowed <~ enableNext
-        self.trashButton.rac_enabled <~ editing
+        let nextAllowed = SignalProducer.combineLatest(self.valid, editing.producer, checker)
+            .map { $0 && $1 && $2 }
+        self.nextAllowed <~ nextAllowed
+        self.trashButton.rac_hidden <~ editing
     }
     
-    func updateServiceMeta(proj: Project, auth: ProjectAuthenticator?, userWantsTokenAuth: Bool) {
+    func updateServiceMeta(_ proj: Project, auth: ProjectAuthenticator?, userWantsTokenAuth: Bool) {
         
         let meta = proj.workspaceMetadata!
         let service = meta.service
         
         let name = "\(service.prettyName())"
         self.serviceName.stringValue = name
-        self.serviceLogo.image = NSImage(named: service.logoName())
+        self.serviceLogo.image = NSImage(named: NSImage.Name(rawValue: service.logoName()))
         
         let alreadyHasAuth = auth != nil
 
         switch service {
         case .GitHub:
-            if let auth = auth where auth.type == .PersonalToken && !auth.secret.isEmpty {
+            if let auth = auth, auth.type == .PersonalToken && !auth.secret.isEmpty {
                 self.tokenTextField.stringValue = auth.secret
             } else {
                 self.tokenTextField.stringValue = ""
             }
-            self.useTokenButton.hidden = alreadyHasAuth
+            self.useTokenButton.isHidden = alreadyHasAuth
         case .BitBucket:
-            self.useTokenButton.hidden = true
+            self.useTokenButton.isHidden = true
         }
         
-        self.loginButton.hidden = alreadyHasAuth
-        self.logoutButton.hidden = !alreadyHasAuth
+        self.loginButton.isHidden = alreadyHasAuth
+        self.logoutButton.isHidden = !alreadyHasAuth
         
         let showTokenField = userWantsTokenAuth && service == .GitHub && (auth?.type == .PersonalToken || auth == nil)
-        self.tokenStackView.hidden = !showTokenField
+        self.tokenStackView.isHidden = !showTokenField
     }
     
     override func shouldGoNext() -> Bool {
@@ -195,12 +199,12 @@ class ProjectViewController: ConfigEditViewController {
         //check availability of these credentials
         self.recheckForAvailability { [weak self] (state) -> () in
             
-            if case .Succeeded = state {
+            if case .succeeded = state {
                 //stop editing
                 self?.editing.value = false
 
                 //animated!
-                delayClosure(1) {
+                delayClosure(delay: 1) {
                     self?.goNext(animated: true)
                 }
             }
@@ -212,9 +216,9 @@ class ProjectViewController: ConfigEditViewController {
         self.goBack()
     }
     
-    private func goBack() {
+    fileprivate func goBack() {
         let config = self.projectConfig.value
-        self.delegate?.didCancelEditingOfProjectConfig(config)
+        self.delegate?.didCancelEditingOfProjectConfig(config!)
     }
     
     override func delete() {
@@ -228,14 +232,13 @@ class ProjectViewController: ConfigEditViewController {
         })
     }
     
-    override func checkAvailability(statusChanged: ((status: AvailabilityCheckState) -> ())) {
+    override func checkAvailability(_ statusChanged: @escaping ((_ status: AvailabilityCheckState) -> ())) {
         
-        AvailabilityChecker
-            .projectAvailability()
-            .apply(self.projectConfig.value)
-            .startWithNext {
-                statusChanged(status: $0)
-        }
+        let _ = AvailabilityChecker
+                .projectAvailability()
+                .apply(self.projectConfig.value)
+                .on(starting: nil, started: nil, event: nil, failed: nil, completed: nil, interrupted: nil, terminated: nil, disposed: nil, value: statusChanged)
+                .start()
     }
     
     func pullConfigFromUI() -> ProjectConfig? {
@@ -248,17 +251,17 @@ class ProjectViewController: ConfigEditViewController {
             return nil
         }
         
-        var config = self.projectConfig.value
+        var config = self.projectConfig.value!
         config.serverAuthentication = auth
         config.sshPassphrase = sshPassphrase
         config.privateSSHKeyPath = privateKeyPath
         config.publicSSHKeyPath = publicKeyPath
         
         do {
-            try self.storageManager.addProjectConfig(config)
+            try self.storageManager.addProjectConfig(config: config)
             return config
         } catch StorageManagerError.DuplicateProjectConfig(let duplicate) {
-            let userError = Error.withInfo("You already have a Project at \"\(duplicate.url)\", please go back and select it from the previous screen.")
+            let userError = XcodeServerError.with("You already have a Project at \"\(duplicate.url)\", please go back and select it from the previous screen.")
             UIUtils.showAlertWithError(userError)
         } catch {
             UIUtils.showAlertWithError(error)
@@ -268,16 +271,16 @@ class ProjectViewController: ConfigEditViewController {
     
     func removeCurrentConfig() {
     
-        let config = self.projectConfig.value
-        self.storageManager.removeProjectConfig(config)
+        let config = self.projectConfig.value!
+        self.storageManager.removeProjectConfig(projectConfig: config)
         self.goBack()
     }
     
-    func selectKey(type: String) {
+    func selectKey(_ type: String) {
         
-        if let url = StorageUtils.openSSHKey(type) {
+        if let url = StorageUtils.openSSHKey(publicOrPrivate: type) {
             do {
-                _ = try NSString(contentsOfURL: url, encoding: NSASCIIStringEncoding)
+                _ = try String(contentsOf: url, encoding: String.Encoding.ascii)
                 if type == "public" {
                     self.publicKeyUrl.value = url
                 } else {
@@ -289,15 +292,15 @@ class ProjectViewController: ConfigEditViewController {
         }
     }
     
-    @IBAction func selectPublicKeyTapped(sender: AnyObject) {
+    @IBAction func selectPublicKeyTapped(_ sender: AnyObject) {
         self.selectKey("public")
     }
     
-    @IBAction func selectPrivateKeyTapped(sender: AnyObject) {
+    @IBAction func selectPrivateKeyTapped(_ sender: AnyObject) {
         self.selectKey("private")
     }
     
-    @IBAction func loginButtonClicked(sender: AnyObject) {
+    @IBAction func loginButtonClicked(_ sender: AnyObject) {
         
         self.userWantsTokenAuth.value = false
         
@@ -306,7 +309,7 @@ class ProjectViewController: ConfigEditViewController {
             
             guard let auth = auth else {
                 //TODO: show UI error that login failed
-                UIUtils.showAlertWithError(Error.withInfo("Failed to log in, please try again", internalError: (error as! NSError), userInfo: nil))
+                UIUtils.showAlertWithError(XcodeServerError.with("Failed to log in, please try again"/*, internalError: (error as! NSError), userInfo: nil*/))
                 self.authenticator.value = nil
                 return
             }
@@ -316,12 +319,12 @@ class ProjectViewController: ConfigEditViewController {
         }
     }
     
-    @IBAction func useTokenClicked(sender: AnyObject) {
+    @IBAction func useTokenClicked(_ sender: AnyObject) {
         
         self.userWantsTokenAuth.value = true
     }
     
-    @IBAction func logoutButtonClicked(sender: AnyObject) {
+    @IBAction func logoutButtonClicked(_ sender: AnyObject) {
         
         self.authenticator.value = nil
         self.userWantsTokenAuth.value = false

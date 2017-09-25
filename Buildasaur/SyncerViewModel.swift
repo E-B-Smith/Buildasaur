@@ -8,12 +8,12 @@
 
 import Foundation
 import BuildaKit
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 struct SyncerStatePresenter {
     
-    static func stringForState(state: SyncerEventType, active: Bool) -> String {
+    static func stringForState(_ state: SyncerEventType, active: Bool) -> String {
         
         guard active else {
             return "🚧 stopped"
@@ -54,18 +54,18 @@ struct SyncerViewModel {
     typealias PresentEditViewControllerType = (ConfigTriplet) -> ()
     let presentEditViewController: PresentEditViewControllerType
     
-    init(syncer: StandardSyncer, presentEditViewController: PresentEditViewControllerType) {
+    init(syncer: StandardSyncer, presentEditViewController: @escaping PresentEditViewControllerType) {
         self.syncer = syncer
         self.presentEditViewController = presentEditViewController
         
         let active = syncer.activeSignalProducer.producer
         let state = syncer.state.producer
         
-        self.status = combineLatest(state, active)
+        self.status = SignalProducer.combineLatest(state, active)
             .map { SyncerStatePresenter.stringForState($0.0, active: $0.1) }
         
         self.host = SignalProducer(value: syncer.xcodeServer)
-            .map { $0.config.host ?? "[No Xcode Server]" }
+            .map { $0.config.host }
         
         self.projectName = SignalProducer(value: syncer.project)
             .map { $0.workspaceMetadata?.projectName ?? "[No Project]" }

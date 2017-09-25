@@ -54,9 +54,9 @@ class BitBucketStatus: BitBucketEntity, StatusType {
         
         dictionary["state"] = self.bbState.rawValue
         dictionary["key"] = self.key
-        dictionary.optionallyAddValueForKey(self.description, key: "description")
-        dictionary.optionallyAddValueForKey(self.name, key: "name")
-        dictionary.optionallyAddValueForKey(self.targetUrl, key: "url")
+        dictionary.optionallyAddValueForKey(self.description as AnyObject, key: "description")
+        dictionary.optionallyAddValueForKey(self.name as AnyObject, key: "name")
+        dictionary.optionallyAddValueForKey(self.targetUrl as AnyObject, key: "url")
         
         return dictionary.copy() as! NSDictionary
     }

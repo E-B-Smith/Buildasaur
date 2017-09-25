@@ -18,13 +18,13 @@ class SyncPair_PR_NoBot: SyncPair {
         super.init()
     }
     
-    override func sync(completion: Completion) {
+    override func sync(completion: @escaping Completion) {
         
         //create a bot for this PR
         let syncer = self.syncer
         let pr = self.pr
         
-        SyncPair_PR_NoBot.createBotForPR(syncer: syncer, pr: pr, completion: completion)
+        SyncPair_PR_NoBot.createBotForPR(syncer: syncer!, pr: pr, completion: completion)
     }
     
     override func syncPairName() -> String {
@@ -33,10 +33,10 @@ class SyncPair_PR_NoBot: SyncPair {
     
     //MARK: Internal
     
-    private class func createBotForPR(syncer syncer: StandardSyncer, pr: PullRequestType, completion: Completion) {
+    private class func createBotForPR(syncer: StandardSyncer, pr: PullRequestType, completion: @escaping Completion) {
         
-        syncer.createBotFromPR(pr, completion: { () -> () in
-            completion(error: nil)
+        syncer.createBotFromPR(pr: pr, completion: { () -> () in
+            completion(nil)
         })
     }
 }

@@ -12,8 +12,8 @@ extension String {
 
     public func base64String() -> String {
         return self
-            .dataUsingEncoding(NSUTF8StringEncoding)!
-            .base64EncodedStringWithOptions(NSDataBase64EncodingOptions())
+            .data(using: String.Encoding.utf8)!
+            .base64EncodedString()
     }
 }
 

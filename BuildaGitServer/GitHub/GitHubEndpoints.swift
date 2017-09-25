@@ -12,22 +12,22 @@ import BuildaUtils
 class GitHubEndpoints {
     
     enum Endpoint {
-        case Users
-        case Repos
-        case PullRequests
-        case Issues
-        case Branches
-        case Commits
-        case Statuses
-        case IssueComments
-        case Merges
+        case users
+        case repos
+        case pullRequests
+        case issues
+        case branches
+        case commits
+        case statuses
+        case issueComments
+        case merges
     }
     
     enum MergeResult {
-        case Success(NSDictionary)
-        case NothingToMerge
-        case Conflict
-        case Missing(String)
+        case success(NSDictionary)
+        case nothingToMerge
+        case conflict
+        case missing(String)
     }
     
     private let baseURL: String
@@ -41,7 +41,7 @@ class GitHubEndpoints {
     private func endpointURL(endpoint: Endpoint, params: [String: String]? = nil) -> String {
         
         switch endpoint {
-        case .Users:
+        case .users:
             
             if let user = params?["user"] {
                 return "/users/\(user)"
@@ -50,19 +50,19 @@ class GitHubEndpoints {
             }
         
             //FYI - repo must be in its full name, e.g. czechboy0/Buildasaur, not just Buildasaur
-        case .Repos:
+        case .repos:
             
             if let repo = params?["repo"] {
                 return "/repos/\(repo)"
             } else {
-                let user = self.endpointURL(.Users, params: params)
+                let user = self.endpointURL(endpoint: .users, params: params)
                 return "\(user)/repos"
             }
             
-        case .PullRequests:
+        case .pullRequests:
             
             assert(params?["repo"] != nil, "A repo must be specified")
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             let pulls = "\(repo)/pulls"
             
             if let pr = params?["pr"] {
@@ -71,10 +71,10 @@ class GitHubEndpoints {
                 return pulls
             }
             
-        case .Issues:
+        case .issues:
             
             assert(params?["repo"] != nil, "A repo must be specified")
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             let issues = "\(repo)/issues"
             
             if let issue = params?["issue"] {
@@ -83,9 +83,9 @@ class GitHubEndpoints {
                 return issues
             }
             
-        case .Branches:
+        case .branches:
             
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             let branches = "\(repo)/branches"
             
             if let branch = params?["branch"] {
@@ -94,9 +94,9 @@ class GitHubEndpoints {
                 return branches
             }
             
-        case .Commits:
+        case .commits:
             
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             let commits = "\(repo)/commits"
             
             if let commit = params?["commit"] {
@@ -105,25 +105,25 @@ class GitHubEndpoints {
                 return commits
             }
             
-        case .Statuses:
+        case .statuses:
             
             let sha = params!["sha"]!
             let method = params?["method"]
             if let method = method {
-                if method == HTTP.Method.POST.rawValue {
+                if method == HTTP.Method.post.rawValue {
                     //POST, we need slightly different url
-                    let repo = self.endpointURL(.Repos, params: params)
+                    let repo = self.endpointURL(endpoint: .repos, params: params)
                     return "\(repo)/statuses/\(sha)"
                 }
             }
             
             //GET, default
-            let commits = self.endpointURL(.Commits, params: params)
+            let commits = self.endpointURL(endpoint: .commits, params: params)
             return "\(commits)/\(sha)/statuses"
             
-        case .IssueComments:
+        case .issueComments:
             
-            let issues = self.endpointURL(.Issues, params: params)
+            let issues = self.endpointURL(endpoint: .issues, params: params)
             let comments = "\(issues)/comments"
             
             if let comment = params?["comment"] {
@@ -132,25 +132,25 @@ class GitHubEndpoints {
                 return comments
             }
             
-        case .Merges:
+        case .merges:
             
             assert(params?["repo"] != nil, "A repo must be specified")
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             return "\(repo)/merges"
         }
     }
     
-    func createRequest(method:HTTP.Method, endpoint:Endpoint, params: [String : String]? = nil, query: [String : String]? = nil, body:NSDictionary? = nil) throws -> NSMutableURLRequest {
+    func createRequest(method: HTTP.Method, endpoint: Endpoint, params: [String : String]? = nil, query: [String : String]? = nil, body:NSDictionary? = nil) throws -> NSMutableURLRequest {
         
-        let endpointURL = self.endpointURL(endpoint, params: params)
+        let endpointURL = self.endpointURL(endpoint: endpoint, params: params)
         let queryString = HTTP.stringForQuery(query)
         let wholePath = "\(self.baseURL)\(endpointURL)\(queryString)"
         
-        let url = NSURL(string: wholePath)!
+        let url = URL(string: wholePath)!
         
-        let request = NSMutableURLRequest(URL: url)
+        let request = NSMutableURLRequest(url: url)
         
-        request.HTTPMethod = method.rawValue
+        request.httpMethod = method.rawValue
         if let auth = self.auth {
             
             switch auth.type {
@@ -161,8 +161,8 @@ class GitHubEndpoints {
         
         if let body = body {
             
-            let data = try NSJSONSerialization.dataWithJSONObject(body, options: NSJSONWritingOptions())
-            request.HTTPBody = data
+            let data = try JSONSerialization.data(withJSONObject: body, options: [])
+            request.httpBody = data
         }
         
         return request

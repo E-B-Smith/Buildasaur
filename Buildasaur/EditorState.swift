@@ -10,20 +10,20 @@ import Foundation
 
 enum EditorState: Int {
     
-    case Initial
+    case initial
     
-    case NoServer
-    case EditingServer
+    case noServer
+    case editingServer
     
-    case NoProject
-    case EditingProject
+    case noProject
+    case editingProject
     
-    case NoBuildTemplate
-    case EditingBuildTemplate
+    case noBuildTemplate
+    case editingBuildTemplate
     
-    case Syncer
+    case syncer
     
-    case Final
+    case final
     
     func next() -> EditorState? {
         return self + 1

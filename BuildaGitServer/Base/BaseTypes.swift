@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 public protocol BuildStatusCreator {
@@ -16,15 +16,15 @@ public protocol BuildStatusCreator {
 
 public protocol SourceServerType: BuildStatusCreator {
     
-    func getBranchesOfRepo(repo: String, completion: (branches: [BranchType]?, error: ErrorType?) -> ())
-    func getOpenPullRequests(repo: String, completion: (prs: [PullRequestType]?, error: ErrorType?) -> ())
-    func getPullRequest(pullRequestNumber: Int, repo: String, completion: (pr: PullRequestType?, error: ErrorType?) -> ())
-    func getRepo(repo: String, completion: (repo: RepoType?, error: ErrorType?) -> ())
-    func getStatusOfCommit(commit: String, repo: String, completion: (status: StatusType?, error: ErrorType?) -> ())
-    func postStatusOfCommit(commit: String, status: StatusType, repo: String, completion: (status: StatusType?, error: ErrorType?) -> ())
-    func postCommentOnIssue(comment: String, issueNumber: Int, repo: String, completion: (comment: CommentType?, error: ErrorType?) -> ())
-    func getCommentsOfIssue(issueNumber: Int, repo: String, completion: (comments: [CommentType]?, error: ErrorType?) -> ())
-    
+    func getBranchesOfRepo(repo: String, completion: @escaping (_ branches: [BranchType]?, _ error: Error?) -> ())
+    func getOpenPullRequests(repo: String, completion: @escaping (_ prs: [PullRequestType]?, _ error: Error?) -> ())
+    func getPullRequest(pullRequestNumber: Int, repo: String, completion: @escaping (_ pr: PullRequestType?, _ error: Error?) -> ())
+    func getRepo(repo: String, completion: @escaping (_ repo: RepoType?, _ error: Error?) -> ())
+    func getStatusOfCommit(commit: String, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> ())
+    func postStatusOfCommit(commit: String, status: StatusType, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> ())
+    func postCommentOnIssue(comment: String, issueNumber: Int, repo: String, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> ())
+    func getCommentsOfIssue(issueNumber: Int, repo: String, completion: @escaping (_ comments: [CommentType]?, _ error: Error?) -> ())
+
     func authChangedSignal() -> Signal<ProjectAuthenticator?, NoError>
 }
 
@@ -38,7 +38,7 @@ public class SourceServerFactory {
             precondition(service == auth.service)
         }
         
-        return GitServerFactory.server(service, auth: auth)
+        return GitServerFactory.server(service: service, auth: auth)
     }
 }
 

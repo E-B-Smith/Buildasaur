@@ -17,73 +17,73 @@ extension MainEditorViewController: EditeeDelegate { }
 
 extension MainEditorViewController: EmptyXcodeServerViewControllerDelegate {
     
-    func didSelectXcodeServerConfig(config: XcodeServerConfig) {
+    func didSelectXcodeServerConfig(_ config: XcodeServerConfig) {
         self.context.value.configTriplet.server = config
     }
 }
 
 extension MainEditorViewController: XcodeServerViewControllerDelegate {
     
-    func didCancelEditingOfXcodeServerConfig(config: XcodeServerConfig) {
+    func didCancelEditingOfXcodeServerConfig(_ config: XcodeServerConfig) {
         self.context.value.configTriplet.server = nil
         self.previous(animated: false)
     }
     
-    func didSaveXcodeServerConfig(config: XcodeServerConfig) {
+    func didSaveXcodeServerConfig(_ config: XcodeServerConfig) {
         self.context.value.configTriplet.server = config
     }
 }
 
 extension MainEditorViewController: EmptyProjectViewControllerDelegate {
     
-    func didSelectProjectConfig(config: ProjectConfig) {
+    func didSelectProjectConfig(_ config: ProjectConfig) {
         self.context.value.configTriplet.project = config
     }
 }
 
 extension MainEditorViewController: ProjectViewControllerDelegate {
     
-    func didCancelEditingOfProjectConfig(config: ProjectConfig) {
+    func didCancelEditingOfProjectConfig(_ config: ProjectConfig) {
         self.context.value.configTriplet.project = nil
         self.previous(animated: false)
     }
     
-    func didSaveProjectConfig(config: ProjectConfig) {
+    func didSaveProjectConfig(_ config: ProjectConfig) {
         self.context.value.configTriplet.project = config
     }
 }
 
 extension MainEditorViewController: EmptyBuildTemplateViewControllerDelegate {
     
-    func didSelectBuildTemplate(buildTemplate: BuildTemplate) {
+    func didSelectBuildTemplate(_ buildTemplate: BuildTemplate) {
         self.context.value.configTriplet.buildTemplate = buildTemplate
     }
 }
 
 extension MainEditorViewController: BuildTemplateViewControllerDelegate {
     
-    func didCancelEditingOfBuildTemplate(template: BuildTemplate) {
+    func didCancelEditingOfBuildTemplate(_ template: BuildTemplate) {
         self.context.value.configTriplet.buildTemplate = nil
         self.previous(animated: false)
     }
     
-    func didSaveBuildTemplate(template: BuildTemplate) {
+    func didSaveBuildTemplate(_ template: BuildTemplate) {
         self.context.value.configTriplet.buildTemplate = template
     }
 }
 
 extension MainEditorViewController: SyncerViewControllerDelegate {
     
-    func didCancelEditingOfSyncerConfig(config: SyncerConfig) {
+    func didCancelEditingOfSyncerConfig(_ config: SyncerConfig) {
         self._cancel()
     }
     
-    func didSaveSyncerConfig(config: SyncerConfig) {
+    func didSaveSyncerConfig(_ config: SyncerConfig) {
         self.context.value.configTriplet.syncer = config
     }
     
     func didRequestEditing() {
-        self.state.value = (.NoServer, true)
+        self.state.value = (.noServer, true)
     }
 }
 

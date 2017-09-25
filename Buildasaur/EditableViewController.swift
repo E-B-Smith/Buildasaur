@@ -9,7 +9,7 @@
 import Cocoa
 import BuildaUtils
 import BuildaKit
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 class EditableViewController: NSViewController {
@@ -29,14 +29,14 @@ class EditableViewController: NSViewController {
     
     typealias ActionSignal = Signal<Void, NoError>
     typealias AnimatableSignal = Signal<Bool, NoError>
-    private typealias ActionObserver = ActionSignal.Observer
-    private typealias AnimatableObserver = AnimatableSignal.Observer
+    fileprivate typealias ActionObserver = ActionSignal.Observer
+    fileprivate typealias AnimatableObserver = AnimatableSignal.Observer
     
     var wantsNext: AnimatableSignal!
     var wantsPrevious: ActionSignal!
     
-    private var sinkNext: AnimatableObserver!
-    private var sinkPrevious: ActionObserver!
+    fileprivate var sinkNext: AnimatableObserver!
+    fileprivate var sinkPrevious: ActionObserver!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,12 +54,12 @@ class EditableViewController: NSViewController {
     //call goNext to finish going next. otherwise don't call
     //and force user to fix the problem.
     
-    final func goNext(animated animated: Bool = false) {
-        self.sinkNext.sendNext(animated)
+    final func goNext(animated: Bool = false) {
+        self.sinkNext.send(value: animated)
     }
     
     final func goPrevious() {
-        self.sinkPrevious.sendNext(())
+        self.sinkPrevious.send(value: ())
     }
 
     //for overriding

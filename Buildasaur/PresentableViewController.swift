@@ -23,6 +23,6 @@ class PresentableViewController: NSViewController {
 
 protocol PresentableViewControllerDelegate: class {
     
-    func presentViewControllerInUniqueWindow(viewController: PresentableViewController)
-    func closeWindowWithViewController(viewController: PresentableViewController)
+    func presentViewControllerInUniqueWindow(_ viewController: PresentableViewController)
+    func closeWindowWithViewController(_ viewController: PresentableViewController)
 }

@@ -27,80 +27,80 @@ class SummaryBuilder {
     func buildPassing(integration: Integration) -> StatusAndComment {
         
         let linkToIntegration = self.linkBuilder(integration)
-        self.addBaseCommentFromIntegration(integration)
+        self.addBaseCommentFromIntegration(integration: integration)
         
-        let status = self.createStatus(.Success, description: "Build passed!", targetUrl: linkToIntegration)
+        let status = self.createStatus(state: .Success, description: "Build passed!", targetUrl: linkToIntegration)
         
         let buildResultSummary = integration.buildResultSummary!
         switch integration.result {
         case .Succeeded?:
-            self.appendTestsPassed(buildResultSummary)
+            self.appendTestsPassed(buildResultSummary: buildResultSummary)
         case .Warnings?, .AnalyzerWarnings?:
             
             switch (buildResultSummary.warningCount, buildResultSummary.analyzerWarningCount) {
             case (_, 0):
-                self.appendWarnings(buildResultSummary)
+                self.appendWarnings(buildResultSummary: buildResultSummary)
             case (0, _):
-                self.appendAnalyzerWarnings(buildResultSummary)
+                self.appendAnalyzerWarnings(buildResultSummary: buildResultSummary)
             default:
-                self.appendWarningsAndAnalyzerWarnings(buildResultSummary)
+                self.appendWarningsAndAnalyzerWarnings(buildResultSummary: buildResultSummary)
             }
             
         default: break
         }
         
         //and code coverage
-        self.appendCodeCoverage(buildResultSummary)
+        self.appendCodeCoverage(buildResultSummary: buildResultSummary)
         
-        return self.buildWithStatus(status)
+        return self.buildWithStatus(status: status)
     }
     
     func buildFailingTests(integration: Integration) -> StatusAndComment {
         
         let linkToIntegration = self.linkBuilder(integration)
         
-        self.addBaseCommentFromIntegration(integration)
+        self.addBaseCommentFromIntegration(integration: integration)
         
-        let status = self.createStatus(.Failure, description: "Build failed tests!", targetUrl: linkToIntegration)
+        let status = self.createStatus(state: .Failure, description: "Build failed tests!", targetUrl: linkToIntegration)
         let buildResultSummary = integration.buildResultSummary!
-        self.appendTestFailure(buildResultSummary)
-        return self.buildWithStatus(status)
+        self.appendTestFailure(buildResultSummary: buildResultSummary)
+        return self.buildWithStatus(status: status)
     }
     
     func buildErrorredIntegration(integration: Integration) -> StatusAndComment {
         
         let linkToIntegration = self.linkBuilder(integration)
-        self.addBaseCommentFromIntegration(integration)
+        self.addBaseCommentFromIntegration(integration: integration)
         
-        let status = self.createStatus(.Error, description: "Build error!", targetUrl: linkToIntegration)
+        let status = self.createStatus(state: .Error, description: "Build error!", targetUrl: linkToIntegration)
         
-        self.appendErrors(integration)
-        return self.buildWithStatus(status)
+        self.appendErrors(integration: integration)
+        return self.buildWithStatus(status: status)
     }
     
     func buildCanceledIntegration(integration: Integration) -> StatusAndComment {
         
         let linkToIntegration = self.linkBuilder(integration)
         
-        self.addBaseCommentFromIntegration(integration)
+        self.addBaseCommentFromIntegration(integration: integration)
         
-        let status = self.createStatus(.Error, description: "Build canceled!", targetUrl: linkToIntegration)
+        let status = self.createStatus(state: .Error, description: "Build canceled!", targetUrl: linkToIntegration)
         
         self.appendCancel()
-        return self.buildWithStatus(status)
+        return self.buildWithStatus(status: status)
     }
     
     func buildEmptyIntegration() -> StatusAndComment {
         
-        let status = self.createStatus(.NoState, description: nil, targetUrl: nil)
-        return self.buildWithStatus(status)
+        let status = self.createStatus(state: .NoState, description: nil, targetUrl: nil)
+        return self.buildWithStatus(status: status)
     }
     
     //MARK: utils
     
     private func createStatus(state: BuildState, description: String?, targetUrl: String?) -> StatusType {
         
-        let status = self.statusCreator.createStatusFromState(state, description: description, targetUrl: targetUrl)
+        let status = self.statusCreator.createStatusFromState(state: state, description: description, targetUrl: targetUrl)
         return status
     }
     
@@ -115,7 +115,7 @@ class SummaryBuilder {
         self.lines.append("Result of \(integrationText)")
         self.lines.append("---")
         
-        if let duration = self.formattedDurationOfIntegration(integration) {
+        if let duration = self.formattedDurationOfIntegration(integration: integration) {
             self.lines.append("*Duration*: " + duration)
         }
     }
@@ -182,7 +182,7 @@ class SummaryBuilder {
         if lines.count == 0 {
             comment = nil
         } else {
-            comment = lines.joinWithSeparator("\n")
+            comment = lines.joined(separator: "\n")
         }
         return StatusAndComment(status: status, comment: comment)
     }

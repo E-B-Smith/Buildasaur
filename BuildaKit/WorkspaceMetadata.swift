@@ -17,6 +17,12 @@ public enum CheckoutType: String {
     //        case SVN - not yet supported yet
 }
 
+public class WorkspaceMetadataError: Error {
+    static func with(_ info: String) -> Error {
+        return NSError(domain: "WorkspaceMetadata", code: -1, userInfo: ["info": info])
+    }
+}
+
 public struct WorkspaceMetadata {
     
     public let projectName: String
@@ -29,25 +35,25 @@ public struct WorkspaceMetadata {
     
     init(projectName: String?, projectPath: String?, projectWCCIdentifier: String?, projectWCCName: String?, projectURLString: String?) throws {
         
-        let errorForMissingKey: (String) -> ErrorType = { Error.withInfo("Can't find/parse \"\($0)\" in workspace metadata!") }
+        let errorForMissingKey: (String) -> Error = { WorkspaceMetadataError.with("Can't find/parse \"\($0)\" in workspace metadata!") }
         guard let projectName = projectName else { throw errorForMissingKey("Project Name") }
         guard let projectPath = projectPath else { throw errorForMissingKey("Project Path") }
         guard let projectWCCIdentifier = projectWCCIdentifier else { throw errorForMissingKey("Project WCC Identifier") }
         guard let projectWCCName = projectWCCName else { throw errorForMissingKey("Project WCC Name") }
         guard let projectURLString = projectURLString else { throw errorForMissingKey("Project URL") }
-        guard let (checkoutType, service) = WorkspaceMetadata.parse(projectURLString) else {
-            let allowedString = [CheckoutType.SSH].map({ $0.rawValue }).joinWithSeparator(", ")
-            let error = Error.withInfo("Disallowed checkout type, the project must be checked out over one of the supported schemes: \(allowedString)")
+        guard let (checkoutType, service) = WorkspaceMetadata.parse(projectURLString: projectURLString) else {
+            let allowedString = [CheckoutType.SSH].map({ $0.rawValue }).joined(separator: ", ")
+            let error = WorkspaceMetadataError.with("Disallowed checkout type, the project must be checked out over one of the supported schemes: \(allowedString)")
             throw error
         }
         
         //we have to prefix SSH urls with "git@" (for a reason I don't remember anymore, probs because the user "git" is treated as a standard part of the url itself)
         var correctedProjectUrlString = projectURLString
-        if case .SSH = checkoutType where !projectURLString.hasPrefix("git@") {
+        if case .SSH = checkoutType, !projectURLString.hasPrefix("git@") {
             correctedProjectUrlString = "git@" + projectURLString
         }
         
-        guard let projectURL = NSURL(string: correctedProjectUrlString) else { throw Error.withInfo("Can't parse url \"\(projectURLString)\"") }
+        guard let projectURL = NSURL(string: correctedProjectUrlString) else { throw WorkspaceMetadataError.with("Can't parse url \"\(projectURLString)\"") }
         
         self.projectName = projectName
         self.projectPath = projectPath
@@ -66,26 +72,26 @@ public struct WorkspaceMetadata {
 extension WorkspaceMetadata {
 
     internal static func parse(projectURLString: String) -> (CheckoutType, GitService)? {
-        guard let url = NSURL(string: projectURLString) else {
-            Log.error("Failed to convert urlString '\(projectURLString)' to an NSURL.")
+        guard let url = URL(string: projectURLString) else {
+            Log.error("Failed to convert urlString '\(projectURLString)' to an URL.")
             return nil
         }
 
         var checkoutType: CheckoutType?
         var gitService: GitService?
 
-        if projectURLString.containsString(GitService.GitHub.hostname()) {
+        if projectURLString.contains(GitService.GitHub.hostname()) {
             gitService = .GitHub
-        } else if projectURLString.containsString(GitService.BitBucket.hostname()) {
+        } else if projectURLString.contains(GitService.BitBucket.hostname()) {
             gitService = .BitBucket
         } else {
             Log.error("This git service is not yet supported.")
         }
 
-        switch url.scheme {
+        switch url.scheme ?? "" {
         case "":
             // No scheme, likely to be SSH so let's check for the telltale 'git@' in the resource specifier.
-            if url.resourceSpecifier.containsString("git@") {
+            if (url as NSURL).resourceSpecifier?.contains("git@") == true {
                 checkoutType = .SSH
             }
         case "ssh":
@@ -93,10 +99,11 @@ extension WorkspaceMetadata {
         case GitService.GitHub.hostname(), GitService.BitBucket.hostname():
             checkoutType = .SSH
         default:
-            Log.error("The \(url.scheme) scheme is not yet supported.")
+            Log.error("The \(String(describing: url.scheme)) scheme is not yet supported.")
         }
 
-        if let checkoutType = checkoutType, gitService = gitService {
+        if let checkoutType = checkoutType,
+            let gitService = gitService {
             return (checkoutType, gitService)
         }
 

@@ -89,9 +89,9 @@ class GitHubStatus : GitHubEntity {
         let dictionary = NSMutableDictionary()
         
         dictionary["state"] = self.githubState.rawValue
-        dictionary.optionallyAddValueForKey(self.description, key: "description")
-        dictionary.optionallyAddValueForKey(self.targetUrl, key: "target_url")
-        dictionary.optionallyAddValueForKey(self.context, key: "context")
+        dictionary.optionallyAddValueForKey(self.description as AnyObject, key: "description")
+        dictionary.optionallyAddValueForKey(self.targetUrl as AnyObject, key: "target_url")
+        dictionary.optionallyAddValueForKey(self.context as AnyObject, key: "context")
         
         return dictionary
     }

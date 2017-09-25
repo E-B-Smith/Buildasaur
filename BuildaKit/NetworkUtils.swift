@@ -11,52 +11,58 @@ import BuildaGitServer
 import BuildaUtils
 import XcodeServerSDK
 
+public class NetworkError: Error {
+    static func with(_ info: String) -> Error {
+        return NSError(domain: "GithubServer", code: -1, userInfo: ["info": info])
+    }
+}
+
 public class NetworkUtils {
     
-    public typealias VerificationCompletion = (success: Bool, error: ErrorType?) -> ()
+    public typealias VerificationCompletion = (_ success: Bool, _ error: Error?) -> ()
     
-    public class func checkAvailabilityOfServiceWithProject(project: Project, completion: VerificationCompletion) {
+    public class func checkAvailabilityOfServiceWithProject(project: Project, completion: @escaping VerificationCompletion) {
         
-        self.checkService(project, completion: { success, error in
+        self.checkService(project: project, completion: { success, error in
             
             if !success {
-                completion(success: false, error: error)
+                completion(false, error)
                 return
             }
             
             //now test ssh keys
             let credentialValidationBlueprint = project.createSourceControlBlueprintForCredentialVerification()
-            self.checkValidityOfSSHKeys(credentialValidationBlueprint, completion: { (success, error) -> () in
+            self.checkValidityOfSSHKeys(blueprint: credentialValidationBlueprint, completion: { (success, error) -> () in
                 
                 if success {
                     Log.verbose("Finished blueprint validation with success!")
                 } else {
-                    Log.verbose("Finished blueprint validation with error: \(error)")
+                    Log.verbose("Finished blueprint validation with error: \(String(describing: error))")
                 }
                 
                 //now complete
-                completion(success: success, error: error)
+                completion(success, error)
             })
         })
     }
     
-    private class func checkService(project: Project, completion: VerificationCompletion) {
+    private class func checkService(project: Project, completion: @escaping VerificationCompletion) {
         
         let auth = project.config.value.serverAuthentication
         let service = auth!.service
-        let server = SourceServerFactory().createServer(service, auth: auth)
+        let server = SourceServerFactory().createServer(service: service, auth: auth)
         
         //check if we can get the repo and verify permissions
         guard let repoName = project.serviceRepoName() else {
-            completion(success: false, error: Error.withInfo("Invalid repo name"))
+            completion(false, NetworkError.with("Invalid repo name"))
             return
         }
         
         //we have a repo name
-        server.getRepo(repoName, completion: { (repo, error) -> () in
+        server.getRepo(repo: repoName, completion: { (repo, error) -> () in
             
             if error != nil {
-                completion(success: false, error: error)
+                completion(false, error)
                 return
             }
             
@@ -68,20 +74,20 @@ public class NetworkUtils {
                 
                 //look at the permissions in the PR metadata
                 if !readPermission {
-                    completion(success: false, error: Error.withInfo("Missing read permission for repo"))
+                    completion(false, NetworkError.with("Missing read permission for repo"))
                 } else if !writePermission {
-                    completion(success: false, error: Error.withInfo("Missing write permission for repo"))
+                    completion(false, NetworkError.with("Missing write permission for repo"))
                 } else {
                     //now complete
-                    completion(success: true, error: nil)
+                    completion(true, nil)
                 }
             } else {
-                completion(success: false, error: Error.withInfo("Couldn't find repo permissions in \(service.prettyName()) response"))
+                completion(false, NetworkError.with("Couldn't find repo permissions in \(service.prettyName()) response"))
             }
         })
     }
     
-    public class func checkAvailabilityOfXcodeServerWithCurrentSettings(config: XcodeServerConfig, completion: (success: Bool, error: NSError?) -> ()) {
+    public class func checkAvailabilityOfXcodeServerWithCurrentSettings(config: XcodeServerConfig, completion: @escaping (_ success: Bool, _ error: Error?) -> ()) {
         
         let xcodeServer = XcodeServerFactory.server(config)
         
@@ -90,32 +96,32 @@ public class NetworkUtils {
         xcodeServer.logout { (success, error) -> () in
             
             if let error = error {
-                completion(success: false, error: error)
+                completion(false, error)
                 return
             }
             
             xcodeServer.getUserCanCreateBots({ (canCreateBots, error) -> () in
                 
                 if let error = error {
-                    completion(success: false, error: error)
+                    completion(false, error)
                     return
                 }
                 
-                completion(success: canCreateBots, error: nil)
+                completion(canCreateBots, nil)
             })
         }
     }
     
-    class func checkValidityOfSSHKeys(blueprint: SourceControlBlueprint, completion: (success: Bool, error: NSError?) -> ()) {
+    class func checkValidityOfSSHKeys(blueprint: SourceControlBlueprint, completion: (_ success: Bool, _ error: Error?) -> ()) {
         
         let blueprintDict = blueprint.dictionarify()
-        let r = SSHKeyVerification.verifyBlueprint(blueprintDict)
+        let r = SSHKeyVerification.verifyBlueprint(blueprint: blueprintDict)
         
         //based on the return value, either succeed or fail
         if r.terminationStatus == 0 {
-            completion(success: true, error: nil)
+            completion(true, nil)
         } else {
-            completion(success: false, error: Error.withInfo(r.standardError))
+            completion(false, NetworkError.with(r.standardError))
         }
     }
 }

@@ -17,15 +17,15 @@ class BotNaming {
     }
     
     class func isBuildaBotBelongingToRepoWithName(bot: Bot, repoName: String) -> Bool {
-        return bot.name.hasPrefix(self.prefixForBuildaBotInRepoWithName(repoName))
+        return bot.name.hasPrefix(self.prefixForBuildaBotInRepoWithName(repoName: repoName))
     }
     
     class func nameForBotWithBranch(branch: BranchType, repoName: String) -> String {
-        return "\(self.prefixForBuildaBotInRepoWithName(repoName)) |-> \(branch.name)"
+        return "\(self.prefixForBuildaBotInRepoWithName(repoName: repoName)) |-> \(branch.name)"
     }
     
     class func nameForBotWithPR(pr: PullRequestType, repoName: String) -> String {
-        return "\(self.prefixForBuildaBotInRepoWithName(repoName)) PR #\(pr.number)"
+        return "\(self.prefixForBuildaBotInRepoWithName(repoName: repoName)) PR #\(pr.number)"
     }
     
     class func prefixForBuildaBotInRepoWithName(repoName: String) -> String {

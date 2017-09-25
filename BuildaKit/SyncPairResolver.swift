@@ -35,10 +35,11 @@ public class SyncPairResolver {
             let uniqueIntegrations = Set(integrations)
             
             //1) for this SHA
-            let headCommitIntegrations = Set(self.headCommitIntegrationsFromAllIntegrations(commit, allIntegrations: integrations))
+            let headCommitIntegrations = Set(self.headCommitIntegrationsFromAllIntegrations(headCommit: commit, allIntegrations: integrations))
             
             //2) the rest
-            let otherCommitIntegrations = uniqueIntegrations.subtract(headCommitIntegrations)
+            var otherCommitIntegrations = Set(uniqueIntegrations)
+            otherCommitIntegrations.subtract(headCommitIntegrations)
             let noncompletedOtherCommitIntegrations: Set<Integration> = otherCommitIntegrations.filterSet {
                 return $0.currentStep != .Completed
             }
@@ -94,7 +95,7 @@ public class SyncPairResolver {
                 
                 //we should cancel all but the most recent one
                 //turn the pending set into an array and sort by integration number in ascending order
-                var pendingSortedArray: Array<Integration> = Array(pending).sort({ (integrationA, integrationB) -> Bool in
+                var pendingSortedArray: Array<Integration> = Array(pending).sorted(by: { (integrationA, integrationB) -> Bool in
                     return integrationA.number < integrationB.number
                 })
                 
@@ -117,12 +118,12 @@ public class SyncPairResolver {
             }
             
             let link = { (integration: Integration) -> String? in
-                SyncPairResolver.linkToServer(hostname, bot: bot, integration: integration)
+                SyncPairResolver.linkToServer(hostname: hostname, bot: bot, integration: integration)
             }
             
             //resolve to a status
             let actions = self.resolveCommitStatusFromLatestIntegrations(
-                commit,
+                commit: commit,
                 issue: issue,
                 pending: latestPendingIntegration,
                 running: runningIntegration,
@@ -187,7 +188,7 @@ public class SyncPairResolver {
             return false
         }
         
-        let sortedHeadCommitIntegrations = Array(headCommitIntegrations).sort {
+        let sortedHeadCommitIntegrations = Array(headCommitIntegrations).sorted {
             (a: Integration, b: Integration) -> Bool in
             return a.number > b.number
         }
@@ -202,7 +203,7 @@ public class SyncPairResolver {
         //turn opens Xcode on the integration page. all good!
         
 //        let link = "xcbot://\(hostname)/botID/\(bot.id)/integrationID/\(integration.id)"
-        let link = "https://stlt.herokuapp.com/v1/xcs_deeplink/\(hostname)/\(bot.id)/\(integration.id)"
+        let link = "https://stlt.herokuapp.com/v1/xcs_deeplink/\(hostname)/\(bot.id)/\(integration.id!)"
         return link
     }
     
@@ -211,7 +212,7 @@ public class SyncPairResolver {
         issue: IssueType?,
         pending: Integration?,
         running: Integration?,
-        link: (Integration) -> String?,
+        link: @escaping (Integration) -> String?,
         statusCreator: BuildStatusCreator,
         completed: Set<Integration>) -> SyncPair.Actions {
             
@@ -223,7 +224,7 @@ public class SyncPairResolver {
                 
                 //TODO: show how many builds are ahead in the queue and estimate when it will be
                 //started and when finished? (there is an average running time on each bot, it should be easy)
-                let status = statusCreator.createStatusFromState(.Pending, description: "Build waiting in the queue...", targetUrl: link(pending))
+                let status = statusCreator.createStatusFromState(state: .Pending, description: "Build waiting in the queue...", targetUrl: link(pending))
                 statusWithComment = StatusAndComment(status: status, comment: nil)
                 
                 //also, cancel the running integration, if it's there any
@@ -238,7 +239,7 @@ public class SyncPairResolver {
                     //there is a running integration.
                     //TODO: estimate, based on the average running time of this bot and on the started timestamp, when it will finish. add that to the description.
                     let currentStepString = running.currentStep.rawValue
-                    let status = statusCreator.createStatusFromState(.Pending, description: "Integration step: \(currentStepString)...", targetUrl: link(running))
+                    let status = statusCreator.createStatusFromState(state: .Pending, description: "Integration step: \(currentStepString)...", targetUrl: link(running))
                     statusWithComment = StatusAndComment(status: status, comment: nil)
                     
                 } else {
@@ -247,12 +248,12 @@ public class SyncPairResolver {
                     if completed.count > 0 {
                         
                         //we have some completed integrations
-                        statusWithComment = self.resolveStatusFromCompletedIntegrations(completed, statusCreator: statusCreator, link: link)
+                        statusWithComment = self.resolveStatusFromCompletedIntegrations(integrations: completed, statusCreator: statusCreator, link: link)
                         
                     } else {
                         //this shouldn't happen.
                         Log.error("LOGIC ERROR! This shouldn't happen, there are no completed integrations!")
-                        let status = statusCreator.createStatusFromState(.Error, description: "* UNKNOWN STATE, Builda ERROR *", targetUrl: nil)
+                        let status = statusCreator.createStatusFromState(state: .Error, description: "* UNKNOWN STATE, Builda ERROR *", targetUrl: nil)
                         statusWithComment = StatusAndComment(status: status, comment: "Builda error, unknown state!")
                     }
                 }
@@ -268,11 +269,11 @@ public class SyncPairResolver {
     func resolveStatusFromCompletedIntegrations(
         integrations: Set<Integration>,
         statusCreator: BuildStatusCreator,
-        link: (Integration) -> String?
+        link: @escaping (Integration) -> String?
         ) -> StatusAndComment {
             
             //get integrations sorted by number
-            let sortedDesc = Array(integrations).sort { $0.number > $1.number }
+            let sortedDesc = Array(integrations).sorted { $0.number > $1.number }
             let summary = SummaryBuilder()
             summary.linkBuilder = link
             summary.statusCreator = statusCreator
@@ -289,7 +290,7 @@ public class SyncPairResolver {
                 }
             }).first {
                 
-                return summary.buildPassing(passingIntegration)
+                return summary.buildPassing(integration: passingIntegration)
             }
             
             //ok, no succeeded, warnings or analyzer warnings, get down to test failures
@@ -297,7 +298,7 @@ public class SyncPairResolver {
                 $0.result! == .TestFailures
             }).first {
                 
-                return summary.buildFailingTests(testFailingIntegration)
+                return summary.buildFailingTests(integration: testFailingIntegration)
             }
             
             //ok, the build didn't even run then. it either got cancelled or failed
@@ -305,7 +306,7 @@ public class SyncPairResolver {
                 $0.result! != .Canceled
             }).first {
                 
-                return summary.buildErrorredIntegration(errorredIntegration)
+                return summary.buildErrorredIntegration(integration: errorredIntegration)
             }
             
             //cool, not even build error. it must be just canceled ones then.
@@ -313,7 +314,7 @@ public class SyncPairResolver {
                 $0.result! == .Canceled
             }).first {
                 
-                return summary.buildCanceledIntegration(canceledIntegration)
+                return summary.buildCanceledIntegration(integration: canceledIntegration)
             }
             
             //hmm no idea, if we got all the way here. just leave it with no state.

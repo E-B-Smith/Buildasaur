@@ -11,7 +11,7 @@ import Cocoa
 extension NSStoryboard {
     
     static var mainStoryboard: NSStoryboard {
-        return NSStoryboard(name: "Main", bundle: nil)
+        return NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil)
     }
 }
 
@@ -25,7 +25,7 @@ class StoryboardLoader {
     }
     
     //for presentable view controllers
-    func presentableViewControllerWithStoryboardIdentifier<T: PresentableViewController>(storyboardIdentifier: String, uniqueIdentifier: String, delegate: PresentableViewControllerDelegate?) -> T {
+    func presentableViewControllerWithStoryboardIdentifier<T: PresentableViewController>(_ storyboardIdentifier: String, uniqueIdentifier: String, delegate: PresentableViewControllerDelegate?) -> T {
         
         //look at our existing view controllers
         if let found = self.delegate?.storyboardLoaderExistingViewControllerWithIdentifier(uniqueIdentifier) {
@@ -34,7 +34,7 @@ class StoryboardLoader {
         }
         
         //nope, we have to create it from storyboard
-        guard let viewController = self.storyboard.instantiateControllerWithIdentifier(storyboardIdentifier) as? PresentableViewController else {
+        guard let viewController = self.storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: storyboardIdentifier)) as? PresentableViewController else {
             fatalError("Failed to instantiate View Controller with identifier \(storyboardIdentifier) as a PresentableViewController")
         }
         
@@ -45,15 +45,15 @@ class StoryboardLoader {
         return viewController as! T
     }
     
-    func typedViewControllerWithStoryboardIdentifier<T: NSViewController>(storyboardIdentifier: String) -> T {
+    func typedViewControllerWithStoryboardIdentifier<T: NSViewController>(_ storyboardIdentifier: String) -> T {
         let viewController = self.viewControllerWithStoryboardIdentifier(storyboardIdentifier)
         let typedViewController = viewController as! T
         return typedViewController
     }
     
     //for all other view controllers
-    func viewControllerWithStoryboardIdentifier(storyboardIdentifier: String) -> NSViewController {
-        guard let viewController = self.storyboard.instantiateControllerWithIdentifier(storyboardIdentifier) as? NSViewController else {
+    func viewControllerWithStoryboardIdentifier(_ storyboardIdentifier: String) -> NSViewController {
+        guard let viewController = self.storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: storyboardIdentifier)) as? NSViewController else {
             fatalError("Failed to instantiate View Controller with identifier \(storyboardIdentifier)")
         }
         return viewController
@@ -62,5 +62,5 @@ class StoryboardLoader {
 
 protocol StoryboardLoaderDelegate: class {
     
-    func storyboardLoaderExistingViewControllerWithIdentifier(identifier: String) -> PresentableViewController?
+    func storyboardLoaderExistingViewControllerWithIdentifier(_ identifier: String) -> PresentableViewController?
 }

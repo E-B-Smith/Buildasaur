@@ -15,10 +15,10 @@ class CheckoutFileParser: SourceControlFileParser {
         return ["xccheckout"]
     }
     
-    func parseFileAtUrl(url: NSURL) throws -> WorkspaceMetadata {
+    func parseFileAtUrl(url: URL) throws -> WorkspaceMetadata {
         
         //plist -> NSDictionary
-        guard let dictionary = NSDictionary(contentsOfURL: url) else { throw Error.withInfo("Failed to parse \(url)") }
+        guard let dictionary = NSDictionary(contentsOf: url) else { throw XcodeDeviceParserError.with("Failed to parse \(url)") }
         
         //parse our required keys
         let projectName = dictionary.optionalStringForKey("IDESourceControlProjectName")

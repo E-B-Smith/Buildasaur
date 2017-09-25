@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import XcodeServerSDK
 import BuildaHeartbeatKit
@@ -40,9 +40,9 @@ public class SyncerManager {
         
         self.factory = factory
         self.syncers = []
-        let configTriplets = SyncerProducerFactory.createTripletsProducer(storageManager)
+        let configTriplets = SyncerProducerFactory.createTripletsProducer(st: storageManager)
         self.configTriplets = configTriplets
-        let syncersProducer = SyncerProducerFactory.createSyncersProducer(factory, triplets: configTriplets)
+        let syncersProducer = SyncerProducerFactory.createSyncersProducer(factory: factory, triplets: configTriplets)
         
         self.syncersProducer = syncersProducer
         
@@ -51,18 +51,18 @@ public class SyncerManager {
         let justBuildTemplates = storageManager.buildTemplates.producer.map { $0.map { $0.1 } }
         let justTriggerConfigs = storageManager.triggerConfigs.producer.map { $0.map { $0.1 } }
         
-        self.projectsProducer = SyncerProducerFactory.createProjectsProducer(factory, configs: justProjects)
-        self.serversProducer = SyncerProducerFactory.createServersProducer(factory, configs: justServers)
+        self.projectsProducer = SyncerProducerFactory.createProjectsProducer(factory: factory, configs: justProjects)
+        self.serversProducer = SyncerProducerFactory.createServersProducer(factory: factory, configs: justServers)
         self.buildTemplatesProducer = SyncerProducerFactory.createBuildTemplateProducer(factory, templates: justBuildTemplates)
-        self.triggerProducer = SyncerProducerFactory.createTriggersProducer(factory, configs: justTriggerConfigs)
-        
-        syncersProducer.startWithNext { [weak self] in self?.syncers = $0 }
+        self.triggerProducer = SyncerProducerFactory.createTriggersProducer(factory: factory, configs: justTriggerConfigs)
+
+        syncersProducer.startWithValues { [weak self] in self?.syncers = $0 }
         self.checkForAutostart()
         self.setupHeartbeatManager()
     }
     
     private func setupHeartbeatManager() {
-        if let heartbeatOptOut = self.storageManager.config.value["heartbeat_opt_out"] as? Bool where heartbeatOptOut {
+        if let heartbeatOptOut = self.storageManager.config.value["heartbeat_opt_out"] as? Bool, heartbeatOptOut {
             Log.info("User opted out of anonymous heartbeat")
         } else {
             Log.info("Will send anonymous heartbeat. To opt out add `\"heartbeat_opt_out\" = true` to ~/Library/Application Support/Buildasaur/Config.json")
@@ -73,7 +73,7 @@ public class SyncerManager {
     }
     
     private func checkForAutostart() {
-        guard let autostart = self.storageManager.config.value["autostart"] as? Bool where autostart else { return }
+        guard let autostart = self.storageManager.config.value["autostart"] as? Bool, autostart else { return }
         self.syncers.forEach { $0.active = true }
     }
     

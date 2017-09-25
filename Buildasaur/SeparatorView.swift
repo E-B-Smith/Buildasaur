@@ -16,7 +16,7 @@ class SeparatorView: NSView {
         super.init(coder: coder)
         
         self.wantsLayer = true
-        self.layer!.backgroundColor = NSColor.lightGrayColor().CGColor
+        self.layer!.backgroundColor = NSColor.lightGray.cgColor
     }
     
 }

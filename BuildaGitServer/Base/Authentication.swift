@@ -38,16 +38,16 @@ extension ProjectAuthenticator: KeychainStringSerializable {
     
     public static func fromString(value: String) throws -> ProjectAuthenticator {
         
-        let comps = value.componentsSeparatedByString(":")
-        guard comps.count >= 4 else { throw Error.withInfo("Corrupted keychain string") }
+        let comps = value.components(separatedBy: ":")
+        guard comps.count >= 4 else { throw GithubServerError.with("Corrupted keychain string") }
         guard let service = GitService(rawValue: comps[0]) else {
-            throw Error.withInfo("Unsupported service: \(comps[0])")
+            throw GithubServerError.with("Unsupported service: \(comps[0])")
         }
         guard let type = ProjectAuthenticator.AuthType(rawValue: comps[2]) else {
-            throw Error.withInfo("Unsupported auth type: \(comps[2])")
+            throw GithubServerError.with("Unsupported auth type: \(comps[2])")
         }
         //join the rest back in case we have ":" in the token
-        let remaining = comps.dropFirst(3).joinWithSeparator(":")
+        let remaining = comps.dropFirst(3).joined(separator: ":")
         let auth = ProjectAuthenticator(service: service, username: comps[1], type: type, secret: remaining)
         return auth
     }
@@ -59,6 +59,6 @@ extension ProjectAuthenticator: KeychainStringSerializable {
             self.username,
             self.type.rawValue,
             self.secret
-            ].joinWithSeparator(":")
+            ].joined(separator: ":")
     }
 }

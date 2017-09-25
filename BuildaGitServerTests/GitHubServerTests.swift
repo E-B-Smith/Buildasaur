@@ -18,7 +18,7 @@ class GitHubSourceTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        self.github = GitServerFactory.server(.GitHub, auth: nil) as! GitHubServer
+        self.github = GitServerFactory.server(service: .GitHub, auth: nil) as! GitHubServer
     }
     
     override func tearDown() {
@@ -28,19 +28,19 @@ class GitHubSourceTests: XCTestCase {
         super.tearDown()
     }
 
-    func tryEndpoint(method: HTTP.Method, endpoint: GitHubEndpoints.Endpoint, params: [String: String]?, completion: (body: AnyObject!, error: NSError!) -> ()) {
+    func tryEndpoint(method: HTTP.Method, endpoint: GitHubEndpoints.Endpoint, params: [String: String]?, completion: @escaping (_ body: AnyObject?, _ error: Error?) -> ()) {
         
-        let expect = expectationWithDescription("Waiting for url request")
+        let expect = expectation(description: "Waiting for url request")
         
-        let request = try! self.github.endpoints.createRequest(method, endpoint: endpoint, params: params)
+        let request = try! self.github.endpoints.createRequest(method: method, endpoint: endpoint, params: params)
         
-        self.github.http.sendRequest(request, completion: { (response, body, error) -> () in
+        let _ = self.github.http.sendRequest(request as URLRequest, completion: { (response, body, error) -> () in
             
-            completion(body: body, error: error)
+            completion(body as AnyObject, error)
             expect.fulfill()
         })
         
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testGetPullRequests() {
@@ -49,13 +49,13 @@ class GitHubSourceTests: XCTestCase {
             "repo": "czechboy0/Buildasaur-Tester"
         ]
 
-        self.tryEndpoint(.GET, endpoint: .PullRequests, params: params) { (body, error) -> () in
+        self.tryEndpoint(method: .get, endpoint: .pullRequests, params: params) { (body, error) -> () in
             
             XCTAssertNotNil(body, "Body must be non-nil")
             if let body = body as? NSArray {
-                let prs: [GitHubPullRequest]? = try? GitHubArray(body)
+                let prs: [GitHubPullRequest]? = try? GitHubArray(jsonArray: body)
                 XCTAssertGreaterThan(prs?.count ?? -1, 0, "We need > 0 items to test parsing")
-                Log.verbose("Parsed PRs: \(prs)")
+                Log.verbose("Parsed PRs: \(String(describing: prs))")
             } else {
                 XCTFail("Body nil")
             }
@@ -68,13 +68,13 @@ class GitHubSourceTests: XCTestCase {
             "repo": "czechboy0/Buildasaur-Tester"
         ]
         
-        self.tryEndpoint(.GET, endpoint: .Branches, params: params) { (body, error) -> () in
+        self.tryEndpoint(method: .get, endpoint: .branches, params: params) { (body, error) -> () in
             
             XCTAssertNotNil(body, "Body must be non-nil")
             if let body = body as? NSArray {
-                let branches: [GitHubBranch]? = try? GitHubArray(body)
+                let branches: [GitHubBranch]? = try? GitHubArray(jsonArray: body)
                 XCTAssertGreaterThan(branches?.count ?? -1, 0, "We need > 0 items to test parsing")
-                Log.verbose("Parsed branches: \(branches)")
+                Log.verbose("Parsed branches: \(String(describing: branches))")
             } else {
                 XCTFail("Body nil")
             }
@@ -92,7 +92,7 @@ class GitHubSourceTests: XCTestCase {
             "html_url": "https://github.com/czechboy0"
         ]
         
-        let user = try! GitHubUser(json: dictionary)
+        let user = try! GitHubUser(json: dictionary as NSDictionary)
         XCTAssertEqual(user.userName, "czechboy0")
         XCTAssertEqual(user.realName!, "Honza Dvorsky")
         XCTAssertEqual(user.avatarUrl!, "https://avatars.githubusercontent.com/u/2182121?v=3")
@@ -101,7 +101,7 @@ class GitHubSourceTests: XCTestCase {
     
     func testRepoParsing() {
         
-        let dictionary = [
+        let dictionary: NSDictionary = [
             "name": "Buildasaur",
             "full_name": "czechboy0/Buildasaur",
             "clone_url": "https://github.com/czechboy0/Buildasaur.git",
@@ -135,7 +135,7 @@ class GitHubSourceTests: XCTestCase {
             "sha": "08182438ed2ef3b34bd97db85f39deb60e2dcd7d",
             "url": "https://api.github.com/repos/czechboy0/Buildasaur/commits/08182438ed2ef3b34bd97db85f39deb60e2dcd7d"
         ]
-        let dictionary = [
+        let dictionary: NSDictionary = [
             "name": "master",
             "commit": commitDictionary
         ]
@@ -148,7 +148,7 @@ class GitHubSourceTests: XCTestCase {
     
     func testPullRequestBranchParsing() {
         
-        let dictionary = [
+        let dictionary: NSDictionary = [
             "ref": "fb-loadNode",
             "sha": "7e45fa772565969ee801b0bdce0f560122e34610",
             "user": [

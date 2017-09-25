@@ -29,11 +29,11 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
         self.serviceAuthenticator = serviceAuthenticator
     }
     
-    func supplyViewControllerForState(state: EditorState, context: EditorContext) -> EditableViewController? {
+    func supplyViewControllerForState(_ state: EditorState, context: EditorContext) -> EditableViewController? {
         
         switch state {
             
-        case .NoServer:
+        case .noServer:
             let vc: EmptyXcodeServerViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.EmptyXcodeServerVC.rawValue)
             if let serverConfig = context.configTriplet.server {
                 vc.existingConfigId = serverConfig.id
@@ -42,14 +42,14 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.emptyServerDelegate = context.editeeDelegate
             return vc
             
-        case .EditingServer:
+        case .editingServer:
             let vc: XcodeServerViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.XcodeServerVC.rawValue)
             vc.serverConfig.value = context.configTriplet.server!
             vc.syncerManager = context.syncerManager
             vc.delegate = context.editeeDelegate
             return vc
             
-        case .NoProject:
+        case .noProject:
             let vc: EmptyProjectViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.EmptyProjectVC.rawValue)
             if let projectConfig = context.configTriplet.project {
                 vc.existingConfigId = projectConfig.id
@@ -58,7 +58,7 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.emptyProjectDelegate = context.editeeDelegate
             return vc
             
-        case .EditingProject:
+        case .editingProject:
             let vc: ProjectViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.ProjectVC.rawValue)
             vc.projectConfig.value = context.configTriplet.project!
             vc.syncerManager = context.syncerManager
@@ -66,7 +66,7 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.serviceAuthenticator = self.serviceAuthenticator
             return vc
         
-        case .NoBuildTemplate:
+        case .noBuildTemplate:
             let vc: EmptyBuildTemplateViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.EmptyBuildTemplateVC.rawValue)
             if let buildTemplate = context.configTriplet.buildTemplate {
                 vc.existingTemplateId = buildTemplate.id
@@ -77,7 +77,7 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.emptyTemplateDelegate = context.editeeDelegate
             return vc
             
-        case .EditingBuildTemplate:
+        case .editingBuildTemplate:
             let vc: BuildTemplateViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.BuildTemplateVC.rawValue)
             vc.buildTemplate.value = context.configTriplet.buildTemplate!
             vc.projectRef = context.configTriplet.project!.id
@@ -86,12 +86,12 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.delegate = context.editeeDelegate
             return vc
             
-        case .Syncer:
+        case .syncer:
             let vc: SyncerViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.SyncerStatusVC.rawValue)
             vc.syncerManager = context.syncerManager
             
             //ensure the syncer config has the right ids linked up
-            let triplet = context.configTriplet
+            let triplet = context.configTriplet!
             var syncerConfig = triplet.syncer
             syncerConfig.xcodeServerRef = triplet.server!.id
             syncerConfig.projectRef = triplet.project!.id

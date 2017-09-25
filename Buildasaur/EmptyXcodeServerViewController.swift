@@ -11,10 +11,11 @@ import BuildaKit
 import BuildaUtils
 import XcodeServerSDK
 import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 protocol EmptyXcodeServerViewControllerDelegate: class {
-    func didSelectXcodeServerConfig(config: XcodeServerConfig)
+    func didSelectXcodeServerConfig(_ config: XcodeServerConfig)
 }
 
 class EmptyXcodeServerViewController: EditableViewController {
@@ -27,8 +28,8 @@ class EmptyXcodeServerViewController: EditableViewController {
     
     @IBOutlet weak var existingXcodeServersPopup: NSPopUpButton!
 
-    private var xcodeServerConfigs: [XcodeServerConfig] = []
-    private var selectedConfig = MutableProperty<XcodeServerConfig?>(nil)
+    fileprivate var xcodeServerConfigs: [XcodeServerConfig] = []
+    fileprivate var selectedConfig = MutableProperty<XcodeServerConfig?>(nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,12 +42,12 @@ class EmptyXcodeServerViewController: EditableViewController {
         let index: Int
         if let configId = self.existingConfigId {
             let ids = self.xcodeServerConfigs.map { $0.id }
-            index = ids.indexOf(configId) ?? 0
+            index = ids.index(of: configId) ?? 0
         } else {
             index = 0
         }
         self.selectItemAtIndex(index)
-        self.existingXcodeServersPopup.selectItemAtIndex(index)
+        self.existingXcodeServersPopup.selectItem(at: index)
     }
     
     func addNewString() -> String {
@@ -62,12 +63,12 @@ class EmptyXcodeServerViewController: EditableViewController {
         return super.shouldGoNext()
     }
     
-    private func setupEditableStates() {
+    fileprivate func setupEditableStates() {
         
         self.nextAllowed <~ self.selectedConfig.producer.map { $0 != nil }
     }
     
-    private func selectItemAtIndex(index: Int) {
+    fileprivate func selectItemAtIndex(_ index: Int) {
         
         let configs = self.xcodeServerConfigs
         
@@ -76,7 +77,7 @@ class EmptyXcodeServerViewController: EditableViewController {
         self.selectedConfig.value = config
     }
     
-    private func setupPopupAction() {
+    fileprivate func setupPopupAction() {
         
         let handler = SignalProducer<AnyObject, NoError> { [weak self] sink, _ in
             if let sself = self {
@@ -85,29 +86,29 @@ class EmptyXcodeServerViewController: EditableViewController {
             }
             sink.sendCompleted()
         }
-        let action = Action { (_: AnyObject?) in handler }
-        self.existingXcodeServersPopup.rac_command = toRACCommand(action)
+        let action = Action { (_: ()) in handler }
+        self.existingXcodeServersPopup.reactive.pressed = CocoaAction(action)
     }
     
-    private func setupDataSource() {
+    fileprivate func setupDataSource() {
 
         let configsProducer = self.storageManager.serverConfigs.producer
         let allConfigsProducer = configsProducer
             .map { Array($0.values) }
-            .map { configs in configs.sort { $0.host < $1.host } }
-        allConfigsProducer.startWithNext { [weak self] newConfigs in
+            .map { configs in configs.sorted { $0.host < $1.host } }
+        allConfigsProducer.startWithValues { [weak self] newConfigs in
             guard let sself = self else { return }
             
             sself.xcodeServerConfigs = newConfigs
             let popup = sself.existingXcodeServersPopup
-            popup.removeAllItems()
+            popup?.removeAllItems()
             var configDisplayNames = newConfigs.map { "\($0.host) (\($0.user ?? String()))" }
             configDisplayNames.append(self?.addNewString() ?? ":(")
-            popup.addItemsWithTitles(configDisplayNames)
+            popup?.addItems(withTitles: configDisplayNames)
         }
     }
     
-    private func didSelectXcodeServer(config: XcodeServerConfig) {
+    fileprivate func didSelectXcodeServer(_ config: XcodeServerConfig) {
         Log.verbose("Selected \(config.host)")
         self.emptyServerDelegate?.didSelectXcodeServerConfig(config)
     }

@@ -8,15 +8,15 @@
 
 import Foundation
 import BuildaUtils
-import ReactiveCocoa
+import ReactiveSwift
 
 class BitBucketEndpoints {
     
     enum Endpoint {
-        case Repos
-        case PullRequests
-        case PullRequestComments
-        case CommitStatuses
+        case repos
+        case pullRequests
+        case pullRequestComments
+        case commitStatuses
     }
     
     private let baseURL: String
@@ -31,7 +31,7 @@ class BitBucketEndpoints {
         
         switch endpoint {
             
-        case .Repos:
+        case .repos:
             
             if let repo = params?["repo"] {
                 return "/2.0/repositories/\(repo)"
@@ -39,10 +39,10 @@ class BitBucketEndpoints {
                 return "/2.0/repositories"
             }
             
-        case .PullRequests:
+        case .pullRequests:
             
             assert(params?["repo"] != nil, "A repo must be specified")
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             
             if let pr = params?["pr"] {
                 return "\(repo)/pullrequests/\(pr)"
@@ -50,11 +50,11 @@ class BitBucketEndpoints {
                 return "\(repo)/pullrequests"
             }
         
-        case .PullRequestComments:
+        case .pullRequestComments:
             
             assert(params?["repo"] != nil, "A repo must be specified")
             assert(params?["pr"] != nil, "A PR must be specified")
-            let pr = self.endpointURL(.PullRequests, params: params)
+            let pr = self.endpointURL(endpoint: .pullRequests, params: params)
             
             if params?["method"] == "POST" {
                 let repo = params!["repo"]!
@@ -64,11 +64,11 @@ class BitBucketEndpoints {
                 return "\(pr)/comments"
             }
             
-        case .CommitStatuses:
+        case .commitStatuses:
             
             assert(params?["repo"] != nil, "A repo must be specified")
             assert(params?["sha"] != nil, "A commit sha must be specified")
-            let repo = self.endpointURL(.Repos, params: params)
+            let repo = self.endpointURL(endpoint: .repos, params: params)
             let sha = params!["sha"]!
             
             let build = "\(repo)/commit/\(sha)/statuses/build"
@@ -89,7 +89,7 @@ class BitBucketEndpoints {
             
         switch auth.type {
         case .OAuthToken:
-            let tokens = auth.secret.componentsSeparatedByString(":")
+            let tokens = auth.secret.components(separatedBy: ":")
             //first is refresh token, second access token
             request.setValue("Bearer \(tokens[1])", forHTTPHeaderField:"Authorization")
         default:
@@ -101,13 +101,13 @@ class BitBucketEndpoints {
         
         guard let auth = self.auth.value else { fatalError("No auth") }
         let refreshUrl = auth.service.accessTokenUrl()
-        let refreshToken = auth.secret.componentsSeparatedByString(":")[0]
+        let refreshToken = auth.secret.components(separatedBy: ":")[0]
         let body = [
             ("grant_type", "refresh_token"),
             ("refresh_token", refreshToken)
-            ].map { "\($0.0)=\($0.1)" }.joinWithSeparator("&")
+            ].map { "\($0.0)=\($0.1)" }.joined(separator: "&")
         
-        let request = NSMutableURLRequest(URL: NSURL(string: refreshUrl)!)
+        let request = NSMutableURLRequest(url: URL(string: refreshUrl)!)
         
         let service = auth.service
         let servicePublicKey = service.serviceKey()
@@ -115,40 +115,40 @@ class BitBucketEndpoints {
         let credentials = "\(servicePublicKey):\(servicePrivateKey)".base64String()
         request.setValue("Basic \(credentials)", forHTTPHeaderField:"Authorization")
         
-        request.HTTPMethod = "POST"
-        self.setStringBody(request, body: body)
+        request.httpMethod = "POST"
+        self.setStringBody(request: request, body: body)
         return request
     }
     
     func createRequest(method: HTTP.Method, endpoint: Endpoint, params: [String : String]? = nil, query: [String : String]? = nil, body: NSDictionary? = nil) throws -> NSMutableURLRequest {
         
-        let endpointURL = self.endpointURL(endpoint, params: params)
+        let endpointURL = self.endpointURL(endpoint: endpoint, params: params)
         let queryString = HTTP.stringForQuery(query)
         let wholePath = "\(self.baseURL)\(endpointURL)\(queryString)"
         
-        let url = NSURL(string: wholePath)!
+        let url = URL(string: wholePath)!
         
-        let request = NSMutableURLRequest(URL: url)
+        let request = NSMutableURLRequest(url: url)
         
-        request.HTTPMethod = method.rawValue
-        self.setAuthOnRequest(request)
+        request.httpMethod = method.rawValue
+        self.setAuthOnRequest(request: request)
         
         if let body = body {
-            try self.setJSONBody(request, body: body)
+            try self.setJSONBody(request: request, body: body)
         }
         
         return request
     }
     
     func setStringBody(request: NSMutableURLRequest, body: String) {
-        let data = body.dataUsingEncoding(NSUTF8StringEncoding)
-        request.HTTPBody = data
+        let data = body.data(using: String.Encoding.utf8)
+        request.httpBody = data
         request.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
     }
 
     func setJSONBody(request: NSMutableURLRequest, body: NSDictionary) throws {
-        let data = try NSJSONSerialization.dataWithJSONObject(body, options: NSJSONWritingOptions())
-        request.HTTPBody = data
+        let data = try JSONSerialization.data(withJSONObject: body, options: [])
+        request.httpBody = data
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
     }
 }

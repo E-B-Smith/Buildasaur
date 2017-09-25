@@ -24,28 +24,28 @@ public class SyncPair {
         //
     }
     
-    typealias Completion = (error: NSError?) -> ()
+    typealias Completion = (_ error: Error?) -> ()
     
     /**
     *   Call to perform sync.
     */
-    final func start(completion: Completion) {
+    final func start(completion: @escaping Completion) {
         
-        let start = NSDate()
+        let start = Date()
 //        Log.verbose("SyncPair \(self.syncPairName()) started sync")
         
         self.sync { (error) -> () in
             
             let duration = -1 * start.timeIntervalSinceNow.clipTo(3)
             Log.verbose("SyncPair \(self.syncPairName()) finished sync after \(duration) seconds.")
-            completion(error: error)
+            completion(error)
         }
     }
     
     /**
     *   To be overriden by subclasses.
     */
-    func sync(completion: Completion) {
+    func sync(completion: @escaping Completion) {
         assertionFailure("Must be overriden by subclasses")
     }
     

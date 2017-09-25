@@ -24,10 +24,10 @@ public class SyncPair_PR_Bot: SyncPair {
         super.init()
     }
     
-    override func sync(completion: Completion) {
+    override func sync(completion: @escaping Completion) {
         
         //sync the PR with the Bot
-        self.syncPRWithBot(completion)
+        self.syncPRWithBot(completion: completion)
     }
     
     override func syncPairName() -> String {
@@ -36,7 +36,7 @@ public class SyncPair_PR_Bot: SyncPair {
     
     //MARK: Internal
     
-    private func syncPRWithBot(completion: Completion) {
+    private func syncPRWithBot(completion: @escaping Completion) {
         
         let syncer = self.syncer
         let bot = self.bot
@@ -44,10 +44,10 @@ public class SyncPair_PR_Bot: SyncPair {
         let headCommit = pr.headCommitSHA
         let issue = pr
         
-        self.getIntegrations(bot, completion: { (integrations, error) -> () in
+        self.getIntegrations(bot: bot, completion: { (integrations, error) -> () in
             
             if let error = error {
-                completion(error: error)
+                completion(error)
                 return
             }
             
@@ -55,7 +55,7 @@ public class SyncPair_PR_Bot: SyncPair {
             self.isBotEnabled(integrations: integrations, completion: { (isEnabled, error) -> () in
                 
                 if let error = error {
-                    completion(error: error)
+                    completion(error)
                     return
                 }
                 
@@ -64,18 +64,18 @@ public class SyncPair_PR_Bot: SyncPair {
                     self.syncer.xcodeServer.getHostname { (hostname, error) -> () in
                         
                         if let error = error {
-                            completion(error: error)
+                            completion(error)
                             return
                         }
                         
                         let actions = self.resolver.resolveActionsForCommitAndIssueWithBotIntegrations(
-                            headCommit,
+                            commit: headCommit,
                             issue: issue,
                             bot: bot,
                             hostname: hostname!,
                             buildStatusCreator: self.syncer,
                             integrations: integrations)
-                        self.performActions(actions, completion: completion)
+                        self.performActions(actions: actions, completion: completion)
                     }
                     
                 } else {
@@ -83,15 +83,15 @@ public class SyncPair_PR_Bot: SyncPair {
                     //not enabled, make sure the PR reflects that and the instructions are clear
                     Log.verbose("Bot \(bot.name) is not yet enabled, ignoring...")
                     
-                    let status = self.syncer.createStatusFromState(BuildState.Pending, description: "Waiting for \"lttm\" to start testing", targetUrl: nil)
+                    let status = self.syncer.createStatusFromState(state: BuildState.Pending, description: "Waiting for \"lttm\" to start testing", targetUrl: nil)
                     let notYetEnabled = StatusAndComment(status: status, comment: nil)
-                    syncer.updateCommitStatusIfNecessary(notYetEnabled, commit: headCommit, issue: pr, completion: completion)
+                    syncer?.updateCommitStatusIfNecessary(newStatus: notYetEnabled, commit: headCommit, issue: pr, completion: completion)
                 }
             })
         })
     }
     
-    private func isBotEnabled(integrations integrations: [Integration], completion: (isEnabled: Bool, error: NSError?) -> ()) {
+    private func isBotEnabled(integrations: [Integration], completion: @escaping (_ isEnabled: Bool, _ error: Error?) -> ()) {
         
         //bot is enabled if (there are any integrations) OR (there is a recent comment with a keyword to enable the bot in the pull request's conversation)
         //which means that there are two ways of enabling a bot.
@@ -99,7 +99,7 @@ public class SyncPair_PR_Bot: SyncPair {
         //b) (optional) comment an agreed keyword in the Pull Request, e.g. "lttm" - 'looks testable to me' is a frequent one
         
         if integrations.count > 0 || !self.syncer._waitForLttm {
-            completion(isEnabled: true, error: nil)
+            completion(true, nil)
             return
         }
         
@@ -107,24 +107,24 @@ public class SyncPair_PR_Bot: SyncPair {
         
         if let repoName = syncer.repoName() {
             
-            self.syncer.sourceServer.findMatchingCommentInIssue(keyword, issue: self.pr.number, repo: repoName) {
+            self.syncer.sourceServer.findMatchingCommentInIssue(commentsToMatch: keyword, issue: self.pr.number, repo: repoName) {
                 (foundComments, error) -> () in
                 
                 if error != nil {
-                    let e = Error.withInfo("Fetching comments", internalError: error as? NSError)
-                    completion(isEnabled: false, error: e)
+                    let e = SyncerError.with("Fetching comments"/*, internalError: error as? NSError*/)
+                    completion(false, e)
                     return
                 }
                 
                 if let foundComments = foundComments {
-                    completion(isEnabled: foundComments.count > 0, error: nil)
+                    completion(foundComments.count > 0, nil)
                 } else {
-                    completion(isEnabled: false, error: nil)
+                    completion(false, nil)
                 }
             }
             
         } else {
-            completion(isEnabled: false, error: Error.withInfo("No repo name, cannot find the GitHub repo!"))
+            completion(false, SyncerError.with("No repo name, cannot find the GitHub repo!"))
         }
     }
 }

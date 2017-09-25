@@ -21,8 +21,8 @@ public protocol MigratorType {
 extension MigratorType {
     
     func config() -> NSDictionary {
-        let config = self.persistence.loadDictionaryFromFile("Config.json") ?? [:]
-        return config
+        let config = self.persistence.loadDictionaryFromFile(name: "Config.json") ?? [:]
+        return config as NSDictionary
     }
     
     func persistenceVersion() -> Int? {
@@ -62,9 +62,9 @@ public class CompositeMigrator: MigratorType {
         
         //if we find a required migration, we need to also run all
         //the ones that come after it
-        for (idx, mig) in self.childMigrators.enumerate() {
+        for (idx, mig) in self.childMigrators.enumerated() {
             if mig.isMigrationRequired() {
-                let toRun = self.childMigrators.suffixFrom(idx)
+                let toRun = self.childMigrators.suffix(from: idx)
                 print("Performing \(toRun.count) migrations")
                 try toRun.forEach { try $0.attemptMigration() }
                 break
@@ -107,14 +107,14 @@ class Migrator_v0_v1: MigratorType {
         mutableConfig[kPersistenceVersion] = 1
         
         //save the updated config
-        pers.saveDictionary("Config.json", item: mutableConfig)
+        pers.saveDictionary(name: "Config.json", item: mutableConfig)
         
         //copy the rest
-        pers.copyFileToWriteLocation("Builda.log", isDirectory: false)
-        pers.copyFileToWriteLocation("Projects.json", isDirectory: false)
-        pers.copyFileToWriteLocation("ServerConfigs.json", isDirectory: false)
-        pers.copyFileToWriteLocation("Syncers.json", isDirectory: false)
-        pers.copyFileToWriteLocation("BuildTemplates", isDirectory: true)
+        pers.copyFileToWriteLocation(name: "Builda.log", isDirectory: false)
+        pers.copyFileToWriteLocation(name: "Projects.json", isDirectory: false)
+        pers.copyFileToWriteLocation(name: "ServerConfigs.json", isDirectory: false)
+        pers.copyFileToWriteLocation(name: "Syncers.json", isDirectory: false)
+        pers.copyFileToWriteLocation(name: "BuildTemplates", isDirectory: true)
     }
 }
 
@@ -138,7 +138,7 @@ class Migrator_v1_v2: MigratorType {
         
         let serverRef = self.migrateServers()
         let (templateRef, projectRef) = self.migrateProjects()
-        self.migrateSyncers(serverRef, project: projectRef, template: templateRef)
+        self.migrateSyncers(server: serverRef, project: projectRef, template: templateRef)
         self.migrateBuildTemplates()
         self.migrateConfigAndLog()
     }
@@ -154,7 +154,7 @@ class Migrator_v1_v2: MigratorType {
         //first pull all triggers from all build templates and save them
         //as separate files, keeping the ids around.
         
-        let templates = self.persistence.loadArrayOfDictionariesFromFolder("BuildTemplates") ?? []
+        let templates = self.persistence.loadArrayOfDictionariesFromFolder(folderName: "BuildTemplates") ?? []
         guard templates.count > 0 else { return }
         let mutableTemplates = templates.map { $0.mutableCopy() as! NSMutableDictionary }
         
@@ -172,7 +172,7 @@ class Migrator_v1_v2: MigratorType {
             }
             
             //add them to the big list of triggers that we'll save later
-            triggers.appendContentsOf(trigWithIds)
+            triggers.append(contentsOf: trigWithIds)
             
             //now gather those ids
             let triggerIds = try! trigWithIds.map { try $0.stringForKey("id") }
@@ -182,15 +182,15 @@ class Migrator_v1_v2: MigratorType {
         }
         
         //now save all triggers into their own folder
-        self.persistence.saveArrayIntoFolder("Triggers", items: triggers, itemFileName: { try! $0.stringForKey("id") }, serialize: { $0 })
+        self.persistence.saveArrayIntoFolder(folderName: "Triggers", items: triggers, itemFileName: { try! $0.stringForKey("id") }) { $0 }
 
         //and save the build templates
-        self.persistence.saveArrayIntoFolder("BuildTemplates", items: mutableTemplates, itemFileName: { try! $0.stringForKey("id") }, serialize: { $0 })
+        self.persistence.saveArrayIntoFolder(folderName: "BuildTemplates", items: mutableTemplates, itemFileName: { try! $0.stringForKey("id") }) { $0 }
     }
     
     func migrateSyncers(server: RefType?, project: RefType?, template: RefType?) {
         
-        let syncers = self.persistence.loadArrayOfDictionariesFromFile("Syncers.json") ?? []
+        let syncers = self.persistence.loadArrayOfDictionariesFromFile(name: "Syncers.json") ?? []
         let mutableSyncers = syncers.map { $0.mutableCopy() as! NSMutableDictionary }
         
         //give each an id
@@ -201,20 +201,20 @@ class Migrator_v1_v2: MigratorType {
         
         //remove server host and project path and add new ids
         let updated = withIds.map { syncer -> NSMutableDictionary in
-            syncer.removeObjectForKey("server_host")
-            syncer.removeObjectForKey("project_path")
-            syncer.optionallyAddValueForKey(server, key: "server_ref")
-            syncer.optionallyAddValueForKey(project, key: "project_ref")
-            syncer.optionallyAddValueForKey(template, key: "preferred_template_ref")
+            syncer.removeObject(forKey: "server_host")
+            syncer.removeObject(forKey: "project_path")
+            syncer.optionallyAddValueForKey(server as AnyObject, key: "server_ref")
+            syncer.optionallyAddValueForKey(project as AnyObject, key: "project_ref")
+            syncer.optionallyAddValueForKey(template as AnyObject, key: "preferred_template_ref")
             return syncer
         }
         
-        self.persistence.saveArray("Syncers.json", items: updated)
+        self.persistence.saveArray(name: "Syncers.json", items: updated as NSArray)
     }
     
     func migrateProjects() -> (template: RefType?, project: RefType?) {
         
-        let projects = self.persistence.loadArrayOfDictionariesFromFile("Projects.json") ?? []
+        let projects = self.persistence.loadArrayOfDictionariesFromFile(name: "Projects.json") ?? []
         let mutableProjects = projects.map { $0.mutableCopy() as! NSMutableDictionary }
         
         //give each an id
@@ -225,16 +225,16 @@ class Migrator_v1_v2: MigratorType {
         
         //fix internal urls to be normal paths instead of the file:/// paths
         let withFixedUrls = withIds.map { project -> NSMutableDictionary in
-            project["url"] = self.fixPath(try! project.stringForKey("url"))
-            project["ssh_public_key_url"] = self.fixPath(try! project.stringForKey("ssh_public_key_url"))
-            project["ssh_private_key_url"] = self.fixPath(try! project.stringForKey("ssh_private_key_url"))
+            project["url"] = self.fixPath(path: try! project.stringForKey("url"))
+            project["ssh_public_key_url"] = self.fixPath(path: try! project.stringForKey("ssh_public_key_url"))
+            project["ssh_private_key_url"] = self.fixPath(path: try! project.stringForKey("ssh_private_key_url"))
             return project
         }
         
         //remove preferred_template_id, will be moved to syncer
         let removedTemplate = withFixedUrls.map { project -> (RefType?, NSMutableDictionary) in
             let template = project["preferred_template_id"] as? RefType
-            project.removeObjectForKey("preferred_template_id")
+            project.removeObject(forKey: "preferred_template_id")
             return (template, project)
         }
         
@@ -245,14 +245,14 @@ class Migrator_v1_v2: MigratorType {
         let firstProject = finalProjects.first?["id"] as? RefType
         
         //save
-        self.persistence.saveArray("Projects.json", items: finalProjects)
+        self.persistence.saveArray(name: "Projects.json", items: finalProjects as NSArray)
         
         return (firstTemplate, firstProject)
     }
     
     func migrateServers() -> (RefType?) {
         
-        let servers = self.persistence.loadArrayOfDictionariesFromFile("ServerConfigs.json") ?? []
+        let servers = self.persistence.loadArrayOfDictionariesFromFile(name: "ServerConfigs.json") ?? []
         let mutableServers = servers.map { $0.mutableCopy() as! NSMutableDictionary }
 
         //give each an id
@@ -262,7 +262,7 @@ class Migrator_v1_v2: MigratorType {
         }
         
         //save
-        self.persistence.saveArray("ServerConfigs.json", items: withIds)
+        self.persistence.saveArray(name: "ServerConfigs.json", items: withIds as NSArray)
         
         //return the first/only one (there should be 0 or 1)
         let firstId = withIds.first?["id"] as? RefType
@@ -272,14 +272,14 @@ class Migrator_v1_v2: MigratorType {
     func migrateConfigAndLog() {
         
         //copy log
-        self.persistence.copyFileToWriteLocation("Builda.log", isDirectory: false)
+        self.persistence.copyFileToWriteLocation(name: "Builda.log", isDirectory: false)
         
         let config = self.config()
         let mutableConfig = config.mutableCopy() as! NSMutableDictionary
         mutableConfig[kPersistenceVersion] = 2
         
         //save the updated config
-        self.persistence.saveDictionary("Config.json", item: mutableConfig)
+        self.persistence.saveDictionary(name: "Config.json", item: mutableConfig)
     }
 }
 
@@ -311,22 +311,22 @@ class Migrator_v2_v3: MigratorType {
         self.migrateLogs()
         
         //copy the rest
-        pers.copyFileToWriteLocation("Syncers.json", isDirectory: false)
-        pers.copyFileToWriteLocation("BuildTemplates", isDirectory: true)
-        pers.copyFileToWriteLocation("Triggers", isDirectory: true)
+        pers.copyFileToWriteLocation(name: "Syncers.json", isDirectory: false)
+        pers.copyFileToWriteLocation(name: "BuildTemplates", isDirectory: true)
+        pers.copyFileToWriteLocation(name: "Triggers", isDirectory: true)
         
         let config = self.config()
         let mutableConfig = config.mutableCopy() as! NSMutableDictionary
         mutableConfig[kPersistenceVersion] = 3
         
         //save the updated config
-        pers.saveDictionary("Config.json", item: mutableConfig)
+        pers.saveDictionary(name: "Config.json", item: mutableConfig)
     }
 
     func migrateProjectAuthentication() {
         
         let pers = self.persistence
-        let projects = pers.loadArrayOfDictionariesFromFile("Projects.json") ?? []
+        let projects = pers.loadArrayOfDictionariesFromFile(name: "Projects.json") ?? []
         let mutableProjects = projects.map { $0.mutableCopy() as! NSMutableDictionary }
 
         let renamedAuth = mutableProjects.map {
@@ -338,58 +338,58 @@ class Migrator_v2_v3: MigratorType {
             let formattedToken = auth.toString()
 
             let passphrase = d.optionalStringForKey("ssh_passphrase")
-            d.removeObjectForKey("github_token")
-            d.removeObjectForKey("ssh_passphrase")
+            d.removeObject(forKey: "github_token")
+            d.removeObject(forKey: "ssh_passphrase")
             
             let tokenKeychain = SecurePersistence.sourceServerTokenKeychain()
-            tokenKeychain.writeIfNeeded(id, value: formattedToken)
+            tokenKeychain.writeIfNeeded(key: id, value: formattedToken)
             
             let passphraseKeychain = SecurePersistence.sourceServerPassphraseKeychain()
-            passphraseKeychain.writeIfNeeded(id, value: passphrase)
+            passphraseKeychain.writeIfNeeded(key: id, value: passphrase)
             
-            precondition(tokenKeychain.read(id) == formattedToken, "Saved token must match")
-            precondition(passphraseKeychain.read(id) == passphrase, "Saved passphrase must match")
+            precondition(tokenKeychain.read(key: id) == formattedToken, "Saved token must match")
+            precondition(passphraseKeychain.read(key: id) == passphrase, "Saved passphrase must match")
             
             return d
         }
         
-        pers.saveArray("Projects.json", items: renamedAuth)
+        pers.saveArray(name: "Projects.json", items: renamedAuth as NSArray)
     }
     
     func migrateServerAuthentication() {
 
         let pers = self.persistence
-        let servers = pers.loadArrayOfDictionariesFromFile("ServerConfigs.json") ?? []
+        let servers = pers.loadArrayOfDictionariesFromFile(name: "ServerConfigs.json") ?? []
         let mutableServers = servers.map { $0.mutableCopy() as! NSMutableDictionary }
         
         let withoutPasswords = mutableServers.map {
             (d: NSMutableDictionary) -> NSDictionary in
             
             let password = try! d.stringForKey("password")
-            let key = (try! XcodeServerConfig(json: d)).keychainKey()
+            let key = (try! XcodeServerConfig(json: d as! [String : Any])).keychainKey()
             
             let keychain = SecurePersistence.xcodeServerPasswordKeychain()
-            keychain.writeIfNeeded(key, value: password)
+            keychain.writeIfNeeded(key: key, value: password)
             
-            d.removeObjectForKey("password")
+            d.removeObject(forKey: "password")
             
-            precondition(keychain.read(key) == password, "Saved password must match")
+            precondition(keychain.read(key: key) == password, "Saved password must match")
             
             return d
         }
         
-        pers.saveArray("ServerConfigs.json", items: withoutPasswords)
+        pers.saveArray(name: "ServerConfigs.json", items: withoutPasswords as NSArray)
     }
     
     func migrateLogs() {
         
         let pers = self.persistence
-        (pers.filesInFolder(pers.folderForIntention(.Reading)) ?? [])
-            .map { $0.lastPathComponent ?? "" }
+        (pers.filesInFolder(folderUrl: pers.folderForIntention(intention: .Reading)) ?? [])
+            .map { $0.lastPathComponent }
             .filter { $0.hasSuffix("log") }
             .forEach {
-                pers.copyFileToFolder($0, folder: "Logs")
-                pers.deleteFile($0)
+                pers.copyFileToFolder(fileName: $0, folder: "Logs")
+                pers.deleteFile(name: $0)
         }
     }
 }

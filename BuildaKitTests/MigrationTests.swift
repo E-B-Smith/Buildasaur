@@ -18,35 +18,35 @@ class MigrationTests: XCTestCase {
         Ref.reset()
     }
     
-    func testBundle() -> NSBundle {
+    func testBundle() -> Bundle {
         
-        let bundle = NSBundle(forClass: MigrationTests.classForCoder())
+        let bundle = Bundle(for: MigrationTests.classForCoder())
         return bundle
     }
     
-    func resourceURLFromTestBundle(name: String) -> NSURL {
-        return self.testBundle().URLForResource(name, withExtension: nil)!
+    func resourceURLFromTestBundle(name: String) -> URL {
+        return self.testBundle().url(forResource: name, withExtension: nil)!
     }
     
-    func writingURL(name: String) -> NSURL {
+    func writingURL(name: String) -> URL {
         let dir = NSTemporaryDirectory()
 //        let dir = "/Users/honzadvorsky/Desktop/TestLocation/"
-        let path = (dir as NSString).stringByAppendingPathComponent(name)
-        let writingURL = NSURL(fileURLWithPath: path, isDirectory: true)
+        let path = (dir as NSString).appendingPathComponent(name)
+        let writingURL = URL(fileURLWithPath: path, isDirectory: true)
         
         //delete the folder first
-        _ = try? NSFileManager.defaultManager().removeItemAtURL(writingURL)
+        _ = try? FileManager.default.removeItem(at: writingURL)
         
         return writingURL
     }
     
-    enum HierarchyError: ErrorType {
+    enum HierarchyError: Error {
         case DifferentFileNames(real: String?, expected: String?)
         case DifferentFileContents(file: String?)
         case DifferentFolderContents(real: [String], expected: [String])
     }
     
-    func ensureEqualHierarchies(persistence: Persistence, urlExpected: NSURL, urlReal: NSURL) throws {
+    func ensureEqualHierarchies(persistence: Persistence, urlExpected: URL, urlReal: URL) throws {
         
         if !urlReal.hasDirectoryPath {
             
@@ -57,8 +57,8 @@ class MigrationTests: XCTestCase {
                 throw HierarchyError.DifferentFileNames(real: real, expected: exp)
             }
             
-            let expData = NSData(contentsOfURL: urlExpected)
-            let realData = NSData(contentsOfURL: urlReal)
+            let expData = try! Data(contentsOf: urlExpected)
+            let realData = try! Data(contentsOf: urlReal)
             if expData != realData {
                 throw HierarchyError.DifferentFileContents(file: real)
             }
@@ -66,35 +66,35 @@ class MigrationTests: XCTestCase {
         }
         
         //recursively walk both trees and make sure everything is the same
-        let filesReal = persistence.filesInFolder(urlReal) ?? []
-        let filesExp = persistence.filesInFolder(urlExpected) ?? []
+        let filesReal = persistence.filesInFolder(folderUrl: urlReal) ?? []
+        let filesExp = persistence.filesInFolder(folderUrl: urlExpected) ?? []
         
-        let fileNamesReal = filesReal.map { $0.lastPathComponent! }
-        let fileNamesExp = filesExp.map { $0.lastPathComponent! }
+        let fileNamesReal = filesReal.map { $0.lastPathComponent }
+        let fileNamesExp = filesExp.map { $0.lastPathComponent }
         
         if fileNamesReal != fileNamesExp {
             throw HierarchyError.DifferentFolderContents(real: fileNamesReal, expected: fileNamesExp)
         }
         
         for idx in 0..<filesExp.count {
-            try self.ensureEqualHierarchies(persistence, urlExpected: filesExp[idx], urlReal: filesReal[idx])
+            try self.ensureEqualHierarchies(persistence: persistence, urlExpected: filesExp[idx], urlReal: filesReal[idx])
         }
     }
     
     func testMigration_v0_v1() {
         
-        let readingURL = self.resourceURLFromTestBundle("Buildasaur-format-0-example1")
-        let writingURL = self.writingURL("v0-v1")
-        let expectedURL = self.resourceURLFromTestBundle("Buildasaur-format-1-example1")
+        let readingURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-0-example1")
+        let writingURL = self.writingURL(name: "v0-v1")
+        let expectedURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-1-example1")
         
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
         
         let persistence = Persistence(readingFolder: readingURL, writingFolder: writingURL, fileManager: fileManager)
         let migrator = Migrator_v0_v1(persistence: persistence)
         
         do {
             try migrator.attemptMigration()
-            try self.ensureEqualHierarchies(persistence, urlExpected: expectedURL, urlReal: writingURL)
+            try self.ensureEqualHierarchies(persistence: persistence, urlExpected: expectedURL, urlReal: writingURL)
         } catch {
             fail("\(error)")
         }
@@ -102,18 +102,18 @@ class MigrationTests: XCTestCase {
     
     func testMigration_v1_v2() {
         
-        let readingURL = self.resourceURLFromTestBundle("Buildasaur-format-1-example1")
-        let writingURL = self.writingURL("v1-v2")
-        let expectedURL = self.resourceURLFromTestBundle("Buildasaur-format-2-example1")
+        let readingURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-1-example1")
+        let writingURL = self.writingURL(name: "v1-v2")
+        let expectedURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-2-example1")
         
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
         
         let persistence = Persistence(readingFolder: readingURL, writingFolder: writingURL, fileManager: fileManager)
         let migrator = Migrator_v1_v2(persistence: persistence)
         
         do {
             try migrator.attemptMigration()
-            try self.ensureEqualHierarchies(persistence, urlExpected: expectedURL, urlReal: writingURL)
+            try self.ensureEqualHierarchies(persistence: persistence, urlExpected: expectedURL, urlReal: writingURL)
         } catch {
             fail("\(error)")
         }
@@ -121,18 +121,18 @@ class MigrationTests: XCTestCase {
     
     func testMigration_v2_v3() {
         
-        let readingURL = self.resourceURLFromTestBundle("Buildasaur-format-2-example2")
-        let writingURL = self.writingURL("v2-v3")
-        let expectedURL = self.resourceURLFromTestBundle("Buildasaur-format-3-example1")
+        let readingURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-2-example2")
+        let writingURL = self.writingURL(name: "v2-v3")
+        let expectedURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-3-example1")
         
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
         
         let persistence = Persistence(readingFolder: readingURL, writingFolder: writingURL, fileManager: fileManager)
         let migrator = Migrator_v2_v3(persistence: persistence)
         
         do {
             try migrator.attemptMigration()
-            try self.ensureEqualHierarchies(persistence, urlExpected: expectedURL, urlReal: writingURL)
+            try self.ensureEqualHierarchies(persistence: persistence, urlExpected: expectedURL, urlReal: writingURL)
         } catch {
             fail("\(error)")
         }
@@ -140,15 +140,15 @@ class MigrationTests: XCTestCase {
     
     func testPersistenceSetter() {
         
-        let tmp = NSURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        let persistence1 = Persistence(readingFolder: tmp, writingFolder: tmp, fileManager: NSFileManager.defaultManager())
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let persistence1 = Persistence(readingFolder: tmp, writingFolder: tmp, fileManager: FileManager.default)
         
         let migrator = CompositeMigrator(persistence: persistence1)
         for i in migrator.childMigrators {
             expect(i.persistence) === persistence1
         }
         
-        let persistence2 = Persistence(readingFolder: tmp, writingFolder: tmp, fileManager: NSFileManager.defaultManager())
+        let persistence2 = Persistence(readingFolder: tmp, writingFolder: tmp, fileManager: FileManager.default)
         migrator.persistence = persistence2
         
         for i in migrator.childMigrators {

@@ -115,7 +115,7 @@ class SyncerTests: XCTestCase {
             "cd/broke_something",
             "ef/migrating_from_php_to_mongo_db"
         ]
-        let syncer = self.mockedSyncer(config)
+        let syncer = self.mockedSyncer(config: config)
         
         let botActions = syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: prs, branches: branches, bots: bots)
 

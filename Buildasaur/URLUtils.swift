@@ -8,9 +8,9 @@
 
 import Cocoa
 
-func openLink(link: String) {
+func openLink(_ link: String) {
     
-    if let url = NSURL(string: link) {
-        NSWorkspace.sharedWorkspace().openURL(url)
+    if let url = URL(string: link) {
+        NSWorkspace.shared.open(url)
     }
 }

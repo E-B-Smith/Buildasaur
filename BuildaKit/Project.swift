@@ -9,12 +9,12 @@
 import Foundation
 import BuildaUtils
 import XcodeServerSDK
-import ReactiveCocoa
+import ReactiveSwift
 
-public class Project {
+open class Project {
     
-    public var url: NSURL {
-        return NSURL(fileURLWithPath: self._config.url, isDirectory: true)
+    public var url: URL {
+        return URL(fileURLWithPath: self._config.url, isDirectory: true)
     }
     
     public let config: MutableProperty<ProjectConfig>
@@ -24,10 +24,10 @@ public class Project {
     }
     
     public var urlString: String { return self.url.absoluteString }
-    public var privateSSHKey: String? { return self.getContentsOfKeyAtPath(self._config.privateSSHKeyPath) }
-    public var publicSSHKey: String? { return self.getContentsOfKeyAtPath(self._config.publicSSHKeyPath) }
+    public var privateSSHKey: String? { return self.getContentsOfKeyAtPath(path: self._config.privateSSHKeyPath) }
+    public var publicSSHKey: String? { return self.getContentsOfKeyAtPath(path: self._config.publicSSHKeyPath) }
     
-    public var availabilityState: AvailabilityCheckState = .Unchecked
+    public var availabilityState: AvailabilityCheckState = .unchecked
     
     private(set) public var workspaceMetadata: WorkspaceMetadata?
     
@@ -41,12 +41,12 @@ public class Project {
     private init(original: Project, forkOriginURL: String) throws {
         
         self.config = MutableProperty<ProjectConfig>(original.config.value)
-        self.workspaceMetadata = try original.workspaceMetadata?.duplicateWithForkURL(forkOriginURL)
+        self.workspaceMetadata = try original.workspaceMetadata?.duplicateWithForkURL(forkUrlString: forkOriginURL)
     }
     
     private func setupBindings() {
         
-        self.config.producer.startWithNext { [weak self] _ in
+        self.config.producer.startWithValues { [weak self] _ in
             _ = try? self?.refreshMetadata()
         }
     }
@@ -55,24 +55,24 @@ public class Project {
         return try Project(original: self, forkOriginURL: forkURL)
     }
     
-    public class func attemptToParseFromUrl(url: NSURL) throws -> WorkspaceMetadata {
-        return try Project.loadWorkspaceMetadata(url)
+    public class func attemptToParseFromUrl(url: URL) throws -> WorkspaceMetadata {
+        return try Project.loadWorkspaceMetadata(url: url)
     }
 
     private func refreshMetadata() throws {
-        let meta = try Project.attemptToParseFromUrl(self.url)
+        let meta = try Project.attemptToParseFromUrl(url: self.url)
         self.workspaceMetadata = meta
     }
     
     public func schemes() -> [XcodeScheme] {
         
-        let schemes = XcodeProjectParser.sharedSchemesFromProjectOrWorkspaceUrl(self.url)
+        let schemes = XcodeProjectParser.sharedSchemesFromProjectOrWorkspaceUrl(url: self.url)
         return schemes
     }
     
-    private class func loadWorkspaceMetadata(url: NSURL) throws -> WorkspaceMetadata {
+    private class func loadWorkspaceMetadata(url: URL) throws -> WorkspaceMetadata {
         
-        return try XcodeProjectParser.parseRepoMetadataFromProjectOrWorkspaceURL(url)
+        return try XcodeProjectParser.parseRepoMetadataFromProjectOrWorkspaceURL(url: url)
     }
     
     public func serviceRepoName() -> String? {
@@ -83,7 +83,7 @@ public class Project {
         let service = meta.service
         
         let originalStringUrl = projectUrl.absoluteString
-        let stringUrl = originalStringUrl.lowercaseString
+        let stringUrl = originalStringUrl!.lowercased()
         
         /*
         both https and ssh repos on github have a form of:
@@ -92,24 +92,23 @@ public class Project {
         and scan up until ".git"
         */
         
-        let serviceUrl = service.hostname().lowercaseString
-        let dotGitRange = stringUrl.rangeOfString(".git", options: NSStringCompareOptions.BackwardsSearch, range: nil, locale: nil) ?? stringUrl.endIndex..<stringUrl.endIndex
-        if let githubRange = stringUrl.rangeOfString(serviceUrl, options: NSStringCompareOptions(), range: nil, locale: nil){
-                
-                let start = githubRange.endIndex.advancedBy(1)
-                let end = dotGitRange.startIndex
+        let serviceUrl = service.hostname().lowercased()
+        let dotGitRange = stringUrl.range(of: ".git", options: NSString.CompareOptions.backwards, range: nil, locale: nil) ?? stringUrl.endIndex..<stringUrl.endIndex
+        if let githubRange = stringUrl.range(of: serviceUrl, options: [], range: nil, locale: nil){
+            let start = stringUrl.index(githubRange.upperBound, offsetBy: 1)
+            let end = dotGitRange.lowerBound
             
-                let repoName = originalStringUrl[start ..< end]
-                return repoName
+            let repoName = originalStringUrl![start ..< end]
+                return String(repoName)
         }
         return nil
     }
 
     private func getContentsOfKeyAtPath(path: String) -> String? {
         
-        let url = NSURL(fileURLWithPath: path)
+        let url = URL(fileURLWithPath: path)
         do {
-            let key = try NSString(contentsOfURL: url, encoding: NSASCIIStringEncoding)
+            let key = try NSString(contentsOf: url, encoding: String.Encoding.ascii.rawValue)
             return key as String
         } catch {
             Log.error("Couldn't load key at url \(url) with error \(error)")

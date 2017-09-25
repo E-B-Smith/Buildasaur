@@ -27,11 +27,11 @@ class ServiceAuthenticator {
     
     init() {}
     
-    func handleUrl(url: NSURL) {
-        OAuthSwift.handleOpenURL(url)
+    func handleUrl(_ url: URL) {
+        OAuthSwift.handle(url: url)
     }
     
-    func getAccess(service: GitService, completion: (auth: ProjectAuthenticator?, error: ErrorType?) -> ()) {
+    func getAccess(_ service: GitService, completion: @escaping (_ auth: ProjectAuthenticator?, _ error: Error?) -> ()) {
         
         let (params, secretFromResponseParams) = self.paramsForService(service)
         
@@ -42,27 +42,27 @@ class ServiceAuthenticator {
             accessTokenUrl: params[.AccessTokenUrl]!,
             responseType: params[.ResponseType]!
         )
-        oauth.authorizeWithCallbackURL(
-            NSURL(string: params[.CallbackUrl]!)!,
+        oauth.authorize(withCallbackURL:
+            URL(string: params[.CallbackUrl]!)!,
             scope: params[.Scope]!,
             state: params[.State]!,
             success: { credential, response, parameters in
                 
-                let secret = secretFromResponseParams(parameters)
+                let secret = secretFromResponseParams(parameters as! [String : String])
                 let auth = ProjectAuthenticator(service: service, username: "GIT", type: .OAuthToken, secret: secret)
-                completion(auth: auth, error: nil)
+                completion(auth, nil)
             },
             failure: { error in
-                completion(auth: nil, error: error)
+                completion(nil, error)
             }
         )
     }
     
-    func getAccessTokenFromRefresh(service: GitService, refreshToken: String, completion: (auth: ProjectAuthenticator?, error: ErrorType?)) {
+    func getAccessTokenFromRefresh(_ service: GitService, refreshToken: String, completion: (auth: ProjectAuthenticator?, error: Error?)) {
         //TODO: implement refresh token flow - to get and save a new access token
     }
     
-    private func paramsForService(service: GitService) -> ([ParamKey: String], SecretFromResponseParams) {
+    fileprivate func paramsForService(_ service: GitService) -> ([ParamKey: String], SecretFromResponseParams) {
         switch service {
         case .GitHub:
             return self.getGitHubParameters()
@@ -73,7 +73,7 @@ class ServiceAuthenticator {
         }
     }
     
-    private func getGitHubParameters() -> ([ParamKey: String], SecretFromResponseParams) {
+    fileprivate func getGitHubParameters() -> ([ParamKey: String], SecretFromResponseParams) {
         let service = GitService.GitHub
         let params: [ParamKey: String] = [
             .ConsumerId: service.serviceKey(),
@@ -83,7 +83,7 @@ class ServiceAuthenticator {
             .ResponseType: "code",
             .CallbackUrl: "buildasaur://oauth-callback/github",
             .Scope: "repo",
-            .State: generateStateWithLength(20) as String
+            .State: generateState(withLength: 20) as String
         ]
         let secret: SecretFromResponseParams = {
             //just pull out the access token, that's all we need
@@ -92,7 +92,7 @@ class ServiceAuthenticator {
         return (params, secret)
     }
     
-    private func getBitBucketParameters() -> ([ParamKey: String], SecretFromResponseParams) {
+    fileprivate func getBitBucketParameters() -> ([ParamKey: String], SecretFromResponseParams) {
         let service = GitService.BitBucket
         let params: [ParamKey: String] = [
             .ConsumerId: service.serviceKey(),
@@ -102,7 +102,7 @@ class ServiceAuthenticator {
             .ResponseType: "code",
             .CallbackUrl: "buildasaur://oauth-callback/bitbucket",
             .Scope: "pullrequest",
-            .State: generateStateWithLength(20) as String
+            .State: generateState(withLength: 20) as String
         ]
         let secret: SecretFromResponseParams = {
             //we need both the access and refresh tokens, because

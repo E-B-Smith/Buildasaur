@@ -45,9 +45,9 @@ private struct Keys {
 
 extension ProjectConfig: JSONSerializable {
     
-    public func jsonify() -> NSDictionary {
+    public func jsonify() -> [String : Any] {
         
-        let json = NSMutableDictionary()
+        var json: [String : Any] = [:]
         
         json[Keys.URL] = self.url
         json[Keys.PrivateSSHKeyPath] = self.privateSSHKeyPath
@@ -56,12 +56,12 @@ extension ProjectConfig: JSONSerializable {
         return json
     }
     
-    public init(json: NSDictionary) throws {
+    public init(json: [String : Any]) throws {
         
-        self.url = try json.get(Keys.URL)
-        self.privateSSHKeyPath = try json.get(Keys.PrivateSSHKeyPath)
-        self.publicSSHKeyPath = try json.get(Keys.PublicSSHKeyPath)
-        self.id = try json.get(Keys.Id)
+        self.url = json[Keys.URL] as! String
+        self.privateSSHKeyPath = json[Keys.PrivateSSHKeyPath] as! String
+        self.publicSSHKeyPath = json[Keys.PublicSSHKeyPath] as! String
+        self.id = json[Keys.Id] as! String
     }
 }
 

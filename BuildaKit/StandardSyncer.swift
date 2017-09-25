@@ -9,7 +9,7 @@
 import Foundation
 import BuildaGitServer
 import XcodeServerSDK
-import ReactiveCocoa
+import ReactiveSwift
 
 public class StandardSyncer : Syncer {
     
@@ -36,8 +36,8 @@ public class StandardSyncer : Syncer {
         self.triggers = triggers
         
         super.init(syncInterval: config.syncInterval)
-        
-        self.config.producer.startWithNext { [weak self] in
+
+        self.config.producer.startWithValues { [weak self] in
             self?.syncInterval = $0.syncInterval
         }
     }
@@ -46,13 +46,13 @@ public class StandardSyncer : Syncer {
         self.active = false
     }
     
-    public override func sync(completion: () -> ()) {
+    public override func sync(completion: @escaping () -> ()) {
         
         if let repoName = self.repoName() {
             
-            self.syncRepoWithName(repoName, completion: completion)
+            self.syncRepoWithName(repoName: repoName, completion: completion)
         } else {
-            self.notifyErrorString("Nil repo name", context: "Syncing")
+            self.notifyErrorString(errorString: "Nil repo name", context: "Syncing")
             completion()
         }
     }

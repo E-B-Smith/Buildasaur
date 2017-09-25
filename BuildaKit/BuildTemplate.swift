@@ -54,57 +54,57 @@ public struct BuildTemplate: JSONSerializable {
         self.name = ""
         self.scheme = ""
         self.schedule = BotSchedule.manualBotSchedule()
-        self.cleaningPolicy = BotConfiguration.CleaningPolicy.Never
+        self.cleaningPolicy = BotConfiguration.CleaningPolicy.never
         self.triggers = []
         self.shouldAnalyze = true
         self.shouldTest = true
         self.shouldArchive = false
         self.testingDeviceIds = []
-        self.deviceFilter = .AllAvailableDevicesAndSimulators
+        self.deviceFilter = .allAvailableDevicesAndSimulators
         self.platformType = nil
     }
     
-    public init(json: NSDictionary) throws {
+    public init(json: [String : Any]) throws {
         
-        self.id = json.optionalStringForKey(kKeyId) ?? Ref.new()
-        self.projectName = json.optionalStringForKey(kKeyProjectName)
-        self.name = try json.stringForKey(kKeyName)
-        self.scheme = try json.stringForKey(kKeyScheme)
-        if let scheduleDict = json.optionalDictionaryForKey(kKeySchedule) {
+        self.id = json[kKeyId] as? RefType ?? Ref.new()
+        self.projectName = json[kKeyProjectName] as? String
+        self.name = json[kKeyName] as! String
+        self.scheme = json[kKeyScheme] as! String
+        if let scheduleDict = json[kKeySchedule]  as? NSDictionary {
             self.schedule = try BotSchedule(json: scheduleDict)
         } else {
             self.schedule = BotSchedule.manualBotSchedule()
         }
         if
-            let cleaningPolicy = json.optionalIntForKey(kKeyCleaningPolicy),
+            let cleaningPolicy = json[kKeyCleaningPolicy] as? Int,
             let policy = BotConfiguration.CleaningPolicy(rawValue: cleaningPolicy) {
                 self.cleaningPolicy = policy
         } else {
-            self.cleaningPolicy = BotConfiguration.CleaningPolicy.Never
+            self.cleaningPolicy = BotConfiguration.CleaningPolicy.never
         }
-        if let array = (json.optionalArrayForKey(kKeyTriggers) as? [RefType]) {
+        if let array = json[kKeyTriggers] as? [RefType] {
             self.triggers = array
         } else {
             self.triggers = []
         }
 
-        self.shouldAnalyze = try json.boolForKey(kKeyShouldAnalyze)
-        self.shouldTest = try json.boolForKey(kKeyShouldTest)
-        self.shouldArchive = try json.boolForKey(kKeyShouldArchive)
+        self.shouldAnalyze = json[kKeyShouldAnalyze] as! Bool
+        self.shouldTest = json[kKeyShouldTest] as! Bool
+        self.shouldArchive = json[kKeyShouldArchive] as! Bool
         
-        self.testingDeviceIds = json.optionalArrayForKey(kKeyTestingDevices) as? [String] ?? []
+        self.testingDeviceIds = json[kKeyTestingDevices] as? [String] ?? []
         
         if
-            let deviceFilterInt = json.optionalIntForKey(kKeyDeviceFilter),
+            let deviceFilterInt = json[kKeyDeviceFilter] as? Int,
             let deviceFilter = DeviceFilter.FilterType(rawValue: deviceFilterInt)
         {
             self.deviceFilter = deviceFilter
         } else {
-            self.deviceFilter = .AllAvailableDevicesAndSimulators
+            self.deviceFilter = .allAvailableDevicesAndSimulators
         }
         
         if
-            let platformTypeString = json.optionalStringForKey(kKeyPlatformType),
+            let platformTypeString = json[kKeyPlatformType] as? String,
             let platformType = DevicePlatform.PlatformType(rawValue: platformTypeString) {
                 self.platformType = platformType
         } else {
@@ -112,17 +112,17 @@ public struct BuildTemplate: JSONSerializable {
         }
         
         if !self.validate() {
-            throw Error.withInfo("Invalid input into Build Template")
+            throw XcodeServerError.with("Invalid input into Build Template")
         }
     }
     
-    public func jsonify() -> NSDictionary {
-        let dict = NSMutableDictionary()
+    public func jsonify() -> [String : Any] {
+        var dict: [String : Any] = [:]
         
         dict[kKeyId] = self.id
         dict[kKeyTriggers] = self.triggers
         dict[kKeyDeviceFilter] = self.deviceFilter.rawValue
-        dict[kKeyTestingDevices] = self.testingDeviceIds ?? []
+        dict[kKeyTestingDevices] = self.testingDeviceIds
         dict[kKeyCleaningPolicy] = self.cleaningPolicy.rawValue
         dict[kKeyName] = self.name
         dict[kKeyScheme] = self.scheme
@@ -130,8 +130,12 @@ public struct BuildTemplate: JSONSerializable {
         dict[kKeyShouldTest] = self.shouldTest
         dict[kKeyShouldArchive] = self.shouldArchive
         dict[kKeySchedule] = self.schedule.dictionarify()
-        dict.optionallyAddValueForKey(self.projectName, key: kKeyProjectName)
-        dict.optionallyAddValueForKey(self.platformType?.rawValue, key: kKeyPlatformType)
+        if let projectName = self.projectName {
+            dict[kKeyProjectName] = projectName
+        }
+        if let platformType = self.platformType {
+            dict[kKeyPlatformType] = platformType.rawValue
+        }
         
         return dict
     }

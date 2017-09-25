@@ -24,10 +24,10 @@ public class SyncPair_Branch_Bot: SyncPair {
         super.init()
     }
     
-    override func sync(completion: Completion) {
+    override func sync(completion: @escaping Completion) {
         
         //sync the branch with the bot
-        self.syncBranchWithBot(completion)
+        self.syncBranchWithBot(completion: completion)
     }
     
     override func syncPairName() -> String {
@@ -36,7 +36,7 @@ public class SyncPair_Branch_Bot: SyncPair {
     
     //MARK: Internal
     
-    private func syncBranchWithBot(completion: Completion) {
+    private func syncBranchWithBot(completion: @escaping Completion) {
         
         let bot = self.bot
         let headCommit = self.branch.commitSHA
@@ -45,19 +45,19 @@ public class SyncPair_Branch_Bot: SyncPair {
         self.syncer.xcodeServer.getHostname { (hostname, error) -> () in
             
             if let error = error {
-                completion(error: error)
+                completion(error)
                 return
             }
             
-            self.getIntegrations(bot, completion: { (integrations, error) -> () in
+            self.getIntegrations(bot: bot, completion: { (integrations, error) -> () in
                 
                 if let error = error {
-                    completion(error: error)
+                    completion(error)
                     return
                 }
                 
                 let actions = self.resolver.resolveActionsForCommitAndIssueWithBotIntegrations(
-                    headCommit,
+                    commit: headCommit,
                     issue: issue,
                     bot: bot,
                     hostname: hostname!,
@@ -68,7 +68,7 @@ public class SyncPair_Branch_Bot: SyncPair {
                 //also, when the build is finally successful on the branch, the issue will be automatically closed.
                 //TODO: add this functionality here and add it as another action available from a sync pair
                 
-                self.performActions(actions, completion: completion)
+                self.performActions(actions: actions, completion: completion)
             })
         }
     }

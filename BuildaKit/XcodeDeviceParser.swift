@@ -10,6 +10,12 @@ import Foundation
 import XcodeServerSDK
 import BuildaUtils
 
+public class XcodeDeviceParserError: Error {
+    static func with(_ info: String) -> Error {
+        return NSError(domain: "GithubServer", code: -1, userInfo: ["info": info])
+    }
+}
+
 public class XcodeDeviceParser {
     
     public enum DeviceType: String {
@@ -32,16 +38,16 @@ public class XcodeDeviceParser {
         }
     }
     
-    public class func parseDeviceTypeFromProjectUrlAndScheme(projectUrl: NSURL, scheme: XcodeScheme) throws -> DeviceType {
+    public class func parseDeviceTypeFromProjectUrlAndScheme(projectUrl: URL, scheme: XcodeScheme) throws -> DeviceType {
         
-        let typeString = try self.parseTargetTypeFromSchemeAndProjectAtUrl(scheme, projectFolderUrl: projectUrl)
+        let typeString = try self.parseTargetTypeFromSchemeAndProjectAtUrl(scheme: scheme, projectFolderUrl: projectUrl)
         guard let deviceType = DeviceType(rawValue: typeString) else {
-            throw Error.withInfo("Unrecognized type: \(typeString)")
+            throw XcodeDeviceParserError.with("Unrecognized type: \(typeString)")
         }
         return deviceType
     }
     
-    private class func parseTargetTypeFromSchemeAndProjectAtUrl(scheme: XcodeScheme, projectFolderUrl: NSURL) throws -> String {
+    private class func parseTargetTypeFromSchemeAndProjectAtUrl(scheme: XcodeScheme, projectFolderUrl: URL) throws -> String {
         
         let ownerArgs = try { () throws -> String in
             
@@ -51,11 +57,11 @@ public class XcodeDeviceParser {
                 return "-workspace \"\(ownerUrl)\""
                 case "xcodeproj":
                 return "-project \"\(ownerUrl)\""
-            default: throw Error.withInfo("Unrecognized project/workspace path \(ownerUrl)")
+            default: throw XcodeDeviceParserError.with("Unrecognized project/workspace path \(ownerUrl)")
             }
             }()
         
-        let folder = projectFolderUrl.URLByDeletingLastPathComponent?.path ?? "~"
+        let folder = projectFolderUrl.deletingLastPathComponent().path
         let schemeName = scheme.name
         
         let script = "cd \"\(folder)\"; xcodebuild \(ownerArgs) -scheme \"\(schemeName)\" -showBuildSettings 2>/dev/null | egrep '^\\s*PLATFORM_NAME' | cut -d = -f 2 | uniq | xargs echo"
@@ -64,6 +70,6 @@ public class XcodeDeviceParser {
             let deviceType = res.standardOutput.stripTrailingNewline()
             return deviceType
         }
-        throw Error.withInfo("Termination status: \(res.terminationStatus), output: \(res.standardOutput), error: \(res.standardError)")
+        throw XcodeDeviceParserError.with("Termination status: \(res.terminationStatus), output: \(res.standardOutput), error: \(res.standardError)")
     }
 }

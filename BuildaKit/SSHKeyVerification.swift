@@ -29,9 +29,9 @@ public class SSHKeyVerification {
         
         do {
             //convert dictionary into string
-            let data = try NSJSONSerialization.dataWithJSONObject(blueprint, options: NSJSONWritingOptions())
+            let data = try JSONSerialization.data(withJSONObject: blueprint, options: [])
             
-            let scriptString = NSString(data: data, encoding: NSUTF8StringEncoding)!
+            let scriptString = String(data: data, encoding: String.Encoding.utf8)!
             
             let xcodePath = self.findXcodeDeveloperFolder()
             let xcsbridgePath = "\(xcodePath)/usr/bin/xcsbridge"
@@ -47,8 +47,8 @@ public class SSHKeyVerification {
             //parse the response as json
             let responseString = response.standardOutput
             if
-                let data = responseString.dataUsingEncoding(NSUTF8StringEncoding),
-                let obj = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                let data = responseString.data(using: String.Encoding.utf8),
+                let obj = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? NSDictionary
             {
                 
                 //valid output is an empty dictionary

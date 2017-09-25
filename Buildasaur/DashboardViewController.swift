@@ -8,7 +8,7 @@
 
 import Cocoa
 import BuildaKit
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 protocol EditeeDelegate: class, EmptyXcodeServerViewControllerDelegate, XcodeServerViewControllerDelegate, EmptyProjectViewControllerDelegate, ProjectViewControllerDelegate, EmptyBuildTemplateViewControllerDelegate, BuildTemplateViewControllerDelegate, SyncerViewControllerDelegate { }
@@ -27,7 +27,7 @@ class DashboardViewController: PresentableViewController {
     var syncerManager: SyncerManager!
     var serviceAuthenticator: ServiceAuthenticator!
     
-    private var syncerViewModels: MutableProperty<[SyncerViewModel]> = MutableProperty([])
+    fileprivate var syncerViewModels: MutableProperty<[SyncerViewModel]> = MutableProperty([])
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,45 +47,45 @@ class DashboardViewController: PresentableViewController {
     }
     
     func configTitle() {
-        let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as! String
+        let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
         self.title = "Buildasaur \(version), at your service!"
     }
     
     func configHeaderView() {
         
         //setup start/stop all buttons
-        let anySyncerStateChanged = self.syncerViewModels.producer.flatMap(.Merge) { newViewModels -> SignalProducer<SignalProducer<Bool, NoError>, NoError> in
+        let anySyncerStateChanged = self.syncerViewModels.producer.flatMap(.merge) { newViewModels -> SignalProducer<SignalProducer<Bool, NoError>, NoError> in
             
             return SignalProducer { sink, _ in
-                newViewModels.forEach { sink.sendNext($0.syncer.activeSignalProducer.producer) }
+                newViewModels.forEach { sink.send(value: $0.syncer.activeSignalProducer.producer) }
                 sink.sendCompleted()
             }
-        }.flatten(.Merge)
+        }.flatten(.merge)
         
-        combineLatest(anySyncerStateChanged, self.syncerViewModels.producer)
-            .startWithNext { [weak self] (_, viewModels) -> () in
+        SignalProducer.combineLatest(anySyncerStateChanged, self.syncerViewModels.producer)
+            .startWithValues { [weak self] (_, viewModels) -> () in
                 guard let sself = self else { return }
                 
                 //startAll is enabled if >0 is NOT ACTIVE
                 let startAllEnabled = viewModels.filter { !$0.syncer.active }.count > 0
-                sself.startAllButton.enabled = startAllEnabled
+                sself.startAllButton.isEnabled = startAllEnabled
                 
                 //stopAll is enabled if >0 is ACTIVE
                 let stopAllEnabled = viewModels.filter { $0.syncer.active }.count > 0
-                sself.stopAllButton.enabled = stopAllEnabled
+                sself.stopAllButton.isEnabled = stopAllEnabled
         }
         
         //setup config
         self.config.value = self.syncerManager.storageManager.config.value
         self.autostartButton.on = self.config.value["autostart"] as? Bool ?? false
         
-        self.config.producer.startWithNext { [weak self] config in
+        self.config.producer.startWithValues { [weak self] config in
             guard let sself = self else { return }
             sself.syncerManager.storageManager.config.value = config
         }
-        self.autostartButton.rac_on.startWithNext { [weak self] in
+        self.autostartButton.rac_on.startWithValues { [weak self] in
             guard let sself = self else { return }
-            sself.config.value["autostart"] = $0
+            sself.config.value["autostart"] = $0 as AnyObject
         }
         
         //setup login item
@@ -95,53 +95,53 @@ class DashboardViewController: PresentableViewController {
     func configTableView() {
         
         let tableView = self.syncersTableView
-        tableView.setDataSource(self)
-        tableView.setDelegate(self)
-        tableView.columnAutoresizingStyle = .UniformColumnAutoresizingStyle
+        tableView?.dataSource = self
+        tableView?.delegate = self
+        tableView?.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
     }
     
     func configDataSource() {
         
         let present: SyncerViewModel.PresentEditViewControllerType = {
-            self.showSyncerEditViewControllerWithTriplet($0.toEditable(), state: .Syncer)
+            self.showSyncerEditViewControllerWithTriplet($0.toEditable(), state: .syncer)
         }
-        self.syncerManager.syncersProducer.startWithNext { newSyncers in
+        self.syncerManager.syncersProducer.startWithValues { newSyncers in
             self.syncerViewModels.value = newSyncers
                 .map { SyncerViewModel(syncer: $0, presentEditViewController: present) }
-                .sort { $0.0.initialProjectName < $0.1.initialProjectName }
+                .sorted { (o1, o2) in o1.initialProjectName < o2.initialProjectName }
             self.syncersTableView.reloadData()
         }
     }
     
     //MARK: Responding to button inside of cells
     
-    private func syncerViewModelFromSender(sender: BuildaNSButton) -> SyncerViewModel {
+    fileprivate func syncerViewModelFromSender(_ sender: BuildaNSButton) -> SyncerViewModel {
         let selectedRow = sender.row!
         let syncerViewModel = self.syncerViewModels.value[selectedRow]
         return syncerViewModel
     }
     
-    @IBAction func startAllButtonClicked(sender: AnyObject) {
+    @IBAction func startAllButtonClicked(_ sender: AnyObject) {
         self.syncerViewModels.value.forEach { $0.startButtonClicked() }
     }
     
-    @IBAction func stopAllButtonClicked(sender: AnyObject) {
+    @IBAction func stopAllButtonClicked(_ sender: AnyObject) {
         self.syncerViewModels.value.forEach { $0.stopButtonClicked() }
     }
     
-    @IBAction func newSyncerButtonClicked(sender: AnyObject) {
+    @IBAction func newSyncerButtonClicked(_ sender: AnyObject) {
         self.showNewSyncerViewController()
     }
     
-    @IBAction func editButtonClicked(sender: BuildaNSButton) {
+    @IBAction func editButtonClicked(_ sender: BuildaNSButton) {
         self.syncerViewModelFromSender(sender).viewButtonClicked()
     }
     
-    @IBAction func controlButtonClicked(sender: BuildaNSButton) {
+    @IBAction func controlButtonClicked(_ sender: BuildaNSButton) {
         self.syncerViewModelFromSender(sender).controlButtonClicked()
     }
     
-    @IBAction func doubleClickedRow(sender: AnyObject?) {
+    @IBAction func doubleClickedRow(_ sender: AnyObject?) {
         let clickedRow = self.syncersTableView.clickedRow
         guard clickedRow >= 0 else { return }
         
@@ -149,11 +149,11 @@ class DashboardViewController: PresentableViewController {
         syncerViewModel.viewButtonClicked()
     }
     
-    @IBAction func infoButtonClicked(sender: AnyObject) {
+    @IBAction func infoButtonClicked(_ sender: AnyObject) {
         openLink("https://github.com/czechboy0/Buildasaur#buildasaur")
     }
     
-    @IBAction func launchOnLoginClicked(sender: NSButton) {
+    @IBAction func launchOnLoginClicked(_ sender: NSButton) {
         let newValue = sender.on
         let loginItem = self.syncerManager.loginItem
         loginItem.isLaunchItem = newValue
@@ -162,7 +162,7 @@ class DashboardViewController: PresentableViewController {
         self.launchOnLoginButton.on = loginItem.isLaunchItem
     }
     
-    @IBAction func checkForUpdatesClicked(sender: NSButton) {
+    @IBAction func checkForUpdatesClicked(_ sender: NSButton) {
         (NSApp.delegate as! AppDelegate).checkForUpdates(sender)
     }
 }
@@ -179,10 +179,10 @@ extension DashboardViewController {
 //        triplet.project = self.syncerManager.storageManager.projectConfigs.value["E94BAED5-7D91-426A-B6B6-5C39BF1F7032"]!
 //        triplet.buildTemplate = self.syncerManager.storageManager.buildTemplates.value["EB0C3E74-C303-4C33-AF0E-012B650D2E9F"]
         
-        self.showSyncerEditViewControllerWithTriplet(triplet, state: .NoServer)
+        self.showSyncerEditViewControllerWithTriplet(triplet, state: .noServer)
     }
     
-    func showSyncerEditViewControllerWithTriplet(triplet: EditableConfigTriplet, state: EditorState) {
+    func showSyncerEditViewControllerWithTriplet(_ triplet: EditableConfigTriplet, state: EditorState) {
         
         let uniqueIdentifier = triplet.syncer.id
         let viewController: MainEditorViewController = self.storyboardLoader.presentableViewControllerWithStoryboardIdentifier("editorViewController", uniqueIdentifier: uniqueIdentifier, delegate: self.presentingDelegate)
@@ -202,7 +202,7 @@ extension DashboardViewController {
 
 extension DashboardViewController: NSTableViewDataSource {
     
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    func numberOfRows(in tableView: NSTableView) -> Int {
         return self.syncerViewModels.value.count
     }
     
@@ -215,8 +215,8 @@ extension DashboardViewController: NSTableViewDataSource {
         case Edit = "edit"
     }
     
-    func getTypeOfReusableView<T: NSView>(column: Column) -> T {
-        guard let view = self.syncersTableView.makeViewWithIdentifier(column.rawValue, owner: self) else {
+    func getTypeOfReusableView<T: NSView>(_ column: Column) -> T {
+        guard let view = self.syncersTableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: column.rawValue), owner: self) else {
             fatalError("Couldn't get a reusable view for column \(column)")
         }
         guard let typedView = view as? T else {
@@ -225,7 +225,7 @@ extension DashboardViewController: NSTableViewDataSource {
         return typedView
     }
     
-    func bindTextView(view: NSTableCellView, column: Column, viewModel: SyncerViewModel) {
+    func bindTextView(_ view: NSTableCellView, column: Column, viewModel: SyncerViewModel) {
         
         let destination = view.textField!.rac_stringValue
         switch column {
@@ -241,7 +241,7 @@ extension DashboardViewController: NSTableViewDataSource {
         }
     }
     
-    func bindButtonView(view: BuildaNSButton, column: Column, viewModel: SyncerViewModel) {
+    func bindButtonView(_ view: BuildaNSButton, column: Column, viewModel: SyncerViewModel) {
         
         let destinationTitle = view.rac_title
         let destinationEnabled = view.rac_enabled
@@ -255,11 +255,11 @@ extension DashboardViewController: NSTableViewDataSource {
         }
     }
     
-    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
         guard let tcolumn = tableColumn else { return nil }
         let columnIdentifier = tcolumn.identifier
-        guard let column = Column(rawValue: columnIdentifier) else { return nil }
+        guard let column = Column(rawValue: columnIdentifier.rawValue) else { return nil }
         let syncerViewModel = self.syncerViewModels.value[row]
 
         //based on the column decide which reuse identifier we'll use
@@ -287,7 +287,7 @@ class BuildaNSButton: NSButton {
 
 extension DashboardViewController: NSTableViewDelegate {
     
-    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         return 30
     }
 }

@@ -38,23 +38,23 @@ public class SyncerFactory: SyncerFactoryType {
         
         precondition(self.syncerLifetimeChangeObserver != nil)
         
-        let xcodeServer = self.createXcodeServer(triplet.server)
-        let maybeProject = self.createProject(triplet.project)
-        let triggers = triplet.triggers.map { self.createTrigger($0) }
+        let xcodeServer = self.createXcodeServer(config: triplet.server)
+        let maybeProject = self.createProject(config: triplet.project)
+        let triggers = triplet.triggers.map { self.createTrigger(config: $0) }
         
         guard let project = maybeProject else { return nil }
         
         guard let service = project.workspaceMetadata?.service else { return nil }
         
         let projectConfig = triplet.project
-        let sourceServer = self.createSourceServer(service, auth: projectConfig.serverAuthentication)
+        let sourceServer = self.createSourceServer(service: service, auth: projectConfig.serverAuthentication)
         sourceServer
             .authChangedSignal()
-            .ignoreNil()
-            .observeNext { [weak self] (auth) -> () in
+            .skipNil()
+            .observeValues { [weak self] (auth) -> () in
                 self?
                     .syncerLifetimeChangeObserver
-                    .authChanged(projectConfig.id, auth: auth)
+                    .authChanged(projectConfigId: projectConfig.id, auth: auth)
         }
         
         if let poolAttempt = self.syncerPool[triplet.syncer.id]
@@ -85,15 +85,16 @@ public class SyncerFactory: SyncerFactoryType {
     public func createSyncers(configs: [ConfigTriplet]) -> [StandardSyncer] {
         
         //create syncers
-        let created = configs.map { self.createSyncer($0) }.filter { $0 != nil }.map { $0! }
+        let created = configs.map { self.createSyncer(triplet: $0) }.filter { $0 != nil }.map { $0! }
         
         let createdIds = Set(created.map { $0.config.value.id })
         
         //remove the syncers that haven't been created (deleted)
-        let deleted = Set(self.syncerPool.keys).subtract(createdIds)
+        var deleted = Set(self.syncerPool.keys)
+        deleted.subtract(createdIds)
         deleted.forEach {
             self.syncerPool[$0]?.active = false
-            self.syncerPool.removeValueForKey($0)
+            let _ = self.syncerPool.removeValue(forKey: $0)
         }
         
         return created
@@ -139,7 +140,7 @@ public class SyncerFactory: SyncerFactoryType {
     
     public func createSourceServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType {
         
-        let server = SourceServerFactory().createServer(service, auth: auth)
+        let server = SourceServerFactory().createServer(service: service, auth: auth)
         return server
     }
     

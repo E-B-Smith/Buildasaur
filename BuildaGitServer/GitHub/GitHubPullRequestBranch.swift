@@ -22,7 +22,7 @@ class GitHubPullRequestBranch : GitHubEntity {
         self.ref = try json.stringForKey("ref")
         self.sha = try json.stringForKey("sha")
         guard let repo = json.optionalDictionaryForKey("repo") else {
-            throw Error.withInfo("PR missing information about its repository")
+            throw GithubServerError.with("PR missing information about its repository")
         }
         self.repo = try GitHubRepo(json: repo)
         

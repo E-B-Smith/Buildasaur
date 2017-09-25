@@ -7,14 +7,14 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 public func flattenArray<T, E>(inProducer: SignalProducer<[T], E>) -> SignalProducer<T, E> {
     
-    return inProducer.flatMap(.Merge) { (vals: [T]) -> SignalProducer<T, E> in
+    return inProducer.flatMap(.merge) { (vals: [T]) -> SignalProducer<T, E> in
         return SignalProducer { sink, _ in
-            vals.forEach { sink.sendNext($0) }
+            vals.forEach { sink.send(value: $0) }
             sink.sendCompleted()
         }
     }
@@ -31,9 +31,9 @@ extension SignalProducer {
     
     //only sends values when condition has value true
     public func forwardIf(condition: SignalProducer<Bool, Error>) -> SignalProducer<Value, Error> {
-        return combineLatest(self, condition).map { (value: Value, condition: Bool) -> Value? in
+        return SignalProducer.combineLatest(self, condition).map { (value: Value, condition: Bool) -> Value? in
             return condition ? value : nil
-        }.ignoreNil()
+        }.skipNil()
     }
 }
 
@@ -43,10 +43,10 @@ internal func repack<A, B, C, D, E, F, G, H, I, J, K>(t: (A, B, C, D, E, F, G, H
 
 /// Combines the values of all the given producers, in the manner described by
 /// `combineLatestWith`.
-@warn_unused_result(message="Did you forget to call `start` on the producer?")
-public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, Error>(a: SignalProducer<A, Error>, _ b: SignalProducer<B, Error>, _ c: SignalProducer<C, Error>, _ d: SignalProducer<D, Error>, _ e: SignalProducer<E, Error>, _ f: SignalProducer<F, Error>, _ g: SignalProducer<G, Error>, _ h: SignalProducer<H, Error>, _ i: SignalProducer<I, Error>, _ j: SignalProducer<J, Error>, _ k: SignalProducer<K, Error>) -> SignalProducer<(A, B, C, D, E, F, G, H, I, J, K), Error> {
-    return combineLatest(a, b, c, d, e, f, g, h, i, j)
-        .combineLatestWith(k)
+
+public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, Error>(_ a: SignalProducer<A, Error>, _ b: SignalProducer<B, Error>, _ c: SignalProducer<C, Error>, _ d: SignalProducer<D, Error>, _ e: SignalProducer<E, Error>, _ f: SignalProducer<F, Error>, _ g: SignalProducer<G, Error>, _ h: SignalProducer<H, Error>, _ i: SignalProducer<I, Error>, _ j: SignalProducer<J, Error>, _ k: SignalProducer<K, Error>) -> SignalProducer<(A, B, C, D, E, F, G, H, I, J, K), Error> {
+    return SignalProducer.combineLatest(a, b, c, d, e, f, g, h, i, j)
+        .combineLatest(with: k)
         .map(repack)
 }
 
@@ -56,10 +56,10 @@ internal func repack<A, B, C, D, E, F, G, H, I, J, K, L>(t: (A, B, C, D, E, F, G
 
 /// Combines the values of all the given producers, in the manner described by
 /// `combineLatestWith`.
-@warn_unused_result(message="Did you forget to call `start` on the producer?")
-public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, L, Error>(a: SignalProducer<A, Error>, _ b: SignalProducer<B, Error>, _ c: SignalProducer<C, Error>, _ d: SignalProducer<D, Error>, _ e: SignalProducer<E, Error>, _ f: SignalProducer<F, Error>, _ g: SignalProducer<G, Error>, _ h: SignalProducer<H, Error>, _ i: SignalProducer<I, Error>, _ j: SignalProducer<J, Error>, _ k: SignalProducer<K, Error>, _ l: SignalProducer<L, Error>) -> SignalProducer<(A, B, C, D, E, F, G, H, I, J, K, L), Error> {
+
+public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, L, Error>(_ a: SignalProducer<A, Error>, _ b: SignalProducer<B, Error>, _ c: SignalProducer<C, Error>, _ d: SignalProducer<D, Error>, _ e: SignalProducer<E, Error>, _ f: SignalProducer<F, Error>, _ g: SignalProducer<G, Error>, _ h: SignalProducer<H, Error>, _ i: SignalProducer<I, Error>, _ j: SignalProducer<J, Error>, _ k: SignalProducer<K, Error>, _ l: SignalProducer<L, Error>) -> SignalProducer<(A, B, C, D, E, F, G, H, I, J, K, L), Error> {
     return combineLatest(a, b, c, d, e, f, g, h, i, j, k)
-        .combineLatestWith(l)
+        .combineLatest(with: l)
         .map(repack)
 }
 

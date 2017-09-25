@@ -23,9 +23,9 @@ class BitBucketRepo: BitBucketEntity, RepoType {
             .dictionaryForKey("links")
             .dictionaryForKey("self")
             .stringForKey("href")
-            .componentsSeparatedByString("/")
+            .components(separatedBy: "/")
             .suffix(2)
-            .joinWithSeparator("/")
+            .joined(separator: "/")
         self.originUrlSSH = "git@bitbucket.org:\(repoName).git"
         
         try super.init(json: json)

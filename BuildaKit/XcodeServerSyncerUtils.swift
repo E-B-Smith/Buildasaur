@@ -13,7 +13,7 @@ import BuildaUtils
 
 public class XcodeServerSyncerUtils {
     
-    public class func createBotFromBuildTemplate(botName: String, syncer: StandardSyncer, template: BuildTemplate, project: Project, branch: String, scheduleOverride: BotSchedule?, xcodeServer: XcodeServer, completion: (bot: Bot?, error: NSError?) -> ()) {
+    public class func createBotFromBuildTemplate(botName: String, syncer: StandardSyncer, template: BuildTemplate, project: Project, branch: String, scheduleOverride: BotSchedule?, xcodeServer: XcodeServer, completion: @escaping (_ bot: Bot?, _ error: Error?) -> ()) {
         
         //pull info from template
         let schemeName = template.scheme
@@ -22,9 +22,9 @@ public class XcodeServerSyncerUtils {
         let schedule = scheduleOverride ?? template.schedule
         let cleaningPolicy = template.cleaningPolicy
         let triggers = syncer.triggers
-        let analyze = template.shouldAnalyze ?? false
-        let test = template.shouldTest ?? false
-        let archive = template.shouldArchive ?? false
+        let analyze = template.shouldAnalyze 
+        let test = template.shouldTest 
+        let archive = template.shouldArchive 
         
         //TODO: create a device spec from testing devices and filter type (and scheme target type?)
         let testingDeviceIds = template.testingDeviceIds
@@ -37,7 +37,7 @@ public class XcodeServerSyncerUtils {
         
         let deviceSpecification = DeviceSpecification(filters: [deviceFilter], deviceIdentifiers: testingDeviceIds)
         
-        let blueprint = project.createSourceControlBlueprint(branch)
+        let blueprint = project.createSourceControlBlueprint(branch: branch)
         
         //create bot config
         let botConfiguration = BotConfiguration(
@@ -57,17 +57,17 @@ public class XcodeServerSyncerUtils {
         xcodeServer.createBot(newBot, completion: { (response) -> () in
             
             var outBot: Bot?
-            var outError: ErrorType?
+            var outError: Error?
             switch response {
-            case .Success(let bot):
+            case .success(let bot):
                 //we good
                 Log.info("Successfully created bot \(bot.name)")
                 outBot = bot
                 break
-            case .Error(let error):
+            case .error(let error):
                 outError = error
             default:
-                outError = Error.withInfo("Failed to return bot after creation even after error was nil!")
+                outError = XcodeServerError.with("Failed to return bot after creation even after error was nil!")
             }
             
             //print success/failure etc
@@ -75,9 +75,9 @@ public class XcodeServerSyncerUtils {
                 Log.error("Failed to create bot with name \(botName) and json \(newBot.dictionarify()), error \(error)")
             }
             
-            NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
-                completion(bot: outBot, error: outError as? NSError)
-            })
+            OperationQueue.main.addOperation {
+                completion(outBot, outError)
+            }
         })
     }
     

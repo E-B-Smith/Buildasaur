@@ -11,6 +11,6 @@ import Foundation
 protocol SourceControlFileParser {
 
     func supportedFileExtensions() -> [String]
-    func parseFileAtUrl(url: NSURL) throws -> WorkspaceMetadata
+    func parseFileAtUrl(url: URL) throws -> WorkspaceMetadata
 }
 

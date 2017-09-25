@@ -18,7 +18,7 @@ public struct Ref {
             counter += 1
             return ref
         #else
-            return NSUUID().UUIDString
+            return NSUUID().uuidString
         #endif
     }
     
@@ -51,7 +51,7 @@ public struct SyncerConfig {
     public var xcodeServerRef: RefType
     
     public var postStatusComments: Bool
-    public var syncInterval: NSTimeInterval
+    public var syncInterval: TimeInterval
     public var waitForLttm: Bool
     public var watchedBranchNames: [String]
     
@@ -83,7 +83,7 @@ private struct Keys {
 
 extension SyncerConfig: JSONSerializable {
     
-    public func jsonify() -> NSDictionary {
+    public func jsonify() -> [String : Any] {
         return [
             Keys.Id: self.id,
             Keys.PreferredTemplateRef: self.preferredTemplateRef,
@@ -96,14 +96,14 @@ extension SyncerConfig: JSONSerializable {
         ]
     }
     
-    public init(json: NSDictionary) throws {
-        self.preferredTemplateRef = try json.get(Keys.PreferredTemplateRef)
-        self.projectRef = try json.get(Keys.ProjectRef)
-        self.xcodeServerRef = try json.get(Keys.ServerRef)
-        self.postStatusComments = try json.get(Keys.PostStatusComments)
-        self.syncInterval = try json.get(Keys.SyncInterval)
-        self.waitForLttm = try json.get(Keys.WaitForLttm)
-        self.watchedBranchNames = try json.get(Keys.WatchedBranches)
-        self.id = try json.getOptionally(Keys.Id) ?? Ref.new()
+    public init(json: [String : Any]) throws {
+        self.preferredTemplateRef = json[Keys.PreferredTemplateRef] as! String
+        self.projectRef = json[Keys.ProjectRef] as! String
+        self.xcodeServerRef = json[Keys.ServerRef] as! String
+        self.postStatusComments = json[Keys.PostStatusComments] as! Bool
+        self.syncInterval = json[Keys.SyncInterval] as! TimeInterval
+        self.waitForLttm = json[Keys.WaitForLttm] as! Bool
+        self.watchedBranchNames = json[Keys.WatchedBranches] as! [String]
+        self.id = (json[Keys.Id] as? RefType) ?? Ref.new()
     }
 }

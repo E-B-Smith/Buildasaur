@@ -9,18 +9,19 @@
 import Cocoa
 import BuildaKit
 import ReactiveCocoa
+import ReactiveSwift
 import Result
 import BuildaUtils
 
 protocol EmptyProjectViewControllerDelegate: class {
-    func didSelectProjectConfig(config: ProjectConfig)
+    func didSelectProjectConfig(_ config: ProjectConfig)
 }
 
 extension ProjectConfig {
     
     var name: String {
         let fileWithExtension = (self.url as NSString).lastPathComponent
-        let file = (fileWithExtension as NSString).stringByDeletingPathExtension
+        let file = (fileWithExtension as NSString).deletingPathExtension
         return file
     }
 }
@@ -35,8 +36,8 @@ class EmptyProjectViewController: EditableViewController {
     
     @IBOutlet weak var existingProjectsPopup: NSPopUpButton!
     
-    private var projectConfigs: [ProjectConfig] = []
-    private var selectedConfig = MutableProperty<ProjectConfig?>(nil)
+    fileprivate var projectConfigs: [ProjectConfig] = []
+    fileprivate var selectedConfig = MutableProperty<ProjectConfig?>(nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,12 +50,12 @@ class EmptyProjectViewController: EditableViewController {
         let index: Int
         if let configId = self.existingConfigId {
             let ids = self.projectConfigs.map { $0.id }
-            index = ids.indexOf(configId) ?? 0
+            index = ids.index(of: configId) ?? 0
         } else {
             index = 0
         }
         self.selectItemAtIndex(index)
-        self.existingProjectsPopup.selectItemAtIndex(index)
+        self.existingProjectsPopup.selectItem(at: index)
     }
     
     func addNewString() -> String {
@@ -78,12 +79,12 @@ class EmptyProjectViewController: EditableViewController {
         return super.shouldGoNext()
     }
     
-    private func setupEditableStates() {
+    fileprivate func setupEditableStates() {
         
         self.nextAllowed <~ self.selectedConfig.producer.map { $0 != nil }
     }
     
-    private func selectItemAtIndex(index: Int) {
+    fileprivate func selectItemAtIndex(_ index: Int) {
         
         let configs = self.projectConfigs
         
@@ -92,7 +93,7 @@ class EmptyProjectViewController: EditableViewController {
         self.selectedConfig.value = config
     }
     
-    private func setupPopupAction() {
+    fileprivate func setupPopupAction() {
         
         let handler = SignalProducer<AnyObject, NoError> { [weak self] sink, _ in
             if let sself = self {
@@ -101,48 +102,48 @@ class EmptyProjectViewController: EditableViewController {
             }
             sink.sendCompleted()
         }
-        let action = Action { (_: AnyObject?) in handler }
-        self.existingProjectsPopup.rac_command = toRACCommand(action)
+        let action = Action { (_: ()) in handler }
+        self.existingProjectsPopup.reactive.pressed = CocoaAction(action)
     }
     
-    private func setupDataSource() {
+    fileprivate func setupDataSource() {
         
         let configsProducer = self.storageManager.projectConfigs.producer
         let allConfigsProducer = configsProducer
             .map { Array($0.values) }
             .map { configs in configs.filter { (try? Project(config: $0)) != nil } }
-            .map { configs in configs.sort { $0.name < $1.name } }
-        allConfigsProducer.startWithNext { [weak self] newConfigs in
+            .map { configs in configs.sorted { $0.name < $1.name } }
+        allConfigsProducer.startWithValues { [weak self] newConfigs in
             guard let sself = self else { return }
             
             sself.projectConfigs = newConfigs
             let popup = sself.existingProjectsPopup
-            popup.removeAllItems()
+            popup?.removeAllItems()
             var configDisplayNames = newConfigs.map { $0.name }
             configDisplayNames.append(self?.addNewString() ?? ":(")
-            popup.addItemsWithTitles(configDisplayNames)
+            popup?.addItems(withTitles: configDisplayNames)
         }
     }
     
-    private func didSelectProjectConfig(config: ProjectConfig) {
+    fileprivate func didSelectProjectConfig(_ config: ProjectConfig) {
         Log.verbose("Selected \(config.url)")
         self.emptyProjectDelegate?.didSelectProjectConfig(config)
     }
     
-    private func pickNewProject() -> ProjectConfig? {
+    fileprivate func pickNewProject() -> ProjectConfig? {
         
         if let url = StorageUtils.openWorkspaceOrProject() {
             
             do {
-                try self.storageManager.checkForProjectOrWorkspace(url)
+                try self.storageManager.checkForProjectOrWorkspace(url: url)
                 var config = ProjectConfig()
-                config.url = url.path!
+                config.url = url.path
                 return config
             } catch {
                 //local source is malformed, something terrible must have happened, inform the user this can't be used (log should tell why exactly)
                 let buttons = ["See workaround", "OK"]
 
-                UIUtils.showAlertWithButtons("Couldn't add Xcode project at path \(url.absoluteString), error: \((error as NSError).localizedDescription).", buttons: buttons, style: NSAlertStyle.CriticalAlertStyle, completion: { (tappedButton) -> () in
+                UIUtils.showAlertWithButtons("Couldn't add Xcode project at path \(url.absoluteString), error: \((error as NSError).localizedDescription).", buttons: buttons, style: .critical, completion: { (tappedButton) -> () in
                     
                     if tappedButton == "See workaround" {
                         openLink("https://github.com/czechboy0/Buildasaur/issues/165#issuecomment-148220340")

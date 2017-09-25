@@ -28,7 +28,7 @@ class MockGitHubServer: GitHubServer {
 class MockProject: Project {
     init() {
         let path: String = #file
-        let folder = (path as NSString).stringByDeletingLastPathComponent
+        let folder = (path as NSString).deletingLastPathComponent
         let testProject = "\(folder)/TestProjects/Buildasaur-TestProject-iOS/Buildasaur-TestProject-iOS.xcworkspace"
         var config = ProjectConfig()
         config.url = testProject
@@ -76,7 +76,7 @@ class MockBranch: GitHubBranch {
     }
     
     convenience init(name: String = "master", sha: String = "1234f") {
-        try! self.init(json: MockBranch.mockDictionary(name, sha: sha))
+        try! self.init(json: MockBranch.mockDictionary(name: name, sha: sha))
     }
     
     required init(json: NSDictionary) throws {
@@ -124,7 +124,7 @@ class MockIssue: GitHubIssue {
 
 class MockBuildStatusCreator: BuildStatusCreator {
     func createStatusFromState(state: BuildState, description: String?, targetUrl: String?) -> StatusType {
-        return GitHubStatus(state: GitHubStatus.GitHubState.fromBuildState(state), description: "Things happened", targetUrl: "http://hello.world", context: "Buildasaur")
+        return GitHubStatus(state: GitHubStatus.GitHubState.fromBuildState(buildState: state), description: "Things happened", targetUrl: "http://hello.world", context: "Buildasaur")
     }
     
     init() { }
@@ -133,7 +133,7 @@ class MockBuildStatusCreator: BuildStatusCreator {
 class MockPullRequest: GitHubPullRequest {
     
     class func mockDictionary(number: Int, title: String, head: NSDictionary, base: NSDictionary) -> NSDictionary {
-        let dict = MockIssue.mockDictionary(number, body: "body", title: title).mutableCopy() as! NSMutableDictionary
+        let dict = MockIssue.mockDictionary(number: number, body: "body", title: title).mutableCopy() as! NSMutableDictionary
         dict["head"] = head
         dict["base"] = base
         return dict.copy() as! NSDictionary
@@ -141,13 +141,13 @@ class MockPullRequest: GitHubPullRequest {
     
     class func mockDictionary(number: Int, title: String) -> NSDictionary {
         
-        let head = MockPullRequestBranch.mockDictionary("head", sha: "head_sha")
-        let base = MockPullRequestBranch.mockDictionary("base", sha: "base_sha")
-        return self.mockDictionary(number, title: title, head: head, base: base)
+        let head = MockPullRequestBranch.mockDictionary(ref: "head", sha: "head_sha")
+        let base = MockPullRequestBranch.mockDictionary(ref: "base", sha: "base_sha")
+        return self.mockDictionary(number: number, title: title, head: head, base: base)
     }
     
     convenience init(number: Int = 1, title: String = "PR title") {
-        try! self.init(json: MockPullRequest.mockDictionary(number, title: title))
+        try! self.init(json: MockPullRequest.mockDictionary(number: number, title: title))
     }
 
     required init(json: NSDictionary) throws {
@@ -170,7 +170,7 @@ class MockBotConfiguration: BotConfiguration {
     
     init() {
         super.init(
-            builtFromClean: BotConfiguration.CleaningPolicy.Never,
+            builtFromClean: BotConfiguration.CleaningPolicy.never,
             analyze: true,
             test: true,
             archive: true,

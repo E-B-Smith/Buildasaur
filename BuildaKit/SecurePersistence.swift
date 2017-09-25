@@ -32,15 +32,15 @@ final class SecurePersistence {
     }
 
     static func xcodeServerPasswordKeychain() -> SecurePersistence {
-        return self.keychain("\(Prefix).xcs.password")
+        return self.keychain(service: "\(Prefix).xcs.password")
     }
     
     static func sourceServerTokenKeychain() -> SecurePersistence {
-        return self.keychain("\(Prefix).source_server.oauth_tokens")
+        return self.keychain(service: "\(Prefix).source_server.oauth_tokens")
     }
     
     static func sourceServerPassphraseKeychain() -> SecurePersistence {
-        return self.keychain("\(Prefix).source_server.passphrase")
+        return self.keychain(service: "\(Prefix).source_server.passphrase")
     }
     
     static private func keychain(service: String) -> SecurePersistence {
@@ -80,7 +80,7 @@ final class SecurePersistence {
     
     func writeIfNeeded(key: String, value: String?) {
         self.safe.write {
-            self.updateIfNeeded(key, value: value)
+            self.updateIfNeeded(key: key, value: value)
         }
     }
     

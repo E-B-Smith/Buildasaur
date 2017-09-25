@@ -10,11 +10,12 @@ import Foundation
 import BuildaUtils
 import XcodeServerSDK
 import BuildaKit
-import ReactiveCocoa
+import ReactiveSwift
+import Result
 
 protocol XcodeServerViewControllerDelegate: class {
-    func didCancelEditingOfXcodeServerConfig(config: XcodeServerConfig)
-    func didSaveXcodeServerConfig(config: XcodeServerConfig)
+    func didCancelEditingOfXcodeServerConfig(_ config: XcodeServerConfig)
+    func didSaveXcodeServerConfig(_ config: XcodeServerConfig)
 }
 
 class XcodeServerViewController: ConfigEditViewController {
@@ -29,17 +30,17 @@ class XcodeServerViewController: ConfigEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.setup()
+        self.setupUI()
     }
     
-    func setup() {
+    func setupUI() {
         
         let server = self.serverConfig
         let servProd = server.producer
         let editing = self.editing.producer
         
         //pull data in from the provided config (can be changed externally!)
-        servProd.startWithNext { [weak self] config in
+        servProd.startWithValues { [weak self] config in
             self?.serverHostTextField.stringValue = config.host
             self?.serverUserTextField.stringValue = config.user ?? ""
             self?.serverPasswordTextField.stringValue = config.password ?? ""
@@ -49,24 +50,28 @@ class XcodeServerViewController: ConfigEditViewController {
         let host = self.serverHostTextField.rac_text
         let user = self.serverUserTextField.rac_text
         let pass = self.serverPasswordTextField.rac_text
-        let allText = combineLatest(host, user, pass)
-        self.valid = allText
+        let all = SignalProducer.combineLatest(host, user, pass)
+        self.valid = all
             .map { try? XcodeServerConfig(host: $0, user: $1, password: $2) }
             .map { $0 != nil }
         
         //change state to .Unchecked whenever any change to a textfield has been done
-        self.availabilityCheckState <~ allText.map { _ in AvailabilityCheckState.Unchecked }
+        self.availabilityCheckState <~ all.map { _ in AvailabilityCheckState.unchecked }
         
         //enabled
         self.serverHostTextField.rac_enabled <~ editing
         self.serverUserTextField.rac_enabled <~ editing
         self.serverPasswordTextField.rac_enabled <~ editing
-        self.trashButton.rac_enabled <~ editing
+        self.trashButton.rac_hidden <~ editing
         
-        //next is enabled if editing && valid input
-        let enableNext = combineLatest(self.valid, editing.producer)
-            .map { $0 && $1 }
-        self.nextAllowed <~ enableNext
+        let checker = self.availabilityCheckState.producer.map { state -> Bool in
+            return state != .checking && state != AvailabilityCheckState.succeeded
+        }
+        
+        //control buttons
+        let nextAllowed = SignalProducer.combineLatest(self.valid, editing.producer, checker)
+            .map { $0 && $1 && $2 }
+        self.nextAllowed <~ nextAllowed
     }
     
     override func shouldGoNext() -> Bool {
@@ -79,12 +84,12 @@ class XcodeServerViewController: ConfigEditViewController {
         //check availability of these credentials
         self.recheckForAvailability { [weak self] (state) -> () in
             
-            if case .Succeeded = state {
+            if case .succeeded = state {
                 //stop editing
                 self?.editing.value = false
                 
                 //animated!
-                delayClosure(1) {
+                delayClosure(delay: 1) {
                     self?.goNext(animated: true)
                 }
             }
@@ -92,7 +97,7 @@ class XcodeServerViewController: ConfigEditViewController {
         return false
     }
     
-    private func cancel() {
+    fileprivate func cancel() {
         //throw away this setup, don't save anything (but don't delete either)
         self.delegate?.didCancelEditingOfXcodeServerConfig(self.serverConfig.value)
     }
@@ -119,10 +124,10 @@ class XcodeServerViewController: ConfigEditViewController {
             let config = try! XcodeServerConfig(host: host, user: user, password: password, id: oldConfigId)
             
             do {
-                try self.storageManager.addServerConfig(config)
+                try self.storageManager.addServerConfig(config: config)
                 return config
             } catch StorageManagerError.DuplicateServerConfig(let duplicate) {
-                let userError = Error.withInfo("You already have a Xcode Server with host \"\(duplicate.host)\" and username \"\(duplicate.user ?? String())\", please go back and select it from the previous screen.")
+                let userError = XcodeServerError.with("You already have a Xcode Server with host \"\(duplicate.host)\" and username \"\(duplicate.user ?? String())\", please go back and select it from the previous screen.")
                 UIUtils.showAlertWithError(userError)
             } catch {
                 UIUtils.showAlertWithError(error)
@@ -137,17 +142,18 @@ class XcodeServerViewController: ConfigEditViewController {
     func removeCurrentConfig() {
         
         let config = self.serverConfig.value
-        self.storageManager.removeServer(config)
+        self.storageManager.removeServer(serverConfig: config!)
         self.cancel()
     }
     
-    override func checkAvailability(statusChanged: ((status: AvailabilityCheckState) -> ())) {
-        
-        let config = self.serverConfig.value
+    override func checkAvailability(_ statusChanged: @escaping ((_ status: AvailabilityCheckState) -> Void)) {
+
+        let config: XcodeServerConfig = self.serverConfig.value!
         let checkAction = AvailabilityChecker.xcodeServerAvailability()
-        checkAction.apply(config).startWithNext {
-            statusChanged(status: $0)
-        }
+        let _ = checkAction
+            .apply(config)
+            .on(starting: nil, started: nil, event: nil, failed: nil, completed: nil, interrupted: nil, terminated: nil, disposed: nil, value: statusChanged)
+            .start()
     }
 }
 

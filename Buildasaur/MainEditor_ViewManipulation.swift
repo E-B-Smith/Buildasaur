@@ -7,31 +7,31 @@
 //
 
 import Cocoa
-import ReactiveCocoa
+import ReactiveSwift
 
 extension MainEditorViewController {
     
     //view controller manipulation
 
-    private func rebindContentViewController() {
+    fileprivate func rebindContentViewController() {
         
         let content = self._contentViewController!
-        
+
         self.nextButton.rac_enabled <~ content.nextAllowed
         self.previousButton.rac_enabled <~ content.previousAllowed
         self.cancelButton.rac_enabled <~ content.cancelAllowed
-        content.wantsNext.observeNext { [weak self] in self?._next(animated: $0) }
-        content.wantsPrevious.observeNext { [weak self] in self?._previous(animated: false) }
+        content.wantsNext.observeValues { [weak self] in self?._next(animated: $0) }
+        content.wantsPrevious.observeValues { [weak self] in self?._previous(animated: false) }
         self.nextButton.rac_title <~ content.nextTitle
     }
     
-    private func remove(viewController: NSViewController?) {
+    fileprivate func remove(_ viewController: NSViewController?) {
         guard let vc = viewController else { return }
         vc.view.removeFromSuperview()
         vc.removeFromParentViewController()
     }
     
-    private func add(viewController: EditableViewController) {
+    fileprivate func add(_ viewController: EditableViewController) {
         self.addChildViewController(viewController)
         let view = viewController.view
         self.containerView.addSubview(view)
@@ -45,7 +45,7 @@ extension MainEditorViewController {
         self.rebindContentViewController()
     }
     
-    func setContentViewController(viewController: EditableViewController, animated: Bool) {
+    func setContentViewController(_ viewController: EditableViewController, animated: Bool) {
         
         //1. remove the old view
         self.remove(self._contentViewController)

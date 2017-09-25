@@ -10,17 +10,17 @@ import Foundation
 import BuildaUtils
 
 class BlueprintFileParser: SourceControlFileParser {
-    
+
     func supportedFileExtensions() -> [String] {
         return ["xcscmblueprint"]
     }
     
-    func parseFileAtUrl(url: NSURL) throws -> WorkspaceMetadata {
+    func parseFileAtUrl(url: URL) throws -> WorkspaceMetadata {
         
         //JSON -> NSDictionary
-        let data = try NSData(contentsOfURL: url, options: NSDataReadingOptions())
-        let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
-        guard let dictionary = jsonObject as? NSDictionary else { throw Error.withInfo("Failed to parse \(url)") }
+        let data = try Data(contentsOf: url, options: NSData.ReadingOptions())
+        let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let dictionary = jsonObject as? NSDictionary else { throw XcodeDeviceParserError.with("Failed to parse \(url)") }
         
         //parse our required keys
         let projectName = dictionary.optionalStringForKey("DVTSourceControlWorkspaceBlueprintNameKey")

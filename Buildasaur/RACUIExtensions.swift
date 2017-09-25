@@ -9,13 +9,14 @@
 import Foundation
 import Cocoa
 import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 //taken from https://github.com/ColinEberhardt/ReactiveTwitterSearch/blob/82ab9d2595b07cbefd4c917ae643b568dd858119/ReactiveTwitterSearch/Util/UIKitExtensions.swift
 
 //book keeping
 
-func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Void>, factory: () -> T) -> T {
+func lazyAssociatedProperty<T: AnyObject>(_ host: AnyObject, key: UnsafeRawPointer, factory: () -> T) -> T {
     
     let obj: T? = getAssociatedProperty(host, key: key) as? T
     if let object = obj {
@@ -27,19 +28,19 @@ func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Vo
     return associatedProperty
 }
 
-func setAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Void>, value: T) {
+func setAssociatedProperty<T: AnyObject>(_ host: AnyObject, key: UnsafeRawPointer, value: T) {
     objc_setAssociatedObject(host, key, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 }
 
-func getAssociatedProperty(host: AnyObject, key: UnsafePointer<Void>) -> AnyObject! {
-    return objc_getAssociatedObject(host, key)
+func getAssociatedProperty(_ host: AnyObject, key: UnsafeRawPointer) -> AnyObject! {
+    return objc_getAssociatedObject(host, key) as AnyObject
 }
 
-func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: (T) -> (), getter: () -> T) -> MutableProperty<T> {
+func lazyMutableProperty<T>(_ host: AnyObject, key: UnsafeRawPointer, setter: @escaping (T) -> (), getter: @escaping () -> T) -> MutableProperty<T> {
     return lazyAssociatedProperty(host, key: key) {
         let property = MutableProperty<T>(getter())
         property.producer
-            .startWithNext { setter($0) }
+            .startWithValues { setter($0) }
         return property
     }
 }
@@ -84,16 +85,15 @@ extension NSButton {
         
         let on = lazyMutableProperty(self, key: &AssociationKey.on, setter: { [weak self] in self?.on = $0 }, getter: { [weak self] in self?.on ?? false })
         
-        let action = Action<AnyObject?, AnyObject, NoError> {
-            input in
-            let button = input as! NSButton
+        let action = Action<(), AnyObject, NoError> { [weak self] input in
+            let button = self!
             return SignalProducer { sink, _ in
                 on.value = button.on
                 sink.sendCompleted()
             }
         }
-        
-        self.rac_command = toRACCommand(action)
+
+        self.reactive.pressed = CocoaAction(action)
         
         return on.producer
     }
@@ -102,24 +102,19 @@ extension NSButton {
 extension NSControl {
     
     public var rac_enabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { [weak self] in self?.enabled = $0 }, getter: { [weak self] in self?.enabled ?? false })
+        return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { [weak self] in self?.isEnabled = $0 }, getter: { [weak self] in self?.isEnabled ?? false })
     }
     
     //not sure about the memory management here
     public var rac_text: SignalProducer<String, NoError> {
-        return self
-            .rac_textSignal()
-            .toSignalProducer()
-            .map { $0 as? String }
-            .ignoreNil()
-            .ignoreErrors()
+        return SignalProducer(self.reactive.stringValues).ignoreErrors()
     }
 }
 
 extension NSView {
     
     public var rac_hidden: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { [weak self] in self?.hidden = $0 }, getter: { [weak self] in self?.hidden ?? false })
+        return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { [weak self] in self?.isHidden = $0 }, getter: { [weak self] in self?.isHidden ?? false })
     }
 }
 

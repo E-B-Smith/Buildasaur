@@ -19,23 +19,23 @@ class SyncPair_Deletable_Bot: SyncPair {
         super.init()
     }
     
-    override func sync(completion: Completion) {
+    override func sync(completion: @escaping Completion) {
         
         //delete the bot
         let syncer = self.syncer
         let bot = self.bot
         
-        SyncPair_Deletable_Bot.deleteBot(syncer: syncer, bot: bot, completion: completion)
+        SyncPair_Deletable_Bot.deleteBot(syncer: syncer!, bot: bot, completion: completion)
     }
     
     override func syncPairName() -> String {
         return "Deletable Bot (\(self.bot.name))"
     }
     
-    private class func deleteBot(syncer syncer: StandardSyncer, bot: Bot, completion: Completion) {
+    private class func deleteBot(syncer: StandardSyncer, bot: Bot, completion: @escaping Completion) {
         
-        syncer.deleteBot(bot, completion: { () -> () in
-            completion(error: nil)
+        syncer.deleteBot(bot: bot, completion: { () -> () in
+            completion(nil)
         })
     }
 }

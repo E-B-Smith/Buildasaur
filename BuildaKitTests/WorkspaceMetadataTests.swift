@@ -14,7 +14,7 @@ import BuildaGitServer
 class WorkspaceMetadataTests: XCTestCase {
 
     func help_test_parse_with(urlString url: String, expectedCheckoutType: CheckoutType, expectedGitService: GitService) {
-        guard let (checkoutType, service) = WorkspaceMetadata.parse(url) else {
+        guard let (checkoutType, service) = WorkspaceMetadata.parse(projectURLString: url) else {
             XCTFail("Failed to parse URL string: \(url)")
             return
         }
@@ -54,20 +54,20 @@ class WorkspaceMetadataTests: XCTestCase {
     // MARK: HTTP
 
     func test_parse_HTTPS() {
-        expect(WorkspaceMetadata.parse("https://github.com/organization/repo")).to(beNil())
+        expect(WorkspaceMetadata.parse(projectURLString: "https://github.com/organization/repo")).to(beNil())
     }
 
     func test_parse_HTTP() {
-        expect(WorkspaceMetadata.parse("http://github.com/organization/repo")).to(beNil())
+        expect(WorkspaceMetadata.parse(projectURLString: "http://github.com/organization/repo")).to(beNil())
     }
 
     func test_parse_implicitHTTP() {
-        expect(WorkspaceMetadata.parse("github.com/organization/repo")).to(beNil())
+        expect(WorkspaceMetadata.parse(projectURLString: "github.com/organization/repo")).to(beNil())
     }
 
     // MARK: Git protocol
 
     func test_parse_git() {
-        expect(WorkspaceMetadata.parse("git://github.com/organization/repo")).to(beNil())
+        expect(WorkspaceMetadata.parse(projectURLString: "git://github.com/organization/repo")).to(beNil())
     }
 }

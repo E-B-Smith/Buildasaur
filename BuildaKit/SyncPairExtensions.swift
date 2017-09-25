@@ -19,16 +19,16 @@ extension SyncPair {
         public let startNewIntegrationBot: Bot? //if non-nil, starts a new integration on this bot
     }
 
-    func performActions(actions: Actions, completion: Completion) {
+    func performActions(actions: Actions, completion: @escaping Completion) {
         
-        let group = dispatch_group_create()
-        var lastGroupError: NSError?
+        let group = DispatchGroup()
+        var lastGroupError: Error?
         
         if let integrationsToCancel = actions.integrationsToCancel {
             
-            dispatch_group_enter(group)
-            self.syncer.cancelIntegrations(integrationsToCancel, completion: { () -> () in
-                dispatch_group_leave(group)
+            group.enter()
+            self.syncer.cancelIntegrations(integrations: integrationsToCancel, completion: { () -> () in
+                group.leave()
             })
         }
         
@@ -38,12 +38,12 @@ extension SyncPair {
             let commit = newStatus.commit
             let issue = newStatus.issue
             
-            dispatch_group_enter(group)
-            self.syncer.updateCommitStatusIfNecessary(status, commit: commit, issue: issue, completion: { (error) -> () in
+            group.enter()
+            self.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, issue: issue, completion: { (error) -> () in
                 if let error = error {
                     lastGroupError = error
                 }
-                dispatch_group_leave(group)
+                group.leave()
             })
         }
         
@@ -51,28 +51,28 @@ extension SyncPair {
             
             let bot = startNewIntegrationBot
             
-            dispatch_group_enter(group)
+            group.enter()
             self.syncer._xcodeServer.postIntegration(bot.id, completion: { (integration, error) -> () in
                 
-                if let integration = integration where error == nil {
+                if let integration = integration, error == nil {
                     Log.info("Bot \(bot.name) successfully enqueued Integration #\(integration.number)")
                 } else {
-                    let e = Error.withInfo("Bot \(bot.name) failed to enqueue an integration", internalError: error)
+                    let e = SyncerError.with("Bot \(bot.name) failed to enqueue an integration"/*, internalError: error*/)
                     lastGroupError = e
                 }
                 
-                dispatch_group_leave(group)
+                group.leave()
             })
         }
         
-        dispatch_group_notify(group, dispatch_get_main_queue(), {
-            completion(error: lastGroupError)
-        })
+        group.notify(queue: DispatchQueue.main) {
+            completion(lastGroupError)
+        }
     }
     
     //MARK: Utility functions
     
-    func getIntegrations(bot: Bot, completion: (integrations: [Integration], error: NSError?) -> ()) {
+    func getIntegrations(bot: Bot, completion: @escaping (_ integrations: [Integration], _ error: Error?) -> ()) {
         
         let syncer = self.syncer
         
@@ -84,21 +84,21 @@ extension SyncPair {
         let query = [
             "last": "20"
         ]
-        syncer._xcodeServer.getBotIntegrations(bot.id, query: query, completion: { (integrations, error) -> () in
+        syncer?._xcodeServer.getBotIntegrations(bot.id, query: query, completion: { (integrations, error) -> () in
             
-            if let error = error {
-                let e = Error.withInfo("Bot \(bot.name) failed return integrations", internalError: error)
-                completion(integrations: [], error: e)
+            if error != nil {
+                let e = SyncerError.with("Bot \(bot.name) failed return integrations"/*, internalError: error*/)
+                completion([], e)
                 return
             }
             
             if let integrations = integrations {
                 
-                completion(integrations: integrations, error: nil)
+                completion(integrations, nil)
                 
             } else {
-                let e = Error.withInfo("Getting integrations", internalError: Error.withInfo("Nil integrations even after returning nil error!"))
-                completion(integrations: [], error: e)
+                let e = SyncerError.with("Getting integrations"/*, internalError: SyncerError.with("Nil integrations even after returning nil error!")*/)
+                completion([], e)
             }
         })
     }

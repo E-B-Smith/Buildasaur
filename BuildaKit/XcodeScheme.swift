@@ -11,7 +11,7 @@ import Foundation
 extension NSURL {
     
     public var fileNameNoExtension: String? {
-        return ((self.lastPathComponent ?? "") as NSString).stringByDeletingPathExtension
+        return ((self.lastPathComponent ?? "") as NSString).deletingPathExtension
     }
 }
 

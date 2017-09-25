@@ -9,7 +9,7 @@
 import Foundation
 import BuildaUtils
 import Keys
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 public enum GitService: String {
@@ -54,15 +54,15 @@ public enum GitService: String {
     
     public func serviceKey() -> String {
         switch self {
-        case .GitHub: return BuildasaurKeys().gitHubAPIClientId()
-        case .BitBucket: return BuildasaurKeys().bitBucketAPIClientId()
+        case .GitHub: return BuildasaurKeys().gitHubAPIClientId
+        case .BitBucket: return BuildasaurKeys().bitBucketAPIClientId
         }
     }
     
     public func serviceSecret() -> String {
         switch self {
-        case .GitHub: return BuildasaurKeys().gitHubAPIClientSecret()
-        case .BitBucket: return BuildasaurKeys().bitBucketAPIClientSecret()
+        case .GitHub: return BuildasaurKeys().gitHubAPIClientSecret
+        case .BitBucket: return BuildasaurKeys().bitBucketAPIClientSecret
         }
     }
 }
@@ -81,3 +81,8 @@ public class GitServer : HTTPServer {
     }
 }
 
+public class GithubServerError: Error {
+    static func with(_ info: String) -> Error {
+        return NSError(domain: "GithubServer", code: -1, userInfo: ["info": info])
+    }
+}

@@ -10,12 +10,12 @@ import Cocoa
 import BuildaUtils
 import XcodeServerSDK
 import BuildaKit
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 class ConfigEditViewController: EditableViewController {
     
-    let availabilityCheckState = MutableProperty<AvailabilityCheckState>(.Unchecked)
+    let availabilityCheckState = MutableProperty<AvailabilityCheckState>(.unchecked)
     
     @IBOutlet weak var trashButton: NSButton!
     @IBOutlet weak var lastConnectionView: NSTextField?
@@ -31,7 +31,7 @@ class ConfigEditViewController: EditableViewController {
         self.setupAvailability()
     }
     
-    private func setupUI() {
+    fileprivate func setupUI() {
         
         if self.serverStatusImageView != nil {
             //status image
@@ -39,7 +39,7 @@ class ConfigEditViewController: EditableViewController {
                 .availabilityCheckState
                 .producer
                 .map { ConfigEditViewController.imageNameForStatus($0) }
-                .map { NSImage(named: $0) }
+                .map { NSImage(named: NSImage.Name(rawValue: $0)) }
             self.serverStatusImageView.rac_image <~ statusImage
         }
         
@@ -50,11 +50,11 @@ class ConfigEditViewController: EditableViewController {
     }
     
     //do not call directly! just override
-    func checkAvailability(statusChanged: ((status: AvailabilityCheckState) -> ())) {
+    func checkAvailability(_ statusChanged: @escaping ((_ status: AvailabilityCheckState) -> ())) {
         assertionFailure("Must be overriden by subclasses")
     }
         
-    @IBAction final func trashButtonClicked(sender: AnyObject) {
+    @IBAction final func trashButtonClicked(_ sender: AnyObject) {
         self.delete()
     }
     
@@ -66,55 +66,55 @@ class ConfigEditViewController: EditableViewController {
         assertionFailure("Must be overriden by subclasses")
     }
     
-    final func recheckForAvailability(completion: ((state: AvailabilityCheckState) -> ())?) {
+    final func recheckForAvailability(_ completion: ((_ state: AvailabilityCheckState) -> ())?) {
         self.editingAllowed.value = false
         self.checkAvailability { [weak self] (status) -> () in
             self?.availabilityCheckState.value = status
             if status.isDone() {
-                completion?(state: status)
+                completion?(status)
                 self?.editingAllowed.value = true
             }
         }
     }
     
-    private func setupAvailability() {
+    fileprivate func setupAvailability() {
         
         let state = self.availabilityCheckState.producer
         if let progress = self.progressIndicator {
-            progress.rac_animating <~ state.map { $0 == .Checking }
+            progress.rac_animating <~ state.map { $0 == .checking }
         }
         if let lastConnection = self.lastConnectionView {
             lastConnection.rac_stringValue <~ state.map { ConfigEditViewController.stringForState($0) }
         }
     }
     
-    private static func stringForState(state: AvailabilityCheckState) -> String {
+    fileprivate static func stringForState(_ state: AvailabilityCheckState) -> String {
         
         //TODO: add some emoji!
         switch state {
-        case .Checking:
+        case .checking:
             return "Checking access to server..."
-        case .Failed(let error):
-            let desc = (error as? NSError)?.localizedDescription ?? "\(error)"
+        case .failed(let error):
+            let desc = (error as NSError?)?.localizedDescription ?? "\(String(describing: error))"
             return "Failed to access server, error: \n\(desc)"
-        case .Succeeded:
+        case .succeeded:
             return "Verified access, all is well!"
-        case .Unchecked:
-            return "-"
+        case .unchecked:
+            return ""
         }
     }
     
-    private static func imageNameForStatus(status: AvailabilityCheckState) -> String {
+    fileprivate static func imageNameForStatus(_ status: AvailabilityCheckState) -> String {
         
         switch status {
-        case .Unchecked:
-            return NSImageNameStatusNone
-        case .Checking:
-            return NSImageNameStatusPartiallyAvailable
-        case .Succeeded:
-            return NSImageNameStatusAvailable
-        case .Failed(_):
-            return NSImageNameStatusUnavailable
+        case .unchecked:
+            return NSImage.Name.statusNone.rawValue
+        case .checking:
+            return NSImage.Name.statusPartiallyAvailable.rawValue
+        case .succeeded:
+            return NSImage.Name.statusAvailable.rawValue
+        case .failed(_):
+            return NSImage.Name.statusUnavailable.rawValue
         }
     }
 }

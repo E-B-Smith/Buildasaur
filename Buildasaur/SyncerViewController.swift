@@ -12,12 +12,13 @@ import BuildaUtils
 import XcodeServerSDK
 import BuildaKit
 import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 protocol SyncerViewControllerDelegate: class {
     
-    func didCancelEditingOfSyncerConfig(config: SyncerConfig)
-    func didSaveSyncerConfig(config: SyncerConfig)
+    func didCancelEditingOfSyncerConfig(_ config: SyncerConfig)
+    func didSaveSyncerConfig(_ config: SyncerConfig)
     func didRequestEditing()
 }
 
@@ -31,7 +32,7 @@ class SyncerViewController: ConfigEditViewController {
     
     weak var delegate: SyncerViewControllerDelegate?
     
-    private let syncer = MutableProperty<StandardSyncer?>(nil)
+    fileprivate let syncer = MutableProperty<StandardSyncer?>(nil)
     
     @IBOutlet weak var editButton: NSButton!
     @IBOutlet weak var statusTextField: NSTextField!
@@ -51,12 +52,12 @@ class SyncerViewController: ConfigEditViewController {
     @IBOutlet weak var manualBotManagementButton: NSButton!
     @IBOutlet weak var branchWatchingButton: NSButton!
     
-    private let isSyncing = MutableProperty<Bool>(false)
+    fileprivate let isSyncing = MutableProperty<Bool>(false)
     
-    private let syncInterval = MutableProperty<Double>(15)
-    private let watchedBranches = MutableProperty<[String]>([])
+    fileprivate let syncInterval = MutableProperty<Double>(15)
+    fileprivate let watchedBranches = MutableProperty<[String]>([])
     
-    private let generatedConfig = MutableProperty<SyncerConfig!>(nil)
+    fileprivate let generatedConfig = MutableProperty<SyncerConfig!>(nil)
     
     //----
     
@@ -74,28 +75,28 @@ class SyncerViewController: ConfigEditViewController {
         self.editing <~ isSyncing.map { !$0 }
         
         //when a new syncer comes in, rebind appropriate properties
-        self.syncer.producer.startWithNext { [weak self] in
+        self.syncer.producer.startWithValues { [weak self] in
             guard let sself = self else { return }
             if let syncer = $0 {
                 sself.isSyncing <~ syncer.activeSignalProducer
                 
-                let stateString = combineLatest(
+                let stateString = SignalProducer.combineLatest(
                     syncer.state.producer,
                     syncer.activeSignalProducer.producer
                     ).map { SyncerStatePresenter.stringForState($0.0, active: $0.1) }
                 sself.stateLabel.rac_stringValue <~ stateString
 
             } else {
-                sself.isSyncing <~ ConstantProperty(false)
+                sself.isSyncing <~ Property(value: false)
             }
         }
         
         //TODO: actually look into whether we've errored on the last sync
         //etc. to be more informative with this status (green should
         //only mean "Everything is OK, AFAIK", not "We're syncing")
-        self.availabilityCheckState <~ self.isSyncing.producer.map { $0 ? .Succeeded : .Unchecked }
+        self.availabilityCheckState <~ self.isSyncing.producer.map { $0 ? .succeeded : .unchecked }
         
-        self.nextTitle <~ ConstantProperty("Done")
+        self.nextTitle <~ Property(value: "Done")
         self.previousAllowed <~ self.isSyncing.producer.map { !$0 }
         
         self.startStopButton.rac_title <~ isSyncing.map { $0 ? "Stop" : "Start" }
@@ -113,7 +114,7 @@ class SyncerViewController: ConfigEditViewController {
         self.postStatusCommentsToggle.rac_enabled <~ editing
         
         //initial dump
-        self.syncerConfig.producer.startWithNext { [weak self] config in
+        self.syncerConfig.producer.startWithValues { [weak self] config in
             guard let sself = self else { return }
             sself.syncIntervalStepper.doubleValue = config.syncInterval
             sself.syncInterval.value = config.syncInterval
@@ -132,9 +133,9 @@ class SyncerViewController: ConfigEditViewController {
         
         precondition(self.syncerManager != nil)
         
-        self.syncerConfig.producer.startWithNext { [weak self] in
+        self.syncerConfig.producer.startWithValues { [weak self] in
             guard let sself = self else { return }
-            sself.syncer <~ sself.syncerManager.syncerWithRef($0.id)
+            sself.syncer <~ sself.syncerManager.syncerWithRef(ref: $0.id)
         }
     }
     
@@ -146,7 +147,7 @@ class SyncerViewController: ConfigEditViewController {
         let syncInterval = self.syncInterval.producer
         let watchedBranches = self.watchedBranches.producer
         
-        let combined = combineLatest(
+        let combined = SignalProducer.combineLatest(
             original,
             waitForLttm,
             postStatusComments,
@@ -157,7 +158,7 @@ class SyncerViewController: ConfigEditViewController {
         let generated = combined.map {
             (original, waitForLttm, postStatusComments, syncInterval, watchedBranches) -> SyncerConfig in
             
-            var newConfig = original
+            var newConfig = original!
             newConfig.waitForLttm = waitForLttm
             newConfig.postStatusComments = postStatusComments
             newConfig.syncInterval = syncInterval
@@ -166,7 +167,7 @@ class SyncerViewController: ConfigEditViewController {
         }
         self.generatedConfig <~ generated.map { Optional($0) }
         
-        self.generatedConfig.producer.startWithNext { [weak self] in
+        self.generatedConfig.producer.startWithValues { [weak self] in
             
             //hmm... we technically aren't saving do disk yet
             //but at least if you edit sth else and come back you'll see
@@ -178,7 +179,7 @@ class SyncerViewController: ConfigEditViewController {
     func setupSyncInterval() {
         
         self.syncIntervalTextField.rac_doubleValue <~ self.syncInterval
-        
+
         //action
         let handler = SignalProducer<AnyObject, NoError> { [weak self] sink, _ in
             if let sself = self {
@@ -193,8 +194,10 @@ class SyncerViewController: ConfigEditViewController {
             }
             sink.sendCompleted()
         }
-        let action = Action { (_: AnyObject?) in handler }
-        self.syncIntervalStepper.rac_command = toRACCommand(action)
+        let action = Action { (_: ()) in handler }
+        self.syncIntervalStepper.isHidden = true // Get me back when FIXME is done
+        //FIXME: self.syncIntervalStepper.action = CocoaAction(action)
+        //self.syncIntervalStepper.reactive.pressed = CocoaAction(action)
     }
     
     override func delete() {
@@ -204,21 +207,21 @@ class SyncerViewController: ConfigEditViewController {
             
             if remove {
                 let currentConfig = self.generatedConfig.value
-                self.storageManager.removeSyncer(currentConfig)
-                self.delegate?.didCancelEditingOfSyncerConfig(currentConfig)
+                self.storageManager.removeSyncer(syncerConfig: currentConfig!)
+                self.delegate?.didCancelEditingOfSyncerConfig(currentConfig!)
             }
         })
     }
     
-    @IBAction func startStopButtonTapped(sender: AnyObject) {
+    @IBAction func startStopButtonTapped(_ sender: AnyObject) {
         self.toggleActive()
     }
     
-    @IBAction func editButtonClicked(sender: AnyObject) {
+    @IBAction func editButtonClicked(_ sender: AnyObject) {
         self.editClicked()
     }
     
-    private func editClicked() {
+    fileprivate func editClicked() {
         self.delegate?.didRequestEditing()
     }
     
@@ -227,7 +230,7 @@ class SyncerViewController: ConfigEditViewController {
         return true
     }
     
-    private func toggleActive() {
+    fileprivate func toggleActive() {
         
         let isSyncing = self.isSyncing.value
         
@@ -254,10 +257,10 @@ class SyncerViewController: ConfigEditViewController {
         }
     }
     
-    private func save() {
+    fileprivate func save() {
         let newConfig = self.generatedConfig.value
-        self.storageManager.addSyncerConfig(newConfig)
-        self.delegate?.didSaveSyncerConfig(newConfig)
+        self.storageManager.addSyncerConfig(config: newConfig!)
+        self.delegate?.didSaveSyncerConfig(newConfig!)
     }
 }
 
@@ -265,25 +268,25 @@ extension SyncerViewController {
     
     //MARK: handling branch watching, manual bot management and link opening
     
-    @IBAction func branchWatchingTapped(sender: AnyObject) {
+    @IBAction func branchWatchingTapped(_ sender: AnyObject) {
         precondition(self.syncer.value != nil)
-        self.performSegueWithIdentifier("showBranchWatching", sender: self)
+        self.performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: "showBranchWatching"), sender: self)
     }
     
-    @IBAction func manualBotManagementTapped(sender: AnyObject) {
+    @IBAction func manualBotManagementTapped(_ sender: AnyObject) {
         precondition(self.syncer.value != nil)
-        self.performSegueWithIdentifier("showManual", sender: self)
+        self.performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: "showManual"), sender: self)
     }
     
-    @IBAction func helpLttmButtonTapped(sender: AnyObject) {
+    @IBAction func helpLttmButtonTapped(_ sender: AnyObject) {
         openLink("https://github.com/czechboy0/Buildasaur/blob/master/README.md#unlock-the-lttm-barrier")
     }
     
-    @IBAction func helpPostStatusCommentsButtonTapped(sender: AnyObject) {
+    @IBAction func helpPostStatusCommentsButtonTapped(_ sender: AnyObject) {
         openLink("https://github.com/czechboy0/Buildasaur/blob/master/README.md#envelope-posting-status-comments")
     }
     
-    override func prepareForSegue(segue: NSStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         
         if let manual = segue.destinationController as? ManualBotManagementViewController {
             manual.syncer = self.syncer.value
@@ -299,7 +302,7 @@ extension SyncerViewController {
 
 extension SyncerViewController: BranchWatchingViewControllerDelegate {
     
-    func didUpdateWatchedBranches(branches: [String]) {
+    func didUpdateWatchedBranches(_ branches: [String]) {
         self.watchedBranches.value = branches
         self.save()
     }
@@ -320,13 +323,13 @@ extension SyncerViewController {
                     return SyncerViewController.stringForEvent($0, syncer: syncer)
                 }
         }
-        producer.startWithNext { [weak self] in
+        producer.startWithValues { [weak self] in
             guard let sself = self else { return }
-            sself.statusTextField.rac_stringValue <~ $0.observeOn(UIScheduler())
+            sself.statusTextField.rac_stringValue <~ $0.observe(on: UIScheduler())
         }
     }
     
-    static func stringForEvent(event: SyncerEventType, syncer: Syncer) -> String {
+    static func stringForEvent(_ event: SyncerEventType, syncer: Syncer) -> String {
         
         switch event {
         case .DidBecomeActive:
@@ -344,15 +347,15 @@ extension SyncerViewController {
         }
     }
     
-    static func syncerBecameActive(syncer: Syncer) -> String {
+    static func syncerBecameActive(_ syncer: Syncer) -> String {
         return self.report("Syncer is now active...", syncer: syncer)
     }
     
-    static func syncerStopped(syncer: Syncer) -> String {
+    static func syncerStopped(_ syncer: Syncer) -> String {
         return self.report("Syncer is stopped", syncer: syncer)
     }
     
-    static func syncerDidStartSyncing(syncer: Syncer) -> String {
+    static func syncerDidStartSyncing(_ syncer: Syncer) -> String {
         
         var messages = [
             "Syncing in progress..."
@@ -366,7 +369,7 @@ extension SyncerViewController {
         return self.reportMultiple(messages, syncer: syncer)
     }
     
-    static func syncerDidFinishSyncing(syncer: Syncer) -> String {
+    static func syncerDidFinishSyncing(_ syncer: Syncer) -> String {
         
         var messages = [
             "Syncer is Idle... Waiting for the next sync...",
@@ -376,7 +379,7 @@ extension SyncerViewController {
             
             //error?
             if let error = ourSyncer.lastSyncError {
-                messages.insert("Last sync failed with error \(error.localizedDescription)", atIndex: 0)
+                messages.insert("Last sync failed with error \(error.localizedDescription)", at: 0)
             }
             
             //info reports
@@ -388,15 +391,15 @@ extension SyncerViewController {
         return self.reportMultiple(messages, syncer: syncer)
     }
     
-    static func syncerEncounteredError(syncer: Syncer, error: ErrorType) -> String {
+    static func syncerEncounteredError(_ syncer: Syncer, error: Error) -> String {
         return self.report("Error: \((error as NSError).localizedDescription)", syncer: syncer)
     }
     
-    static func report(string: String, syncer: Syncer) -> String {
+    static func report(_ string: String, syncer: Syncer) -> String {
         return self.reportMultiple([string], syncer: syncer)
     }
     
-    static func reportMultiple(strings: [String], syncer: Syncer) -> String {
+    static func reportMultiple(_ strings: [String], syncer: Syncer) -> String {
         
         var itemsToReport = [String]()
         
@@ -406,6 +409,6 @@ extension SyncerViewController {
         }
         
         strings.forEach { itemsToReport.append($0) }
-        return itemsToReport.joinWithSeparator("\n")
+        return itemsToReport.joined(separator: "\n")
     }
 }

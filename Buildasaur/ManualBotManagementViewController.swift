@@ -25,9 +25,9 @@ class ManualBotManagementViewController: NSViewController {
     
     @IBOutlet weak var creatingActivityIndicator: NSProgressIndicator!
     
-    private var buildTemplates: [BuildTemplate] {
+    fileprivate var buildTemplates: [BuildTemplate] {
         return Array(self.storageManager.buildTemplates.value.values)
-            .sort {$0.id < $1.id }
+            .sorted {$0.id < $1.id }
     }
     
     override func viewDidLoad() {
@@ -36,7 +36,7 @@ class ManualBotManagementViewController: NSViewController {
         assert(self.syncer != nil, "We need a syncer here")
         
         let names = self.buildTemplates.map({ $0.name })
-        self.templateComboBox.addItemsWithObjectValues(names)
+        self.templateComboBox.addItems(withObjectValues: names)
     }
     
     override func viewWillAppear() {
@@ -50,23 +50,23 @@ class ManualBotManagementViewController: NSViewController {
         }
     }
     
-    func fetchBranches(completion: ([BranchType]?, ErrorType?) -> ()) {
+    func fetchBranches(_ completion: @escaping ([BranchType]?, Error?) -> ()) {
         
         self.branchActivityIndicator.startAnimation(nil)
         let repoName = self.syncer.project.serviceRepoName()!
-        self.syncer.sourceServer.getBranchesOfRepo(repoName, completion: { (branches, error) -> () in
+        self.syncer.sourceServer.getBranchesOfRepo(repo: repoName, completion: { (branches, error) -> () in
             
-            NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+            OperationQueue.main.addOperation { () -> Void in
                 
                 self.branchComboBox.removeAllItems()
                 if let branches = branches {
                     let names = branches.map { $0.name }
-                    self.branchComboBox.addItemsWithObjectValues(names)
+                    self.branchComboBox.addItems(withObjectValues: names)
                 }
                 
                 completion(branches, error)
                 self.branchActivityIndicator.stopAnimation(nil)
-            })
+            }
         })
     }
     
@@ -82,7 +82,7 @@ class ManualBotManagementViewController: NSViewController {
     
     func pullBranchName() -> String? {
         
-        if let branch = self.branchComboBox.objectValueOfSelectedItem as? String where !branch.isEmpty {
+        if let branch = self.branchComboBox.objectValueOfSelectedItem as? String, !branch.isEmpty {
             return branch
         }
         UIUtils.showAlertWithText("Please specify a valid branch")
@@ -111,7 +111,7 @@ class ManualBotManagementViewController: NSViewController {
             let xcodeServer = self.syncer.xcodeServer
             
             self.creatingActivityIndicator.startAnimation(nil)
-            XcodeServerSyncerUtils.createBotFromBuildTemplate(name, syncer: syncer,template: template, project: project, branch: branch, scheduleOverride: nil, xcodeServer: xcodeServer, completion: { (bot, error) -> () in
+            XcodeServerSyncerUtils.createBotFromBuildTemplate(botName: name, syncer: syncer,template: template, project: project, branch: branch, scheduleOverride: nil, xcodeServer: xcodeServer, completion: { (bot, error) -> () in
                 
                 self.creatingActivityIndicator.stopAnimation(nil)
                 
@@ -120,7 +120,7 @@ class ManualBotManagementViewController: NSViewController {
                 } else if let bot = bot {
                     let text = "Successfully created bot \(bot.name) for branch \(bot.configuration.sourceControlBlueprint.branch)"
                     UIUtils.showAlertWithText(text, style: nil, completion: { (resp) -> () in
-                        self.dismissController(nil)
+                        self.dismiss(nil)
                     })
                     
                 } else {
@@ -135,11 +135,11 @@ class ManualBotManagementViewController: NSViewController {
         }
     }
     
-    @IBAction func cancelTapped(sender: AnyObject) {
-        self.dismissController(nil)
+    @IBAction func cancelTapped(_ sender: AnyObject) {
+        self.dismiss(nil)
     }
     
-    @IBAction func createTapped(sender: AnyObject) {
+    @IBAction func createTapped(_ sender: AnyObject) {
         self.createBot()
     }
 

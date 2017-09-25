@@ -39,7 +39,7 @@ class BitBucketEntity : BitBucketType {
 }
 
 //parse an array of dictionaries into an array of parsed entities
-func BitBucketArray<T where T: BitBucketType>(jsonArray: [NSDictionary]) throws -> [T] {
+func BitBucketArray<T>(jsonArray: [NSDictionary]) throws -> [T] where T: BitBucketType {
     
     let parsed = try jsonArray.map {
         (json: NSDictionary) -> (T) in

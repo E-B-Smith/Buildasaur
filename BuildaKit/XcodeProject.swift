@@ -24,7 +24,7 @@ extension Project {
         let privateSSHKey = self.privateSSHKey
         let sshPassphrase = self.config.value.sshPassphrase
         
-        let blueprint = SourceControlBlueprint(branch: branch, projectWCCIdentifier: projectWCCIdentifier, wCCName: wccName, projectName: projectName, projectURL: projectURL, projectPath: projectPath, publicSSHKey: publicSSHKey, privateSSHKey: privateSSHKey, sshPassphrase: sshPassphrase)
+        let blueprint = SourceControlBlueprint(branch: branch, projectWCCIdentifier: projectWCCIdentifier, wCCName: wccName, projectName: projectName, projectURL: projectURL!, projectPath: projectPath, publicSSHKey: publicSSHKey, privateSSHKey: privateSSHKey, sshPassphrase: sshPassphrase)
         return blueprint
     }
     
@@ -35,7 +35,7 @@ extension Project {
         let privateSSHKey = self.privateSSHKey
         let sshPassphrase = self.config.value.sshPassphrase
         
-        let blueprint = SourceControlBlueprint(projectURL: projectURL, publicSSHKey: publicSSHKey, privateSSHKey: privateSSHKey, sshPassphrase: sshPassphrase)
+        let blueprint = SourceControlBlueprint(projectURL: projectURL!, publicSSHKey: publicSSHKey, privateSSHKey: privateSSHKey, sshPassphrase: sshPassphrase)
         return blueprint
     }
 }

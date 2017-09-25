@@ -15,32 +15,32 @@ extension SourceServerType {
     /**
     *   Get the latest status of a pull request.
     */
-    func getStatusOfPullRequest(pullRequestNumber: Int, repo: String, completion: (status: StatusType?, error: ErrorType?) -> ()) {
+    func getStatusOfPullRequest(pullRequestNumber: Int, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> ()) {
         
-        self.getPullRequest(pullRequestNumber, repo: repo) { (pr, error) -> () in
+        self.getPullRequest(pullRequestNumber: pullRequestNumber, repo: repo) { (pr, error) -> () in
             
             if error != nil {
-                completion(status: nil, error: error)
+                completion(nil, error)
                 return
             }
             
             if let pr = pr {
                 //fetched PR, now take its head's sha - that's the commit we care about.
                 let sha = pr.headName
-                self.getStatusOfCommit(sha, repo: repo, completion: completion)
+                self.getStatusOfCommit(commit: sha, repo: repo, completion: completion)
             } else {
-                completion(status: nil, error: Error.withInfo("PR is nil and error is nil"))
+                completion(nil, GithubServerError.with("PR is nil and error is nil"))
             }
         }
     }
 
     //TODO: support paging through all the comments. currently we only fetch the last ~30 comments.
-    public func findMatchingCommentInIssue(commentsToMatch: [String], issue: Int, repo: String, completion: (foundComments: [CommentType]?, error: ErrorType?) -> ()) {
+    public func findMatchingCommentInIssue(commentsToMatch: [String], issue: Int, repo: String, completion: @escaping (_ foundComments: [CommentType]?, _ error: Error?) -> ()) {
         
-        self.getCommentsOfIssue(issue, repo: repo) { (comments, error) -> () in
+        self.getCommentsOfIssue(issueNumber: issue, repo: repo) { (comments, error) -> () in
             
             if error != nil {
-                completion(foundComments: nil, error: error)
+                completion(nil, error)
                 return
             }
             
@@ -56,9 +56,9 @@ extension SourceServerType {
                     }
                     return filteredSearch.count > 0
                 }
-                completion(foundComments: filtered, error: nil)
+                completion(filtered, nil)
             } else {
-                completion(foundComments: nil, error: Error.withInfo("Nil comments and nil error. Wat?"))
+                completion(nil, GithubServerError.with("Nil comments and nil error. Wat?"))
             }
         }
     }
