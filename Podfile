@@ -26,7 +26,7 @@ end
 
 def also_xcode_pods
     pods_for_errbody
-    pod 'XcodeServerSDK', '~> 0.7.2'
+    pod 'XcodeServerSDK', '~> 0.7.3'
     pod 'ekgclient', '~> 0.3.3'
 end
 
@@ -40,7 +40,7 @@ def buildasaur_app_pods
 end
 
 def test_pods
-    pod 'Nimble', :git => 'https://github.com/Quick/Nimble.git', :commit => 'a63252b16eba6cdebec4e4936388c90552165a68'
+    pod 'Nimble', '~> 7.0.2'
     pod 'DVR', '~> 1.1.0'
 end
 

@@ -70,7 +70,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func setupSparkle() {
         #if RELEASE
-            self.updater = SUUpdater.sharedUpdater()
+            self.updater = SUUpdater.shared()
             self.updater!.delegate = self
         #endif
     }

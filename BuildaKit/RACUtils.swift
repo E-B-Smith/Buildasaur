@@ -63,3 +63,28 @@ public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, L, Error>(_ a: Signal
         .map(repack)
 }
 
+internal func repack<A, B, C, D, E, F, G, H, I, J, K, L, M>(t: (A, B, C, D, E, F, G, H, I, J, K, L), value: M) -> (A, B, C, D, E, F, G, H, I, J, K, L, M) {
+    return (t.0, t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8, t.9, t.10, t.11, value)
+}
+
+/// Combines the values of all the given producers, in the manner described by
+/// `combineLatestWith`.
+
+public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, L, M, Error>(_ a: SignalProducer<A, Error>, _ b: SignalProducer<B, Error>, _ c: SignalProducer<C, Error>, _ d: SignalProducer<D, Error>, _ e: SignalProducer<E, Error>, _ f: SignalProducer<F, Error>, _ g: SignalProducer<G, Error>, _ h: SignalProducer<H, Error>, _ i: SignalProducer<I, Error>, _ j: SignalProducer<J, Error>, _ k: SignalProducer<K, Error>, _ l: SignalProducer<L, Error>, _ m: SignalProducer<M, Error>) -> SignalProducer<(A, B, C, D, E, F, G, H, I, J, K, L, M), Error> {
+    return combineLatest(a, b, c, d, e, f, g, h, i, j, k, l)
+        .combineLatest(with: m)
+        .map(repack)
+}
+
+internal func repack<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(t: (A, B, C, D, E, F, G, H, I, J, K, L, M), value: N) -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N) {
+    return (t.0, t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8, t.9, t.10, t.11, t.12, value)
+}
+
+/// Combines the values of all the given producers, in the manner described by
+/// `combineLatestWith`.
+
+public func combineLatest<A, B, C, D, E, F, G, H, I, J, K, L, M, N, Error>(_ a: SignalProducer<A, Error>, _ b: SignalProducer<B, Error>, _ c: SignalProducer<C, Error>, _ d: SignalProducer<D, Error>, _ e: SignalProducer<E, Error>, _ f: SignalProducer<F, Error>, _ g: SignalProducer<G, Error>, _ h: SignalProducer<H, Error>, _ i: SignalProducer<I, Error>, _ j: SignalProducer<J, Error>, _ k: SignalProducer<K, Error>, _ l: SignalProducer<L, Error>, _ m: SignalProducer<M, Error>, _ n: SignalProducer<N, Error>) -> SignalProducer<(A, B, C, D, E, F, G, H, I, J, K, L, M, N), Error> {
+    return combineLatest(a, b, c, d, e, f, g, h, i, j, k, l, m)
+        .combineLatest(with: n)
+        .map(repack)
+}

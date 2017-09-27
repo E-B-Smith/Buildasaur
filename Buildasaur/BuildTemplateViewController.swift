@@ -39,6 +39,8 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
     @IBOutlet weak var analyzeButton: NSButton!
     @IBOutlet weak var testButton: NSButton!
     @IBOutlet weak var archiveButton: NSButton!
+    @IBOutlet weak var allowServerToManageCertificate: NSButton!
+    @IBOutlet weak var automaticallyRegisterDevices: NSButton!
     @IBOutlet weak var schedulePopup: NSPopUpButton!
     @IBOutlet weak var cleaningPolicyPopup: NSPopUpButton!
     @IBOutlet weak var triggersTableView: NSTableView!
@@ -107,6 +109,9 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
         
         let buildTemplate = self.buildTemplate.value
         self.selectedScheme = MutableProperty<String>(buildTemplate.scheme)
+        
+        self.automaticallyRegisterDevices.rac_enabled <~ self.allowServerToManageCertificate.rac_on
+        self.automaticallyRegisterDevices.isEnabled = false
 
         self.selectedScheme.producer
             .startWithValues { [weak self] _ in
@@ -135,12 +140,12 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
                 self?.isDevicesUpToDate.value = true
             }
         }
-        
+
         self.setupSchemes()
         self.setupSchedules()
         self.setupCleaningPolicies()
         self.setupDeviceFilter()
-        
+
         let nextAllowed = SignalProducer.combineLatest(
             self.isValid.producer,
             self.isDevicesUpToDate.producer,
@@ -179,6 +184,9 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
             sself.analyzeButton.on = buildTemplate.shouldAnalyze
             sself.testButton.on = buildTemplate.shouldTest
             sself.archiveButton.on = buildTemplate.shouldArchive
+                
+            sself.allowServerToManageCertificate.on = buildTemplate.manageCertsAndProfiles
+            sself.automaticallyRegisterDevices.on = buildTemplate.addMissingDevicesToTeams
             
             let schedule = buildTemplate.schedule
             let scheduleIndex = sself.schedules.value.index(of: schedule.schedule)
@@ -374,6 +382,8 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
         let analyze = self.analyzeButton.rac_on
         let test = self.testButton.rac_on
         let archive = self.archiveButton.rac_on
+        let allowServerToManageCertificate = self.allowServerToManageCertificate.rac_on
+        let automaticallyRegisterDevices = self.automaticallyRegisterDevices.rac_on
         let schedule = self.selectedSchedule.producer
         let cleaningPolicy = self.cleaningPolicy.producer
         let triggers = self.triggers.producer
@@ -381,10 +391,10 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
         let deviceIds = self.selectedDeviceIds.producer
         
         let original = self.buildTemplate.producer
-        let combined = combineLatest(original, name, scheme, platformType, analyze, test, archive, schedule, cleaningPolicy, triggers, deviceFilter, deviceIds)
+        let combined = combineLatest(original, name, scheme, platformType, analyze, test, archive, allowServerToManageCertificate, automaticallyRegisterDevices, schedule, cleaningPolicy, triggers, deviceFilter, deviceIds)
         
         let validated = combined.map { [weak self]
-            original, name, scheme, platformType, analyze, test, archive, schedule, cleaningPolicy, triggers, deviceFilter, deviceIds -> Bool in
+            original, name, scheme, platformType, analyze, test, archive, allowServerToManageCertificate, automaticallyRegisterDevices, schedule, cleaningPolicy, triggers, deviceFilter, deviceIds -> Bool in
             
             guard let sself = self else { return false }
             
@@ -409,7 +419,7 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
         self.isValid <~ validated
         
         let generated = combined.forwardIf(condition: validated).map { [weak self]
-            original, name, scheme, platformType, analyze, test, archive, schedule, cleaningPolicy, triggers, deviceFilter, deviceIds -> BuildTemplate in
+            original, name, scheme, platformType, analyze, test, archive, allowServerToManageCertificate, automaticallyRegisterDevices, schedule, cleaningPolicy, triggers, deviceFilter, deviceIds -> BuildTemplate in
             
             var mod = original
             mod.projectName = self?.project.value.config.value.name
@@ -419,6 +429,8 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
             mod.shouldAnalyze = analyze
             mod.shouldTest = test
             mod.shouldArchive = archive
+            mod.manageCertsAndProfiles = allowServerToManageCertificate
+            mod.addMissingDevicesToTeams = automaticallyRegisterDevices
             mod.schedule = schedule
             mod.cleaningPolicy = cleaningPolicy
             mod.triggers = triggers.map { $0.id }

@@ -23,6 +23,8 @@ private let kKeyPlatformType = "platform_type"
 private let kKeyShouldAnalyze = "should_analyze"
 private let kKeyShouldTest = "should_test"
 private let kKeyShouldArchive = "should_archive"
+private let kKeyManageCertsAndProfiles = "manage_certs_and_profiles"
+private let kKeyAddMissingDevicesToTeams = "add_missing_devices_to_teams"
 
 public struct BuildTemplate: JSONSerializable {
     
@@ -37,6 +39,8 @@ public struct BuildTemplate: JSONSerializable {
     public var shouldAnalyze: Bool
     public var shouldTest: Bool
     public var shouldArchive: Bool
+    public var addMissingDevicesToTeams: Bool
+    public var manageCertsAndProfiles: Bool
     public var testingDeviceIds: [String]
     public var deviceFilter: DeviceFilter.FilterType
     public var platformType: DevicePlatform.PlatformType?
@@ -59,6 +63,8 @@ public struct BuildTemplate: JSONSerializable {
         self.shouldAnalyze = true
         self.shouldTest = true
         self.shouldArchive = false
+        self.manageCertsAndProfiles = false
+        self.addMissingDevicesToTeams = false
         self.testingDeviceIds = []
         self.deviceFilter = .allAvailableDevicesAndSimulators
         self.platformType = nil
@@ -92,8 +98,11 @@ public struct BuildTemplate: JSONSerializable {
         self.shouldTest = json[kKeyShouldTest] as! Bool
         self.shouldArchive = json[kKeyShouldArchive] as! Bool
         
+        self.manageCertsAndProfiles = json[kKeyManageCertsAndProfiles] as? Bool ?? false
+        self.addMissingDevicesToTeams = json[kKeyAddMissingDevicesToTeams] as? Bool ?? false
+
         self.testingDeviceIds = json[kKeyTestingDevices] as? [String] ?? []
-        
+
         if
             let deviceFilterInt = json[kKeyDeviceFilter] as? Int,
             let deviceFilter = DeviceFilter.FilterType(rawValue: deviceFilterInt)
@@ -102,7 +111,7 @@ public struct BuildTemplate: JSONSerializable {
         } else {
             self.deviceFilter = .allAvailableDevicesAndSimulators
         }
-        
+
         if
             let platformTypeString = json[kKeyPlatformType] as? String,
             let platformType = DevicePlatform.PlatformType(rawValue: platformTypeString) {
@@ -110,7 +119,7 @@ public struct BuildTemplate: JSONSerializable {
         } else {
             self.platformType = nil
         }
-        
+
         if !self.validate() {
             throw XcodeServerError.with("Invalid input into Build Template")
         }
@@ -129,6 +138,8 @@ public struct BuildTemplate: JSONSerializable {
         dict[kKeyShouldAnalyze] = self.shouldAnalyze
         dict[kKeyShouldTest] = self.shouldTest
         dict[kKeyShouldArchive] = self.shouldArchive
+        dict[kKeyManageCertsAndProfiles] = self.manageCertsAndProfiles
+        dict[kKeyAddMissingDevicesToTeams] = self.addMissingDevicesToTeams
         dict[kKeySchedule] = self.schedule.dictionarify()
         if let projectName = self.projectName {
             dict[kKeyProjectName] = projectName
