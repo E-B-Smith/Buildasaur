@@ -7,64 +7,42 @@
 //
 
 import Foundation
-import ReactiveSwift
-import Result
 import BuildaUtils
 import XcodeServerSDK
 
 public class AvailabilityChecker {
-    
-    public static func xcodeServerAvailability() -> Action<XcodeServerConfig, AvailabilityCheckState, NoError> {
-        return Action {
-            (input: XcodeServerConfig) -> SignalProducer<AvailabilityCheckState, NoError> in
-            
-            return SignalProducer {
-                sink, _ in
-                
-                sink.send(value: .checking)
-                
-                NetworkUtils.checkAvailabilityOfXcodeServerWithCurrentSettings(config: input, completion: { (success, error) -> () in
-                    OperationQueue.main.addOperation {
-                        if success {
-                            sink.send(value: .succeeded)
-                        } else {
-                            sink.send(value: .failed(error))
-                        }
-                        sink.sendCompleted()
-                    }
-                })
+    public static func xcodeServerAvailability(config: XcodeServerConfig, onUpdate: @escaping (_ state: AvailabilityCheckState) -> Void) {
+        onUpdate(.checking)
+
+        NetworkUtils.checkAvailabilityOfXcodeServerWithCurrentSettings(config: config) { (success, error) -> Void in
+            OperationQueue.main.addOperation {
+                if success {
+                    onUpdate(.succeeded)
+                } else {
+                    onUpdate(.failed(error))
+                }
             }
         }
     }
-    
-    public static func projectAvailability() -> Action<ProjectConfig, AvailabilityCheckState, NoError> {
-        return Action {
-            (input: ProjectConfig) -> SignalProducer<AvailabilityCheckState, NoError> in
-            
-            return SignalProducer { sink, _ in
-                
-                sink.send(value: .checking)
-                
-                var project: Project!
-                do {
-                    project = try Project(config: input)
-                } catch {
-                    sink.send(value: .failed(error))
-                    return
+
+    public static func projectAvailability(config: ProjectConfig, onUpdate: @escaping (_ state: AvailabilityCheckState) -> Void) {
+        onUpdate(.checking)
+
+        var project: Project!
+        do {
+            project = try Project(config: config)
+        } catch {
+            onUpdate(.failed(error))
+            return
+        }
+
+        NetworkUtils.checkAvailabilityOfServiceWithProject(project: project) { (success, error) -> Void in
+            OperationQueue.main.addOperation {
+                if success {
+                    onUpdate(.succeeded)
+                } else {
+                    onUpdate(.failed(error))
                 }
-                
-                NetworkUtils.checkAvailabilityOfServiceWithProject(project: project, completion: { (success, error) -> () in
-                    
-                    OperationQueue.main.addOperation {
-                        
-                        if success {
-                            sink.send(value: .succeeded)
-                        } else {
-                            sink.send(value: .failed(error))
-                        }
-                        sink.sendCompleted()
-                    }
-                })
             }
         }
     }

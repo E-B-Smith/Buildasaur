@@ -12,20 +12,20 @@ import XcodeServerSDK
 import SwiftSafe
 
 final class SecurePersistence {
-    
+
     #if TESTING
         typealias Keychain = NSMutableDictionary
     #endif
-    
+
     #if RELEASE
         static let Prefix = "com.honzadvorsky.buildasaur"
     #else
         static let Prefix = "com.honzadvorsky.buildasaur.debug"
     #endif
-    
+
     private let keychain: Keychain
     private let safe: Safe
-    
+
     private init(keychain: Keychain, safe: Safe = EREW()) {
         self.keychain = keychain
         self.safe = safe
@@ -34,15 +34,15 @@ final class SecurePersistence {
     static func xcodeServerPasswordKeychain() -> SecurePersistence {
         return self.keychain(service: "\(Prefix).xcs.password")
     }
-    
+
     static func sourceServerTokenKeychain() -> SecurePersistence {
         return self.keychain(service: "\(Prefix).source_server.oauth_tokens")
     }
-    
+
     static func sourceServerPassphraseKeychain() -> SecurePersistence {
         return self.keychain(service: "\(Prefix).source_server.passphrase")
     }
-    
+
     static private func keychain(service: String) -> SecurePersistence {
         #if TESTING
         let keychain = NSMutableDictionary()
@@ -51,7 +51,7 @@ final class SecurePersistence {
         #endif
         return self.init(keychain: keychain)
     }
-    
+
     func read(key: String) -> String? {
         var val: String?
         self.safe.read {
@@ -63,7 +63,7 @@ final class SecurePersistence {
         }
         return val
     }
-    
+
     func readAll() -> [(String, String)] {
         var all: [(String, String)] = []
         self.safe.read {
@@ -77,13 +77,13 @@ final class SecurePersistence {
         }
         return all
     }
-    
+
     func writeIfNeeded(key: String, value: String?) {
         self.safe.write {
             self.updateIfNeeded(key: key, value: value)
         }
     }
-    
+
     private func updateIfNeeded(key: String, value: String?) {
         #if TESTING
             let existing = self.keychain[key] as? String
@@ -111,4 +111,3 @@ extension ProjectConfig: KeychainSaveable {
         return self.id
     }
 }
-

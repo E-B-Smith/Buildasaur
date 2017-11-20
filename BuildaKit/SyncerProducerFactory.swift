@@ -7,13 +7,12 @@
 //
 
 import Foundation
-import ReactiveSwift
-import Result
 import XcodeServerSDK
 
 class SyncerProducerFactory {
-    
-    static func createTripletsProducer(st: StorageManager) -> SignalProducer<[ConfigTriplet], NoError> {
+
+    //TODO Fix me
+    /*static func createTripletsProducer(st: StorageManager) -> SignalProducer<[ConfigTriplet], NoError> {
         
         let projectConfigs = st.projectConfigs.producer
         let serverConfigs = st.serverConfigs.producer
@@ -104,6 +103,6 @@ class SyncerProducerFactory {
             return configsArray.map { factory.createTrigger(config: $0) }
         }
         return triggers
-    }
+    }*/
 
 }

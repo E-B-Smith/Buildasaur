@@ -10,32 +10,32 @@ import Foundation
 import BuildaGitServer
 
 class SyncPair_PR_NoBot: SyncPair {
-    
+
     let pr: PullRequestType
-    
+
     init(pr: PullRequestType) {
         self.pr = pr
         super.init()
     }
-    
+
     override func sync(completion: @escaping Completion) {
-        
+
         //create a bot for this PR
         let syncer = self.syncer
         let pr = self.pr
-        
+
         SyncPair_PR_NoBot.createBotForPR(syncer: syncer!, pr: pr, completion: completion)
     }
-    
+
     override func syncPairName() -> String {
         return "PR (\(self.pr.headName)) + No Bot"
     }
-    
-    //MARK: Internal
-    
+
+    // MARK: Internal
+
     private class func createBotForPR(syncer: StandardSyncer, pr: PullRequestType, completion: @escaping Completion) {
-        
-        syncer.createBotFromPR(pr: pr, completion: { () -> () in
+
+        syncer.createBotFromPR(pr: pr, completion: { () -> Void in
             completion(nil)
         })
     }

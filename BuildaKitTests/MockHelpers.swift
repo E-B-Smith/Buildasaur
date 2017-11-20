@@ -9,9 +9,9 @@
 import Foundation
 
 class MockHelpers {
-    
+
     class func loadSampleIntegration() -> NSMutableDictionary {
-        
+
         let bundle = Bundle(for: MockHelpers.self)
         if let url = bundle.url(forResource: "sampleFinishedIntegration", withExtension: "json") {
             let data = try! Data(contentsOf: url)
@@ -23,5 +23,5 @@ class MockHelpers {
         }
         return NSMutableDictionary()
     }
-    
+
 }

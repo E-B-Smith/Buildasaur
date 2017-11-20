@@ -8,12 +8,12 @@
 
 import Foundation
 
-class GitHubIssue : GitHubEntity {
-    
+class GitHubIssue: GitHubEntity {
+
     let number: Int
     let body: String
     var title: String
-    
+
     required init(json: NSDictionary) throws {
         self.number = try json.intForKey("number")
         self.body = json.optionalStringForKey("body") ?? ""
@@ -21,5 +21,3 @@ class GitHubIssue : GitHubEntity {
         try super.init(json: json)
     }
 }
-
-

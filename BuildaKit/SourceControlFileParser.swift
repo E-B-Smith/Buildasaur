@@ -13,4 +13,3 @@ protocol SourceControlFileParser {
     func supportedFileExtensions() -> [String]
     func parseFileAtUrl(url: URL) throws -> WorkspaceMetadata
 }
-

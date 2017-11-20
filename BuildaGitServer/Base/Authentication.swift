@@ -10,17 +10,16 @@ import Foundation
 import BuildaUtils
 
 public struct ProjectAuthenticator {
-    
     public enum AuthType: String {
         case PersonalToken
         case OAuthToken
     }
-    
+
     public let service: GitService
     public let username: String
     public let type: AuthType
     public let secret: String
-    
+
     public init(service: GitService, username: String, type: AuthType, secret: String) {
         self.service = service
         self.username = username
@@ -35,9 +34,7 @@ public protocol KeychainStringSerializable {
 }
 
 extension ProjectAuthenticator: KeychainStringSerializable {
-    
     public static func fromString(value: String) throws -> ProjectAuthenticator {
-        
         let comps = value.components(separatedBy: ":")
         guard comps.count >= 4 else { throw GithubServerError.with("Corrupted keychain string") }
         guard let service = GitService(rawValue: comps[0]) else {
@@ -51,9 +48,8 @@ extension ProjectAuthenticator: KeychainStringSerializable {
         let auth = ProjectAuthenticator(service: service, username: comps[1], type: type, secret: remaining)
         return auth
     }
-    
+
     public func toString() -> String {
-        
         return [
             self.service.rawValue,
             self.username,

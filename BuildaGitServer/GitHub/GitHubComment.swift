@@ -8,13 +8,13 @@
 
 import Foundation
 
-class GitHubComment : GitHubEntity {
-    
+class GitHubComment: GitHubEntity {
+
     let body: String
     let author: GitHubUser
-    
+
     required init(json: NSDictionary) throws {
-        
+
         self.body = try json.stringForKey("body")
         self.author = try GitHubUser(json: json.dictionaryForKey("user"))
 
@@ -23,5 +23,5 @@ class GitHubComment : GitHubEntity {
 }
 
 extension GitHubComment: CommentType {
-    
+
 }

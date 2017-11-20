@@ -11,19 +11,19 @@ import BuildaUtils
 
 //functions to make working with github easier - utility functions
 extension SourceServerType {
-    
+
     /**
     *   Get the latest status of a pull request.
     */
-    func getStatusOfPullRequest(pullRequestNumber: Int, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> ()) {
-        
-        self.getPullRequest(pullRequestNumber: pullRequestNumber, repo: repo) { (pr, error) -> () in
-            
+    func getStatusOfPullRequest(pullRequestNumber: Int, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> Void) {
+
+        self.getPullRequest(pullRequestNumber: pullRequestNumber, repo: repo) { (pr, error) -> Void in
+
             if error != nil {
                 completion(nil, error)
                 return
             }
-            
+
             if let pr = pr {
                 //fetched PR, now take its head's sha - that's the commit we care about.
                 let sha = pr.headName
@@ -35,26 +35,25 @@ extension SourceServerType {
     }
 
     //TODO: support paging through all the comments. currently we only fetch the last ~30 comments.
-    public func findMatchingCommentInIssue(commentsToMatch: [String], issue: Int, repo: String, completion: @escaping (_ foundComments: [CommentType]?, _ error: Error?) -> ()) {
-        
-        self.getCommentsOfIssue(issueNumber: issue, repo: repo) { (comments, error) -> () in
-            
+    public func findMatchingCommentInIssue(commentsToMatch: [String], issue: Int, repo: String, completion: @escaping (_ foundComments: [CommentType]?, _ error: Error?) -> Void) {
+
+        self.getCommentsOfIssue(issueNumber: issue, repo: repo) { (comments, error) -> Void in
+
             if error != nil {
                 completion(nil, error)
                 return
             }
-            
+
             if let comments = comments {
                 let filtered = comments.filter { (comment: CommentType) -> Bool in
-                    
-                    let filteredSearch = commentsToMatch.filter {
-                        (searchString: String) -> Bool in
+
+                    let filteredSearch = commentsToMatch.filter { (searchString: String) -> Bool in
                         if searchString == comment.body {
                             return true
                         }
                         return false
                     }
-                    return filteredSearch.count > 0
+                    return !filteredSearch.isEmpty
                 }
                 completion(filtered, nil)
             } else {

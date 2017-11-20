@@ -9,24 +9,23 @@
 import Foundation
 import BuildaUtils
 import XcodeServerSDK
-import ReactiveSwift
 
 public enum SyncerEventType {
-    
+
     case Initial
-    
+
     case DidBecomeActive
     case DidStop
-    
+
     case DidStartSyncing
     case DidFinishSyncing(Error?)
-    
+
     case DidEncounterError(Error)
 }
 
 class Trampoline: NSObject {
-    
-    var block: (() -> ())? = nil
+
+    var block: (() -> Void)?
     @objc func jump() { self.block?() }
 }
 
@@ -37,33 +36,38 @@ public class SyncerError: Error {
 }
 
 @objc public class Syncer: NSObject {
-    
-    public let state = MutableProperty<SyncerEventType>(.Initial)
-    
+
+    public private(set) var state: SyncerEventType = .Initial {
+        didSet {
+            self.onStateChanged?(self.state)
+        }
+    }
+    public var onStateChanged: ((SyncerEventType) -> Void)?
+
     //public
     public internal(set) var reports: [String: String] = [:]
     public private(set) var lastSuccessfulSyncFinishedDate: Date?
     public private(set) var lastSyncFinishedDate: Date?
     public private(set) var lastSyncStartDate: Date?
     public private(set) var lastSyncError: Error?
-    
+
     private var currentSyncError: NSError?
-    
+
     /// How often, in seconds, the syncer should pull data from both sources and resolve pending actions
     public var syncInterval: TimeInterval
-    
+
     private var isSyncing: Bool {
         didSet {
             if !oldValue && self.isSyncing {
                 self.lastSyncStartDate = Date()
-                self.state.value = .DidStartSyncing
+                self.state = .DidStartSyncing
             } else if oldValue && !self.isSyncing {
                 self.lastSyncFinishedDate = Date()
-                self.state.value = .DidFinishSyncing(self.lastSyncError)
+                self.state = .DidFinishSyncing(self.lastSyncError)
             }
         }
     }
-    
+
     public var active: Bool {
         didSet {
             if active && !oldValue {
@@ -72,40 +76,36 @@ public class SyncerError: Error {
                 self.timer = timer
                 RunLoop.main.add(timer, forMode: .commonModes)
                 self._sync() //call for the first time, next one will be called by the timer
-                self.state.value = .DidBecomeActive
+                self.state = .DidBecomeActive
             } else if !active && oldValue {
                 self.timer?.invalidate()
                 self.timer = nil
-                self.state.value = .DidStop
+                self.state = .DidStop
             }
-            self.activeSignalProducer.value = active
+            self.onActiveChanged?(self.active)
         }
     }
-    
-    //TODO: shouldn't be a mutableproperty, because nothing happens
-    //when you actually set it (the syncer isn't affected). only using
-    //for observing the active state from the outside world.
-    public let activeSignalProducer = MutableProperty<Bool>(false)
+    public var onActiveChanged: ((Bool) -> Void)?
 
     //private
     var timer: Timer?
     private let trampoline: Trampoline
 
     //---------------------------------------------------------
-    
+
     public init(syncInterval: TimeInterval) {
         self.syncInterval = syncInterval
         self.active = false
         self.isSyncing = false
         self.trampoline = Trampoline()
         super.init()
-        self.trampoline.block = { [weak self] () -> () in
+        self.trampoline.block = { [weak self] () -> Void in
             self?._sync()
         }
     }
-    
+
     func _sync() {
-        
+
         //this shouldn't even be getting called now
         if !self.active {
             self.timer?.invalidate()
@@ -118,18 +118,18 @@ public class SyncerError: Error {
             Log.info("Trying to sync again even though the previous sync hasn't finished. You might want to consider making the sync interval longer. Just sayin'")
             return
         }
-        
+
         Log.untouched("\n------------------------------------\n")
-        
+
         self.isSyncing = true
         self.currentSyncError = nil
         self.reports.removeAll(keepingCapacity: true)
-        
+
         let start = Date()
         Log.info("Sync starting at \(start)")
-        
-        self.sync { () -> () in
-            
+
+        self.sync { () -> Void in
+
             let end = Date()
             let finishState: String
             if let error = self.currentSyncError {
@@ -144,19 +144,19 @@ public class SyncerError: Error {
             self.isSyncing = false
         }
     }
-    
+
     func notifyErrorString(errorString: String, context: String?) {
         self.notifyError(error: SyncerError.with(errorString), context: context)
     }
-    
+
     func notifyError(error: Error?, context: String?) {
         self.notifyError(error: error as NSError?, context: context)
     }
-    
+
     func notifyError(error: NSError?, context: String?) {
-        
+
         var message = "Syncing encountered a problem. "
-        
+
         if let error = error {
             message += "Error: \(error.localizedDescription). "
         }
@@ -165,13 +165,13 @@ public class SyncerError: Error {
         }
         Log.error(message)
         self.currentSyncError = error
-        self.state.value = .DidEncounterError(SyncerError.with(message))
+        self.state = .DidEncounterError(SyncerError.with(message))
     }
-    
+
     /**
     To be overriden by subclasses to do their logic in
     */
-    public func sync(completion: @escaping () -> ()) {
+    public func sync(completion: @escaping () -> Void) {
         //sync logic here
         assertionFailure("Should be overriden by subclasses")
     }

@@ -8,13 +8,13 @@
 
 import Foundation
 
-class GitHubBranch : GitHubEntity {
-    
+class GitHubBranch: GitHubEntity {
+
     let name: String
     let commit: GitHubCommit
-    
+
     required init(json: NSDictionary) throws {
-        
+
         self.name = try json.stringForKey("name")
         self.commit = try GitHubCommit(json: json.dictionaryForKey("commit"))
         try super.init(json: json)
@@ -22,11 +22,11 @@ class GitHubBranch : GitHubEntity {
 }
 
 extension GitHubBranch: BranchType {
-    
+
     //name (see above)
-    
+
     var commitSHA: String {
         return self.commit.sha
     }
-    
+
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -2056,7 +2056,7 @@ Gw
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yyH-7f-chi">
-                                        <rect key="frame" x="9" y="97" width="412" height="56"/>
+                                        <rect key="frame" x="9" y="97" width="434" height="56"/>
                                         <subviews>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yp3-gn-PeT">
                                                 <rect key="frame" x="0.0" y="0.0" width="54" height="55"/>
@@ -2096,13 +2096,13 @@ Gw
                                                 </customSpacing>
                                             </stackView>
                                             <scrollView autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pzv-da-4vI">
-                                                <rect key="frame" x="62" y="0.0" width="350" height="56"/>
+                                                <rect key="frame" x="62" y="0.0" width="372" height="56"/>
                                                 <clipView key="contentView" id="Ziw-Dc-PJW">
-                                                    <rect key="frame" x="1" y="1" width="348" height="54"/>
+                                                    <rect key="frame" x="1" y="1" width="370" height="54"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="26" id="3LH-7K-zWF">
-                                                            <rect key="frame" x="0.0" y="0.0" width="348" height="54"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="370" height="54"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <size key="intercellSpacing" width="3" height="2"/>
                                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -2137,7 +2137,7 @@ Gw
                                                                     </buttonCell>
                                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                 </tableColumn>
-                                                                <tableColumn identifier="delete" width="95" minWidth="10" maxWidth="3.4028234663852886e+38" id="mw0-hr-kfd">
+                                                                <tableColumn identifier="delete" width="117" minWidth="10" maxWidth="3.4028234663852886e+38" id="mw0-hr-kfd">
                                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                                         <font key="font" metaFont="smallSystem"/>
                                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -2187,7 +2187,7 @@ Gw
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8PN-Qf-rxT">
-                                        <rect key="frame" x="0.0" y="68" width="420" height="21"/>
+                                        <rect key="frame" x="0.0" y="68" width="442" height="21"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="e8f-s3-c3l">
                                                 <rect key="frame" x="-2" y="3" width="67" height="17"/>
@@ -2198,7 +2198,7 @@ Gw
                                                 </textFieldCell>
                                             </textField>
                                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bV7-h4-cgv">
-                                                <rect key="frame" x="69" y="-3" width="354" height="26"/>
+                                                <rect key="frame" x="69" y="-3" width="376" height="26"/>
                                                 <popUpButtonCell key="cell" type="push" title="Test Device Filter" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9Kq-Lg-lX9" id="5HQ-2l-1Y0">
                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="menu"/>
@@ -2225,7 +2225,7 @@ Gw
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VmW-fk-we2">
-                                        <rect key="frame" x="0.0" y="0.0" width="420" height="60"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="442" height="60"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cm5-n9-4Go">
                                                 <rect key="frame" x="-2" y="43" width="67" height="17"/>
@@ -2236,13 +2236,13 @@ Gw
                                                 </textFieldCell>
                                             </textField>
                                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dQg-Qo-Iyp">
-                                                <rect key="frame" x="71" y="0.0" width="349" height="60"/>
+                                                <rect key="frame" x="71" y="0.0" width="371" height="60"/>
                                                 <clipView key="contentView" id="ypc-5g-bje">
-                                                    <rect key="frame" x="1" y="1" width="347" height="58"/>
+                                                    <rect key="frame" x="1" y="1" width="369" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" id="8jQ-1w-bC4">
-                                                            <rect key="frame" x="0.0" y="0.0" width="347" height="58"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="369" height="58"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <size key="intercellSpacing" width="3" height="2"/>
                                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

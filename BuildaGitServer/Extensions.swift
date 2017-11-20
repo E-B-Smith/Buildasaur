@@ -16,4 +16,3 @@ extension String {
             .base64EncodedString()
     }
 }
-
