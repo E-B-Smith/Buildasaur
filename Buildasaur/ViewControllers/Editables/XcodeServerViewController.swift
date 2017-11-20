@@ -32,6 +32,7 @@ class XcodeServerViewController: ConfigEditViewController {
     }
     override var availabilityCheckState: AvailabilityCheckState {
         didSet {
+            self.trashButton.isHidden = self.editing || self.availabilityCheckState == .checking
             self.updateNextAllowed()
         }
     }
@@ -40,7 +41,7 @@ class XcodeServerViewController: ConfigEditViewController {
             self.serverHostTextField.isEnabled = self.editing
             self.serverUserTextField.isEnabled = self.editing
             self.serverPasswordTextField.isEnabled = self.editing
-            self.trashButton.isHidden = self.editing
+            self.trashButton.isHidden = self.editing || self.availabilityCheckState == .checking
 
             self.updateNextAllowed()
         }

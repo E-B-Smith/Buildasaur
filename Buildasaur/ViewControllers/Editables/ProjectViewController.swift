@@ -22,6 +22,7 @@ class ProjectViewController: ConfigEditViewController {
 
     override var availabilityCheckState: AvailabilityCheckState {
         didSet {
+            self.trashButton.isHidden = self.availabilityCheckState == .checking
             self.goNextIfPossible()
             self.updateNextAllowed()
         }

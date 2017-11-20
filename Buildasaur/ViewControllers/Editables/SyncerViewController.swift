@@ -92,6 +92,8 @@ class SyncerViewController: ConfigEditViewController {
             self.manualBotManagementButton.isEnabled = !self.isSyncing
             self.branchWatchingButton.isEnabled = !self.isSyncing
 
+            self.trashButton.isHidden = self.isSyncing
+
             //TODO: actually look into whether we've errored on the last sync
             //etc. to be more informative with this status (green should
             //only mean "Everything is OK, AFAIK", not "We're syncing")
