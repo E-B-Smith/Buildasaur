@@ -78,7 +78,9 @@ class DashboardViewController: PresentableViewController {
         self.autostartButton.on = self.config["autostart"] as? Bool ?? false
 
         self.autostartButton.onClick = { [weak self] sender in
-            self?.config["autostart"] = sender
+            if let sender = sender as? NSButton {
+                self?.config["autostart"] = sender.on as AnyObject
+            }
         }
 
         //setup login item
