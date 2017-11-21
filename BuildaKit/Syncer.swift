@@ -154,11 +154,10 @@ public class SyncerError: Error {
     }
 
     func notifyError(error: NSError?, context: String?) {
-
         var message = "Syncing encountered a problem. "
 
         if let error = error {
-            message += "Error: \(error.localizedDescription). "
+            message += "Error: \(error.userInfo["info"]!). "
         }
         if let context = context {
             message += "Context: \(context)"

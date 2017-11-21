@@ -123,8 +123,8 @@ class MockIssue: GitHubIssue {
 }
 
 class MockBuildStatusCreator: BuildStatusCreator {
-    func createStatusFromState(state: BuildState, description: String?, targetUrl: String?) -> StatusType {
-        return GitHubStatus(state: GitHubStatus.GitHubState.fromBuildState(buildState: state), description: "Things happened", targetUrl: "http://hello.world", context: "Buildasaur")
+    func createStatusFromState(state: BuildState, description: String?, targetUrl: [String: String]?) -> StatusType {
+        return GitHubStatus(state: GitHubStatus.GitHubState.fromBuildState(buildState: state), description: "Things happened", targetUrl: ["https": "http://hello.world"], context: "Buildasaur")
     }
 
     init() { }
