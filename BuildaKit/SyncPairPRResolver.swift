@@ -12,6 +12,5 @@ import BuildaGitServer
 import BuildaUtils
 
 public class SyncPairPRResolver: SyncPairResolver {
-    
-    
+
 }

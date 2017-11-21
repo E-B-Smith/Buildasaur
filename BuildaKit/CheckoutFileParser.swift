@@ -10,16 +10,16 @@ import Foundation
 import BuildaUtils
 
 class CheckoutFileParser: SourceControlFileParser {
-    
+
     func supportedFileExtensions() -> [String] {
         return ["xccheckout"]
     }
-    
+
     func parseFileAtUrl(url: URL) throws -> WorkspaceMetadata {
-        
+
         //plist -> NSDictionary
         guard let dictionary = NSDictionary(contentsOf: url) else { throw XcodeDeviceParserError.with("Failed to parse \(url)") }
-        
+
         //parse our required keys
         let projectName = dictionary.optionalStringForKey("IDESourceControlProjectName")
         let projectPath = dictionary.optionalStringForKey("IDESourceControlProjectPath")
@@ -41,7 +41,7 @@ class CheckoutFileParser: SourceControlFileParser {
             return nil
             }()
         let projectURLString = { dictionary.optionalStringForKey("IDESourceControlProjectURL") }()
-        
+
         return try WorkspaceMetadata(projectName: projectName, projectPath: projectPath, projectWCCIdentifier: projectWCCIdentifier, projectWCCName: projectWCCName, projectURLString: projectURLString)
     }
 }

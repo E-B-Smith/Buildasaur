@@ -8,44 +8,44 @@
 
 import Foundation
 
-class GitHubRepo : GitHubEntity {
-    
+class GitHubRepo: GitHubEntity {
+
     let name: String
     let fullName: String
     let repoUrlHTTPS: String
     let repoUrlSSH: String
     let permissionsDict: NSDictionary
-    
+
     var latestRateLimitInfo: RateLimitType?
-    
+
     required init(json: NSDictionary) throws {
 
         self.name = try json.stringForKey("name")
         self.fullName = try json.stringForKey("full_name")
         self.repoUrlHTTPS = try json.stringForKey("clone_url")
         self.repoUrlSSH = try json.stringForKey("ssh_url")
-        
+
         if let permissions = json.optionalDictionaryForKey("permissions") {
             self.permissionsDict = permissions
         } else {
             self.permissionsDict = NSDictionary()
         }
-        
+
         try super.init(json: json)
     }
 }
 
 extension GitHubRepo: RepoType {
-    
+
     var permissions: RepoPermissions {
-        
+
         let read = self.permissionsDict["pull"] as? Bool ?? false
         let write = self.permissionsDict["push"] as? Bool ?? false
         return RepoPermissions(read: read, write: write)
     }
-    
+
     var originUrlSSH: String {
-        
+
         return self.repoUrlSSH
     }
 }

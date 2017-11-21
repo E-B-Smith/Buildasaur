@@ -8,19 +8,18 @@
 
 import Foundation
 
-class GitHubUser : GitHubEntity {
+class GitHubUser: GitHubEntity {
 
     let userName: String
     let realName: String?
     let avatarUrl: String?
 
     required init(json: NSDictionary) throws {
-        
+
         self.userName = try json.stringForKey("login")
         self.realName = json.optionalStringForKey("name")
         self.avatarUrl = try json.stringForKey("avatar_url")
-        
+
         try super.init(json: json)
     }
 }
-

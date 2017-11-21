@@ -18,16 +18,16 @@ public func firstNonNil<T>(objects: [T?]) -> T? {
 }
 
 extension Set {
-    
+
     public func filterSet(includeElement: (Element) -> Bool) -> Set<Element> {
         return Set(self.filter(includeElement))
     }
 }
 
 extension Array {
-    
+
     public func indexOfFirstObjectPassingTest(test: (Element) -> Bool) -> Array<Element>.Index? {
-        
+
         for (idx, obj) in self.enumerated() {
             if test(obj) {
                 return idx
@@ -35,7 +35,7 @@ extension Array {
         }
         return nil
     }
-    
+
     public func firstObjectPassingTest(test: (Element) -> Bool) -> Element? {
         for item in self {
             if test(item) {
@@ -47,29 +47,28 @@ extension Array {
 }
 
 extension Array {
-    
-    public func mapVoidAsync(transformAsync: @escaping (_ item: Element, _ itemCompletion: @escaping () -> ()) -> (), completion: @escaping () -> ()) {
-        self.mapAsync(transformAsync: transformAsync as! ((Element, (Void) -> ()) -> ()), completion: { (_) -> () in
+
+    public func mapVoidAsync(transformAsync: @escaping (_ item: Element, _ itemCompletion: @escaping () -> Void) -> Void, completion: @escaping () -> Void) {
+        self.mapAsync(transformAsync: transformAsync as! ((Element, (()) -> Void) -> Void), completion: { (_) -> Void in
             completion()
         })
     }
-    
-    public func mapAsync<U>(transformAsync: (_ item: Element, _ itemCompletion: (U) -> ()) -> (), completion: @escaping ([U]) -> ()) {
-        
+
+    public func mapAsync<U>(transformAsync: (_ item: Element, _ itemCompletion: (U) -> Void) -> Void, completion: @escaping ([U]) -> Void) {
+
         let group = DispatchGroup()
         var returnedValueMap = [Int: U]()
-        
+
         for (index, element) in self.enumerated() {
             group.enter()
-            transformAsync(element, {
-                (returned: U) -> () in
+            transformAsync(element, { (returned: U) -> Void in
                 returnedValueMap[index] = returned
                 group.leave()
             })
         }
-        
+
         group.notify(queue: DispatchQueue.main) {
-            
+
             //we have all the returned values in a map, put it back into an array of Us
             var returnedValues = [U]()
             for i in 0 ..< returnedValueMap.count {
@@ -81,10 +80,10 @@ extension Array {
 }
 
 extension Array {
-    
+
     //dictionarify an array for fast lookup by a specific key
     public func toDictionary(key: (Element) -> String) -> [String: Element] {
-        
+
         var dict = [String: Element]()
         for i in self {
             dict[key(i)] = i
@@ -99,25 +98,25 @@ public enum NSDictionaryParseError: Error {
 }
 
 extension NSDictionary {
-    
+
     public func get<T>(key: String) throws -> T {
-        
+
         guard let value = self[key] else {
             throw NSDictionaryParseError.missingValueForKey(key: key)
         }
-        
+
         guard let typedValue = value as? T else {
             throw NSDictionaryParseError.wrongTypeOfValueForKey(key: key, value: value as AnyObject)
         }
         return typedValue
     }
-    
+
     public func getOptionally<T>(key: String) throws -> T? {
-        
+
         guard let value = self[key] else {
             return nil
         }
-        
+
         guard let typedValue = value as? T else {
             throw NSDictionaryParseError.wrongTypeOfValueForKey(key: key, value: value as AnyObject)
         }
@@ -126,8 +125,8 @@ extension NSDictionary {
 }
 
 extension Dictionary {
-    
-    public mutating func merge<S: Sequence> (other: S) where S.Iterator.Element == (Key,Value) {
+
+    public mutating func merge<S: Sequence> (other: S) where S.Iterator.Element == (Key, Value) {
         for (key, value) in other {
             self[key] = value
         }
@@ -135,7 +134,7 @@ extension Dictionary {
 }
 
 extension Array {
-    
+
     public func dictionarifyWithKey(key: (_ item: Element) -> String) -> [String: Element] {
         var dict = [String: Element]()
         self.forEach { dict[key($0)] = $0 }
@@ -144,7 +143,7 @@ extension Array {
 }
 
 extension String {
-    
+
     //returns nil if string is empty
     public func nonEmpty() -> String? {
         return self.isEmpty ? nil : self
@@ -154,5 +153,3 @@ extension String {
 public func delayClosure(delay: Double, closure: @escaping () -> Void) {
     DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: closure)
 }
-
-

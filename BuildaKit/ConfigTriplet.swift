@@ -17,7 +17,7 @@ public struct ConfigTriplet {
     public var project: ProjectConfig
     public var buildTemplate: BuildTemplate
     public var triggers: [TriggerConfig]
-    
+
     init(syncer: SyncerConfig, server: XcodeServerConfig, project: ProjectConfig, buildTemplate: BuildTemplate, triggers: [TriggerConfig]) {
         self.syncer = syncer
         self.server = server
@@ -26,7 +26,7 @@ public struct ConfigTriplet {
         self.syncer.preferredTemplateRef = buildTemplate.id
         self.triggers = triggers
     }
-    
+
     public func toEditable() -> EditableConfigTriplet {
         return EditableConfigTriplet(syncer: self.syncer, server: self.server, project: self.project, buildTemplate: self.buildTemplate, triggers: self.triggers)
     }
@@ -38,7 +38,7 @@ public struct EditableConfigTriplet {
     public var project: ProjectConfig?
     public var buildTemplate: BuildTemplate?
     public var triggers: [TriggerConfig]?
-    
+
     public func toFinal() -> ConfigTriplet {
         var syncer = self.syncer
         syncer.preferredTemplateRef = self.buildTemplate!.id

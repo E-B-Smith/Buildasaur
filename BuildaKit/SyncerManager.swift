@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import ReactiveSwift
-import Result
 import XcodeServerSDK
 import BuildaHeartbeatKit
 import BuildaUtils
@@ -17,52 +15,70 @@ import BuildaUtils
 //creating them from configurations
 
 public class SyncerManager {
-    
+
     public let storageManager: StorageManager
     public let factory: SyncerFactoryType
     public let loginItem: LoginItem
-    
-    public let syncersProducer: SignalProducer<[StandardSyncer], NoError>
-    public let projectsProducer: SignalProducer<[Project], NoError>
-    public let serversProducer: SignalProducer<[XcodeServer], NoError>
-    
-    public let buildTemplatesProducer: SignalProducer<[BuildTemplate], NoError>
-    public let triggerProducer: SignalProducer<[Trigger], NoError>
-    
-    public var syncers: [StandardSyncer]
-    private var configTriplets: SignalProducer<[ConfigTriplet], NoError>
+
+    public var syncers: [StandardSyncer] {
+        didSet {
+            self.onSyncersChange?(self.syncers)
+        }
+    }
+    public var onSyncersChange: (([StandardSyncer]) -> Void)?
+    public var configTriplets: [ConfigTriplet] = []
     public var heartbeatManager: HeartbeatManager?
 
     public init(storageManager: StorageManager, factory: SyncerFactoryType, loginItem: LoginItem) {
-        
+
         self.storageManager = storageManager
         self.loginItem = loginItem
-        
+
         self.factory = factory
         self.syncers = []
-        let configTriplets = SyncerProducerFactory.createTripletsProducer(st: storageManager)
-        self.configTriplets = configTriplets
-        let syncersProducer = SyncerProducerFactory.createSyncersProducer(factory: factory, triplets: configTriplets)
-        
-        self.syncersProducer = syncersProducer
-        
-        let justProjects = storageManager.projectConfigs.producer.map { $0.map { $0.1 } }
-        let justServers = storageManager.serverConfigs.producer.map { $0.map { $0.1 } }
-        let justBuildTemplates = storageManager.buildTemplates.producer.map { $0.map { $0.1 } }
-        let justTriggerConfigs = storageManager.triggerConfigs.producer.map { $0.map { $0.1 } }
-        
-        self.projectsProducer = SyncerProducerFactory.createProjectsProducer(factory: factory, configs: justProjects)
-        self.serversProducer = SyncerProducerFactory.createServersProducer(factory: factory, configs: justServers)
-        self.buildTemplatesProducer = SyncerProducerFactory.createBuildTemplateProducer(factory, templates: justBuildTemplates)
-        self.triggerProducer = SyncerProducerFactory.createTriggersProducer(factory: factory, configs: justTriggerConfigs)
 
-        syncersProducer.startWithValues { [weak self] in self?.syncers = $0 }
+        self.storageManager.onUpdateSyncerConfigs = { [weak self] in
+            self?.reloadSyncers()
+        }
+        self.reloadSyncers()
         self.checkForAutostart()
         self.setupHeartbeatManager()
     }
-    
+
+    private func reloadSyncers() {
+        typealias OptionalTuple = (SyncerConfig, XcodeServerConfig?, ProjectConfig?, BuildTemplate?, [TriggerConfig]?)
+        typealias OptionalTuples = [OptionalTuple]
+
+        let latestTuples: OptionalTuples = self.storageManager.syncerConfigs.values.map { (syncerConfig: SyncerConfig) -> OptionalTuple in
+            let buildTemplates = self.storageManager.buildTemplates[syncerConfig.preferredTemplateRef]
+            let triggerIds = Set(buildTemplates?.triggers ?? [])
+            let triggers = self.storageManager.triggerConfigs.filter { triggerIds.contains($0.0) }.map { $0.1 }
+            return (
+                syncerConfig,
+                self.storageManager.serverConfigs[syncerConfig.xcodeServerRef],
+                self.storageManager.projectConfigs[syncerConfig.projectRef],
+                buildTemplates,
+                triggers
+            )
+        }
+        let nonNilTuples = latestTuples.filter { (tuple: OptionalTuple) -> Bool in
+            tuple.1 != nil && tuple.2 != nil && tuple.3 != nil && tuple.4 != nil
+        }
+        let unwrapped = nonNilTuples.map { ($0.0, $0.1!, $0.2!, $0.3!, $0.4!) }
+
+        let triplets = unwrapped.map {
+            return ConfigTriplet(
+                syncer: $0.0,
+                server: $0.1,
+                project: $0.2,
+                buildTemplate: $0.3,
+                triggers: $0.4)
+        }
+        self.configTriplets = triplets
+        self.syncers = self.factory.createSyncers(configs: self.configTriplets)
+    }
     private func setupHeartbeatManager() {
-        if let heartbeatOptOut = self.storageManager.config.value["heartbeat_opt_out"] as? Bool, heartbeatOptOut {
+        if let heartbeatOptOut = self.storageManager.config["heartbeat_opt_out"] as? Bool, heartbeatOptOut {
             Log.info("User opted out of anonymous heartbeat")
         } else {
             Log.info("Will send anonymous heartbeat. To opt out add `\"heartbeat_opt_out\" = true` to ~/Library/Application Support/Buildasaur/Config.json")
@@ -71,37 +87,31 @@ public class SyncerManager {
             self.heartbeatManager!.start()
         }
     }
-    
+
     private func checkForAutostart() {
-        guard let autostart = self.storageManager.config.value["autostart"] as? Bool, autostart else { return }
+        guard let autostart = self.storageManager.config["autostart"] as? Bool, autostart else { return }
         self.syncers.forEach { $0.active = true }
     }
-    
-    public func xcodeServerWithRef(ref: RefType) -> SignalProducer<XcodeServer?, NoError> {
-        
-        return self.serversProducer.map { allServers -> XcodeServer? in
-            return allServers.filter { $0.config.id == ref }.first
-        }
+
+    public func xcodeServerWithRef(ref: RefType) -> XcodeServer? {
+        guard let xcodeServerConfig = self.storageManager.serverConfigs.first(where: { $0.value.id == ref })?.value else { return nil }
+        return self.factory.createXcodeServer(config: xcodeServerConfig)
     }
-    
-    public func projectWithRef(ref: RefType) -> SignalProducer<Project?, NoError> {
-        
-        return self.projectsProducer.map { allProjects -> Project? in
-            return allProjects.filter { $0.config.value.id == ref }.first
-        }
+
+    public func projectWithRef(ref: RefType) -> Project? {
+        guard let projectConfig = self.storageManager.projectConfigs.first(where: { $0.value.id == ref })?.value else { return nil }
+        return self.factory.createProject(config: projectConfig)
     }
-    
-    public func syncerWithRef(ref: RefType) -> SignalProducer<StandardSyncer?, NoError> {
-        
-        return self.syncersProducer.map { allSyncers -> StandardSyncer? in
-            return allSyncers.filter { $0.config.value.id == ref }.first
-        }
+
+    public func syncerWithRef(ref: RefType) -> StandardSyncer? {
+        guard let syncer = self.factory.createSyncers(configs: self.configTriplets).first(where: { $0.config.id == ref }) else { return nil }
+        return syncer
     }
 
     deinit {
         self.stopSyncers()
     }
-    
+
     public func startSyncers() {
         self.syncers.forEach { $0.active = true }
     }
@@ -112,8 +122,8 @@ public class SyncerManager {
 }
 
 extension SyncerManager: HeartbeatManagerDelegate {
-    
-    public func typesOfRunningSyncers() -> [String : Int] {
+
+    public func typesOfRunningSyncers() -> [String: Int] {
         return self.syncers.filter { $0.active }.reduce([:]) { (all, syncer) -> [String: Int] in
             var stats = all
             let syncerType = syncer._project.workspaceMetadata!.service.rawValue

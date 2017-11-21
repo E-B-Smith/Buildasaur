@@ -27,9 +27,9 @@ private let kKeyManageCertsAndProfiles = "manage_certs_and_profiles"
 private let kKeyAddMissingDevicesToTeams = "add_missing_devices_to_teams"
 
 public struct BuildTemplate: JSONSerializable {
-    
+
     public let id: RefType
-    
+
     public var projectName: String?
     public var name: String
     public var scheme: String
@@ -44,14 +44,14 @@ public struct BuildTemplate: JSONSerializable {
     public var testingDeviceIds: [String]
     public var deviceFilter: DeviceFilter.FilterType
     public var platformType: DevicePlatform.PlatformType?
-    
+
     func validate() -> Bool {
-        
+
         if self.id.isEmpty { return false }
         //TODO: add all the other required values! this will be called on saving from the UI to make sure we have all the required fields.
         return true
     }
-    
+
     public init(projectName: String? = nil) {
         self.id = Ref.new()
         self.projectName = projectName
@@ -69,9 +69,8 @@ public struct BuildTemplate: JSONSerializable {
         self.deviceFilter = .allAvailableDevicesAndSimulators
         self.platformType = nil
     }
-    
-    public init(json: [String : Any]) throws {
-        
+
+    public init(json: [String: Any]) throws {
         self.id = json[kKeyId] as? RefType ?? Ref.new()
         self.projectName = json[kKeyProjectName] as? String
         self.name = json[kKeyName] as! String
@@ -97,7 +96,7 @@ public struct BuildTemplate: JSONSerializable {
         self.shouldAnalyze = json[kKeyShouldAnalyze] as! Bool
         self.shouldTest = json[kKeyShouldTest] as! Bool
         self.shouldArchive = json[kKeyShouldArchive] as! Bool
-        
+
         self.manageCertsAndProfiles = json[kKeyManageCertsAndProfiles] as? Bool ?? false
         self.addMissingDevicesToTeams = json[kKeyAddMissingDevicesToTeams] as? Bool ?? false
 
@@ -124,10 +123,10 @@ public struct BuildTemplate: JSONSerializable {
             throw XcodeServerError.with("Invalid input into Build Template")
         }
     }
-    
-    public func jsonify() -> [String : Any] {
-        var dict: [String : Any] = [:]
-        
+
+    public func jsonify() -> [String: Any] {
+        var dict: [String: Any] = [:]
+
         dict[kKeyId] = self.id
         dict[kKeyTriggers] = self.triggers
         dict[kKeyDeviceFilter] = self.deviceFilter.rawValue
@@ -139,7 +138,9 @@ public struct BuildTemplate: JSONSerializable {
         dict[kKeyShouldTest] = self.shouldTest
         dict[kKeyShouldArchive] = self.shouldArchive
         dict[kKeyManageCertsAndProfiles] = self.manageCertsAndProfiles
-        dict[kKeyAddMissingDevicesToTeams] = self.addMissingDevicesToTeams
+        if self.manageCertsAndProfiles {
+            dict[kKeyAddMissingDevicesToTeams] = self.addMissingDevicesToTeams
+        }
         dict[kKeySchedule] = self.schedule.dictionarify()
         if let projectName = self.projectName {
             dict[kKeyProjectName] = projectName
@@ -147,7 +148,7 @@ public struct BuildTemplate: JSONSerializable {
         if let platformType = self.platformType {
             dict[kKeyPlatformType] = platformType.rawValue
         }
-        
+
         return dict
     }
 }

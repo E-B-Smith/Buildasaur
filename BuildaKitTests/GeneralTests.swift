@@ -12,12 +12,11 @@ import XCTest
 class GeneralTests: XCTestCase {
 
     func testXcodeWorkspaceParsing() {
-        
+
         let projectUrl = URL(fileURLWithPath: MockProject().config.value.url, isDirectory: true)
         let projects = try? XcodeProjectXMLParser.parseProjectsInsideOfWorkspace(url: projectUrl)
         XCTAssert(projects != nil)
         XCTAssert(projects?.count ?? 0 > 0)
     }
-
 
 }

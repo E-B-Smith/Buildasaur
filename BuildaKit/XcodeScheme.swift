@@ -9,18 +9,18 @@
 import Foundation
 
 extension NSURL {
-    
+
     public var fileNameNoExtension: String? {
         return ((self.lastPathComponent ?? "") as NSString).deletingPathExtension
     }
 }
 
 public struct XcodeScheme {
-    
+
     public var name: String {
         return self.path.fileNameNoExtension!
     }
-    
+
     public let path: NSURL
     public let ownerProjectOrWorkspace: NSURL
 }

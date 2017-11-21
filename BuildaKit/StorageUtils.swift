@@ -12,18 +12,18 @@ import BuildaUtils
 import XcodeServerSDK
 
 public class StorageUtils {
-    
+
     public class func openWorkspaceOrProject() -> URL? {
-        
+
         let openPanel = NSOpenPanel()
         openPanel.canChooseDirectories = false
         openPanel.canChooseFiles = true
         openPanel.allowsMultipleSelection = false
         openPanel.allowedFileTypes = ["xcworkspace", "xcodeproj"]
         openPanel.title = "Select your Project or Workspace"
-        
+
         let clicked = openPanel.runModal()
-        
+
         switch clicked {
         case .OK:
             let url = openPanel.url
@@ -36,9 +36,9 @@ public class StorageUtils {
         }
         return nil
     }
-    
+
     public class func openSSHKey(publicOrPrivate: String) -> URL? {
-        
+
         let openPanel = NSOpenPanel()
         openPanel.canChooseDirectories = false
         openPanel.canChooseFiles = true
@@ -46,9 +46,9 @@ public class StorageUtils {
         openPanel.allowedFileTypes = ["", "pub"]
         openPanel.title = "Select your \(publicOrPrivate) SSH key"
         openPanel.showsHiddenFiles = true
-        
+
         let clicked = openPanel.runModal()
-        
+
         switch clicked {
         case .OK:
             let url = openPanel.url
@@ -60,6 +60,5 @@ public class StorageUtils {
         }
         return nil
     }
-    
-}
 
+}

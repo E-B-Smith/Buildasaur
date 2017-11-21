@@ -9,17 +9,14 @@
 import Foundation
 
 //GitHub commit in all its glory, with git commit metadata, plus comments, committer, author and parents info
-class GitHubCommit : GitHubEntity {
-    
+class GitHubCommit: GitHubEntity {
+
     let sha: String
 
     required init(json: NSDictionary) throws {
-        
+
         self.sha = try json.stringForKey("sha")
-        
+
         try super.init(json: json)
     }
 }
-
-
-

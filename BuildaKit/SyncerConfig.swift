@@ -21,12 +21,12 @@ public struct Ref {
             return NSUUID().uuidString
         #endif
     }
-    
+
     #if TESTING
     static func reset() {
         counter = 0
     }
-    
+
     static var counter: Int = 0
     static let testIds: [RefType] = [
         "D143B09C-CB1B-4831-8BA1-E2F8AB039B56",
@@ -44,17 +44,17 @@ public struct Ref {
 }
 
 public struct SyncerConfig {
-    
+
     public let id: RefType
     public var preferredTemplateRef: RefType
     public var projectRef: RefType
     public var xcodeServerRef: RefType
-    
+
     public var postStatusComments: Bool
     public var syncInterval: TimeInterval
     public var waitForLttm: Bool
     public var watchedBranchNames: [String]
-    
+
     //creates a default syncer config
     public init() {
         self.id = Ref.new()
@@ -69,12 +69,12 @@ public struct SyncerConfig {
 }
 
 private struct Keys {
-    
+
     static let Id = "id"
     static let PreferredTemplateRef = "preferred_template_ref"
     static let ProjectRef = "project_ref"
     static let ServerRef = "server_ref"
-    
+
     static let PostStatusComments = "post_status_comments"
     static let SyncInterval = "sync_interval"
     static let WaitForLttm = "wait_for_lttm"
@@ -82,8 +82,8 @@ private struct Keys {
 }
 
 extension SyncerConfig: JSONSerializable {
-    
-    public func jsonify() -> [String : Any] {
+
+    public func jsonify() -> [String: Any] {
         return [
             Keys.Id: self.id,
             Keys.PreferredTemplateRef: self.preferredTemplateRef,
@@ -95,8 +95,8 @@ extension SyncerConfig: JSONSerializable {
             Keys.WatchedBranches: self.watchedBranchNames
         ]
     }
-    
-    public init(json: [String : Any]) throws {
+
+    public init(json: [String: Any]) throws {
         self.preferredTemplateRef = json[Keys.PreferredTemplateRef] as! String
         self.projectRef = json[Keys.ProjectRef] as! String
         self.xcodeServerRef = json[Keys.ServerRef] as! String

@@ -18,12 +18,8 @@ PODS:
   - Keys (1.0.0)
   - Nimble (7.0.2)
   - OAuthSwift (1.2.0)
-  - ReactiveCocoa (6.0.2):
-    - ReactiveSwift (~> 2.0)
-  - ReactiveSwift (2.0.1):
-    - Result (~> 3.2)
-  - Result (3.2.3)
   - Sparkle (1.13.1)
+  - SwiftLint (0.23.1)
   - SwiftSafe (2.0.1)
   - XcodeServerSDK (0.7.3):
     - BuildaUtils (~> 0.4.1)
@@ -39,8 +35,8 @@ DEPENDENCIES:
   - Keys (from `Pods/CocoaPodsKeys`)
   - Nimble (~> 7.0.2)
   - OAuthSwift
-  - ReactiveCocoa (~> 6.0.1)
   - Sparkle
+  - SwiftLint
   - XcodeServerSDK (~> 0.7.3)
 
 EXTERNAL SOURCES:
@@ -60,13 +56,11 @@ SPEC CHECKSUMS:
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
   OAuthSwift: 7fd6855b8e4d58eb5a30d156ea9bed7a8aecd1ca
-  ReactiveCocoa: 9dcbd8275374f35a6e5fcce01a93b860a7b92c44
-  ReactiveSwift: 60a29ff35988a964fd2bb759755cb6594de523fc
-  Result: 128640a6347e8d2ae48b142556739a2d13f90ce6
   Sparkle: 2fbd47b869621d1e679c7554e3e19dda02104818
+  SwiftLint: 1b670ce79284c76520f84060e87d645078fd32fa
   SwiftSafe: bd14d81b4e458790796e089af07ae740147dc6f3
   XcodeServerSDK: a7f7c8e2e4707a939eca35eb2115a2c812da8b74
 
-PODFILE CHECKSUM: 0ca80d3cd57d327829342586cf798d341da4b98e
+PODFILE CHECKSUM: 65e03e7fe8743f1926b9e4e0eb5998015cd51d50
 
 COCOAPODS: 1.3.1

@@ -10,13 +10,9 @@
 		0928E6AF8EED8E829B0F4286 /* Pods_Buildasaur.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA09FE729BC440366D74E2E /* Pods_Buildasaur.framework */; };
 		130C2BB548050F030930B54F /* Pods_BuildaHeartbeatKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41155620B4193BDB27CD7E83 /* Pods_BuildaHeartbeatKit.framework */; };
 		158554341171FBBD63B039E2 /* Pods_BuildaGitServerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F29FCDBD0B3B9740956E5206 /* Pods_BuildaGitServerTests.framework */; };
-		3A0034F01C5975C000A4ECB5 /* bitbucket_post_status.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A0034EF1C5975C000A4ECB5 /* bitbucket_post_status.json */; };
-		3A0034F21C59775100A4ECB5 /* bitbucket_get_status.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A0034F11C59775100A4ECB5 /* bitbucket_get_status.json */; };
 		3A014BA51C57A94B00B82B4A /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A014BA41C57A94B00B82B4A /* Authentication.swift */; };
 		3A08B3611C58301D00ED7A1F /* github.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A08B3601C58301D00ED7A1F /* github.png */; };
-		3A08B3641C5837EA00ED7A1F /* ServiceAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A08B3631C5837EA00ED7A1F /* ServiceAuthentication.swift */; };
 		3A0BE6E31C5A754E00AC9C57 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0BE6E21C5A754E00AC9C57 /* Extensions.swift */; };
-		3A0FF5A01BBFDA7E00FB8051 /* RACUIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0FF59F1BBFDA7E00FB8051 /* RACUIExtensions.swift */; };
 		3A0FF5A21BBFE8BA00FB8051 /* SyncerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0FF5A11BBFE8BA00FB8051 /* SyncerConfig.swift */; };
 		3A0FF5A41BBFF9FA00FB8051 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0FF5A31BBFF9FA00FB8051 /* ProjectConfig.swift */; };
 		3A0FF5AE1BC0067700FB8051 /* SyncerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0FF5AD1BC0067700FB8051 /* SyncerManager.swift */; };
@@ -35,48 +31,22 @@
 		3A4C15A01BBB2DD0007FA970 /* WorkspaceMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4C159E1BBB2DD0007FA970 /* WorkspaceMetadata.swift */; };
 		3A56556E1BC059E7008BD142 /* SyncerProducerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A56556D1BC059E7008BD142 /* SyncerProducerFactory.swift */; };
 		3A5655701BC05ACF008BD142 /* SyncerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A56556F1BC05ACF008BD142 /* SyncerFactory.swift */; };
-		3A5655721BC06A55008BD142 /* EmptyXcodeServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5655711BC06A55008BD142 /* EmptyXcodeServerViewController.swift */; };
 		3A5687761A3B93BD0066DB2B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5687751A3B93BD0066DB2B /* AppDelegate.swift */; };
 		3A56877A1A3B93BD0066DB2B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A5687791A3B93BD0066DB2B /* Images.xcassets */; };
 		3A56877D1A3B93BD0066DB2B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A56877B1A3B93BD0066DB2B /* Main.storyboard */; };
-		3A5B04AA1AB4ABEB00F60536 /* TriggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5B04A91AB4ABEB00F60536 /* TriggerViewController.swift */; };
-		3A5B04B01AB5144700F60536 /* ManualBotManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5B04AF1AB5144700F60536 /* ManualBotManagementViewController.swift */; };
 		3A756DC01BAB425E00508B69 /* BuildaHeartbeatKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A756DBF1BAB425E00508B69 /* BuildaHeartbeatKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A756DC41BAB425E00508B69 /* BuildaHeartbeatKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A756DBD1BAB425E00508B69 /* BuildaHeartbeatKit.framework */; };
 		3A756DC51BAB425E00508B69 /* BuildaHeartbeatKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3A756DBD1BAB425E00508B69 /* BuildaHeartbeatKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A756DCB1BAB42C200508B69 /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A756DCA1BAB42C200508B69 /* Heartbeat.swift */; };
 		3A756DCC1BAB44A200508B69 /* BuildaHeartbeatKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A756DBD1BAB425E00508B69 /* BuildaHeartbeatKit.framework */; };
-		3A7577AB1C593A740023F08C /* bitbucket_get_prs.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A7577AA1C593A740023F08C /* bitbucket_get_prs.json */; };
-		3A7577AD1C593C5C0023F08C /* BitBucketPullRequestBranch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7577AC1C593C5C0023F08C /* BitBucketPullRequestBranch.swift */; };
-		3A7577AF1C59621E0023F08C /* bitbucket_get_pr.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A7577AE1C59621E0023F08C /* bitbucket_get_pr.json */; };
-		3A7577B11C5963440023F08C /* bitbucket_get_repo.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A7577B01C5963440023F08C /* bitbucket_get_repo.json */; };
-		3A7577B31C5963BF0023F08C /* BitBucketComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7577B21C5963BF0023F08C /* BitBucketComment.swift */; };
-		3A7577B51C5966530023F08C /* bitbucket_get_comments.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A7577B41C5966530023F08C /* bitbucket_get_comments.json */; };
-		3A7577B71C59691A0023F08C /* BitBucketStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7577B61C59691A0023F08C /* BitBucketStatus.swift */; };
 		3A7AF60E1C590CC4000FD726 /* bitbucket.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A7AF60D1C590CC4000FD726 /* bitbucket.png */; };
-		3A7AF6101C591FAD000FD726 /* BitBucketServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF60F1C591FAD000FD726 /* BitBucketServerTests.swift */; };
-		3A7AF6121C592023000FD726 /* BitBucketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF6111C592023000FD726 /* BitBucketServer.swift */; };
-		3A7AF6141C592055000FD726 /* BitBucketEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF6131C592055000FD726 /* BitBucketEndpoints.swift */; };
 		3A7AF6161C5923A4000FD726 /* GitServerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF6151C5923A4000FD726 /* GitServerFactory.swift */; };
-		3A7AF6181C592919000FD726 /* BitBucketEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF6171C592919000FD726 /* BitBucketEntity.swift */; };
-		3A7AF61A1C592975000FD726 /* BitBucketPullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF6191C592975000FD726 /* BitBucketPullRequest.swift */; };
-		3A7AF61C1C592A17000FD726 /* BitBucketIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF61B1C592A17000FD726 /* BitBucketIssue.swift */; };
-		3A7AF61E1C592A90000FD726 /* BitBucketRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF61D1C592A90000FD726 /* BitBucketRepo.swift */; };
-		3A7AF6201C592B2C000FD726 /* BitBucketRateLimit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AF61F1C592B2C000FD726 /* BitBucketRateLimit.swift */; };
 		3A7F0CC81BC1508C0079A511 /* GeneralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7F0CC71BC1508C0079A511 /* GeneralTests.swift */; };
 		3A81BB191B5A77E9004732CD /* BuildaKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A81BB181B5A77E9004732CD /* BuildaKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A81BB201B5A77E9004732CD /* BuildaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A81BB161B5A77E9004732CD /* BuildaKit.framework */; };
 		3A81BB2B1B5A77E9004732CD /* BuildaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A81BB161B5A77E9004732CD /* BuildaKit.framework */; };
 		3A81BB2C1B5A77E9004732CD /* BuildaKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3A81BB161B5A77E9004732CD /* BuildaKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A81BB351B5A7898004732CD /* BuildaGitServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AAF6EE41A3CE5BA00C657FB /* BuildaGitServer.framework */; };
-		3A81BB3C1B5A7994004732CD /* UIUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A81BB3B1B5A7994004732CD /* UIUtils.swift */; };
-		3A9109BB1BC27C3700C2AECA /* MainEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109BA1BC27C3700C2AECA /* MainEditorViewController.swift */; };
-		3A9109BD1BC27C5500C2AECA /* EditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109BC1BC27C5500C2AECA /* EditorState.swift */; };
-		3A9109BF1BC29E0A00C2AECA /* EditorViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109BE1BC29E0A00C2AECA /* EditorViewControllerFactory.swift */; };
-		3A9109C11BC2A42600C2AECA /* EditorContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109C01BC2A42600C2AECA /* EditorContext.swift */; };
-		3A9109C31BC2B05C00C2AECA /* MainEditor_EditeeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109C21BC2B05C00C2AECA /* MainEditor_EditeeDelegate.swift */; };
-		3A9109C51BC2B0B200C2AECA /* MainEditor_ViewManipulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109C41BC2B0B200C2AECA /* MainEditor_ViewManipulation.swift */; };
-		3A9109C71BC2B67100C2AECA /* EditableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9109C61BC2B67100C2AECA /* EditableViewController.swift */; };
 		3A9BB91D1BCEFE8F0049C0C0 /* launch_item.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3A9BB91C1BCEFE8F0049C0C0 /* launch_item.plist */; };
 		3A9C95A51BBDAE9F00D37135 /* SyncerLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C95A41BBDAE9F00D37135 /* SyncerLogic.swift */; };
 		3A9D741D1BCBDDA200DCA23C /* PersistenceMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D741C1BCBDDA200DCA23C /* PersistenceMigrator.swift */; };
@@ -84,11 +54,6 @@
 		3A9D74221BCC041600DCA23C /* Buildasaur-format-0-example1 in Resources */ = {isa = PBXBuildFile; fileRef = 3A9D74211BCC041600DCA23C /* Buildasaur-format-0-example1 */; };
 		3A9D74241BCC103E00DCA23C /* Buildasaur-format-1-example1 in Resources */ = {isa = PBXBuildFile; fileRef = 3A9D74231BCC103E00DCA23C /* Buildasaur-format-1-example1 */; };
 		3A9D74261BCC19BB00DCA23C /* Buildasaur-format-2-example1 in Resources */ = {isa = PBXBuildFile; fileRef = 3A9D74251BCC19BB00DCA23C /* Buildasaur-format-2-example1 */; };
-		3AA573061BCD70FC00172D3E /* URLUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA573051BCD70FC00172D3E /* URLUtils.swift */; };
-		3AAA1B661AAB6E9800FA1598 /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAA1B651AAB6E9800FA1598 /* SeparatorView.swift */; };
-		3AAA1B681AAB722600FA1598 /* ProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAA1B671AAB722600FA1598 /* ProjectViewController.swift */; };
-		3AAA1B761AAC504700FA1598 /* XcodeServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAA1B751AAC504700FA1598 /* XcodeServerViewController.swift */; };
-		3AAA1B781AAC508A00FA1598 /* ConfigEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAA1B771AAC508A00FA1598 /* ConfigEditViewController.swift */; };
 		3AAF6EE91A3CE5BA00C657FB /* BuildaGitServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAF6EE81A3CE5BA00C657FB /* BuildaGitServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AAF6EEF1A3CE5BA00C657FB /* BuildaGitServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AAF6EE41A3CE5BA00C657FB /* BuildaGitServer.framework */; };
 		3AAF6EFB1A3CE5BA00C657FB /* BuildaGitServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AAF6EE41A3CE5BA00C657FB /* BuildaGitServer.framework */; };
@@ -105,12 +70,7 @@
 		3AB3F0E81A3CEBAC005F717F /* GitHubEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6355D71A3BBCD200545BF9 /* GitHubEndpoints.swift */; };
 		3AB3F0EA1A3CEBAC005F717F /* GitHubServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A58B1521A3B967C003E0266 /* GitHubServer.swift */; };
 		3AB3F0EB1A3CEBE9005F717F /* GitServerPublic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAF6F031A3CE66A00C657FB /* GitServerPublic.swift */; };
-		3AB3FDCB1B05644300021197 /* MenuItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB3FDCA1B05644300021197 /* MenuItemManager.swift */; };
-		3AC156241BB95C0C0068A1A3 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC156231BB95C0C0068A1A3 /* DashboardViewController.swift */; };
-		3AC2E4331BC444DF009095F7 /* EmptyBuildTemplateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC2E4321BC444DF009095F7 /* EmptyBuildTemplateViewController.swift */; };
 		3AC2E4351BC44CC3009095F7 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC2E4341BC44CC3009095F7 /* Availability.swift */; };
-		3AC7D5DF1BBC22A900786198 /* PresentableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC7D5DE1BBC22A900786198 /* PresentableViewController.swift */; };
-		3AC7D5E11BBC231400786198 /* StoryboardLoadingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC7D5E01BBC231400786198 /* StoryboardLoadingUtils.swift */; };
 		3ACBADD71B5ADE0E00204457 /* MockHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADD61B5ADE0E00204457 /* MockHelpers.swift */; };
 		3ACBADDC1B5ADE1400204457 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADD81B5ADE1400204457 /* Mocks.swift */; };
 		3ACBADDD1B5ADE1400204457 /* sampleFinishedIntegration.json in Resources */ = {isa = PBXBuildFile; fileRef = 3ACBADD91B5ADE1400204457 /* sampleFinishedIntegration.json */; };
@@ -145,22 +105,46 @@
 		3ACBAE171B5ADE2A00204457 /* XcodeServerSyncerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADFB1B5ADE2A00204457 /* XcodeServerSyncerUtils.swift */; };
 		3ACF93A91BBEC7AB00CD888C /* XcodeProjectXMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACF93A71BBEC7AB00CD888C /* XcodeProjectXMLParser.swift */; };
 		3ACF93AA1BBEC7AB00CD888C /* XcodeScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACF93A81BBEC7AB00CD888C /* XcodeScheme.swift */; };
-		3AD338B01AAE31D500ECD0F2 /* BuildTemplateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD338AF1AAE31D500ECD0F2 /* BuildTemplateViewController.swift */; };
 		3AD5D2E81BD01EAF008DBB45 /* SummaryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD5D2E71BD01EAF008DBB45 /* SummaryBuilder.swift */; };
 		3AD5D2EA1BD02144008DBB45 /* GitHubSummaryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD5D2E91BD02144008DBB45 /* GitHubSummaryBuilderTests.swift */; };
-		3AE0AB2B1BB991AB00A52D20 /* SyncerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE0AB2A1BB991AB00A52D20 /* SyncerViewModel.swift */; };
-		3AE4F6CE1BBC88450006CA1C /* RACUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE4F6CD1BBC88450006CA1C /* RACUtils.swift */; };
-		3AE4F6D01BBC8D250006CA1C /* EmptyProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE4F6CF1BBC8D250006CA1C /* EmptyProjectViewController.swift */; };
 		3AE8B79B1C52DAD20033F6EF /* Buildasaur-format-2-example2 in Resources */ = {isa = PBXBuildFile; fileRef = 3AE8B79A1C52DAD20033F6EF /* Buildasaur-format-2-example2 */; };
 		3AED13131C529BB600E3B7FF /* Buildasaur-format-3-example1 in Resources */ = {isa = PBXBuildFile; fileRef = 3AED13121C529BB600E3B7FF /* Buildasaur-format-3-example1 */; };
 		3AED13151C52A1A300E3B7FF /* SecurePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AED13141C52A1A300E3B7FF /* SecurePersistence.swift */; };
-		3AF090B81B1134AA0058567F /* BranchWatchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF090B71B1134AA0058567F /* BranchWatchingViewController.swift */; };
-		3AF1B1241AAC7CA500917EF3 /* SyncerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF1B1231AAC7CA500917EF3 /* SyncerViewController.swift */; };
-		6DF2EAFA1D1C6DDF006FC52B /* SelectTriggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2EAF91D1C6DDF006FC52B /* SelectTriggerViewController.swift */; };
 		6DF2EB301D1EB0F0006FC52B /* ExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2EB2F1D1EB0F0006FC52B /* ExtensionTests.swift */; };
 		775501D89C0E4D209E6EE5D0 /* Pods_BuildaGitServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9139F7877761955F17C535E /* Pods_BuildaGitServer.framework */; };
 		785688011CDD4843009EEB72 /* WorkspaceMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785688001CDD4843009EEB72 /* WorkspaceMetadataTests.swift */; };
 		D59A4C6EEE903468E69AEA81 /* Pods_BuildaKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC43508E8A4F9D6E5ED0126 /* Pods_BuildaKitTests.framework */; };
+		E41183531FC31D9500C112F6 /* TriggerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41183521FC31D9500C112F6 /* TriggerConfig.swift */; };
+		E46BFA951FBF79EA00F1FF72 /* ServiceAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA941FBF79EA00F1FF72 /* ServiceAuthentication.swift */; };
+		E46BFAB21FBF7A4300F1FF72 /* ManualBotManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA971FBF7A4300F1FF72 /* ManualBotManagementViewController.swift */; };
+		E46BFAB31FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA981FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift */; };
+		E46BFAB41FBF7A4300F1FF72 /* EmptyBuildTemplateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA991FBF7A4300F1FF72 /* EmptyBuildTemplateViewController.swift */; };
+		E46BFAB51FBF7A4300F1FF72 /* EditorViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA9A1FBF7A4300F1FF72 /* EditorViewControllerFactory.swift */; };
+		E46BFAB61FBF7A4300F1FF72 /* UIUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA9B1FBF7A4300F1FF72 /* UIUtils.swift */; };
+		E46BFAB71FBF7A4300F1FF72 /* BranchWatchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA9C1FBF7A4300F1FF72 /* BranchWatchingViewController.swift */; };
+		E46BFAB81FBF7A4300F1FF72 /* SyncerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA9D1FBF7A4300F1FF72 /* SyncerViewController.swift */; };
+		E46BFAB91FBF7A4300F1FF72 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA9E1FBF7A4300F1FF72 /* DashboardViewController.swift */; };
+		E46BFABA1FBF7A4300F1FF72 /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA9F1FBF7A4300F1FF72 /* SeparatorView.swift */; };
+		E46BFABB1FBF7A4300F1FF72 /* XcodeServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA01FBF7A4300F1FF72 /* XcodeServerViewController.swift */; };
+		E46BFABC1FBF7A4300F1FF72 /* BuildTemplateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA11FBF7A4300F1FF72 /* BuildTemplateViewController.swift */; };
+		E46BFABD1FBF7A4300F1FF72 /* EditableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA21FBF7A4300F1FF72 /* EditableViewController.swift */; };
+		E46BFABE1FBF7A4300F1FF72 /* TriggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA31FBF7A4300F1FF72 /* TriggerViewController.swift */; };
+		E46BFABF1FBF7A4300F1FF72 /* URLUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA41FBF7A4300F1FF72 /* URLUtils.swift */; };
+		E46BFAC01FBF7A4300F1FF72 /* SyncerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA51FBF7A4300F1FF72 /* SyncerViewModel.swift */; };
+		E46BFAC11FBF7A4300F1FF72 /* EditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA61FBF7A4300F1FF72 /* EditorState.swift */; };
+		E46BFAC21FBF7A4300F1FF72 /* MainEditor_ViewManipulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA71FBF7A4300F1FF72 /* MainEditor_ViewManipulation.swift */; };
+		E46BFAC31FBF7A4300F1FF72 /* EmptyXcodeServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA81FBF7A4300F1FF72 /* EmptyXcodeServerViewController.swift */; };
+		E46BFAC41FBF7A4300F1FF72 /* PresentableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAA91FBF7A4300F1FF72 /* PresentableViewController.swift */; };
+		E46BFAC51FBF7A4300F1FF72 /* MainEditor_EditeeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAAA1FBF7A4300F1FF72 /* MainEditor_EditeeDelegate.swift */; };
+		E46BFAC61FBF7A4300F1FF72 /* EditorContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAAB1FBF7A4300F1FF72 /* EditorContext.swift */; };
+		E46BFAC71FBF7A4300F1FF72 /* MainEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAAC1FBF7A4300F1FF72 /* MainEditorViewController.swift */; };
+		E46BFAC81FBF7A4300F1FF72 /* ConfigEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAAD1FBF7A4300F1FF72 /* ConfigEditViewController.swift */; };
+		E46BFAC91FBF7A4300F1FF72 /* MenuItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAAE1FBF7A4300F1FF72 /* MenuItemManager.swift */; };
+		E46BFACA1FBF7A4300F1FF72 /* SelectTriggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAAF1FBF7A4300F1FF72 /* SelectTriggerViewController.swift */; };
+		E46BFACB1FBF7A4300F1FF72 /* ProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAB01FBF7A4300F1FF72 /* ProjectViewController.swift */; };
+		E46BFACC1FBF7A4300F1FF72 /* EmptyProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAB11FBF7A4300F1FF72 /* EmptyProjectViewController.swift */; };
+		E46BFAD51FBF82D900F1FF72 /* NSButton+OnClick.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAD41FBF82D900F1FF72 /* NSButton+OnClick.swift */; };
+		E46BFAD91FBF90CB00F1FF72 /* NSStepper+ValueChanged.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAD81FBF90CA00F1FF72 /* NSStepper+ValueChanged.swift */; };
 		E9F513792E8C95C43A68D1CD /* Pods_BuildaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7827BDC6B1752C193A0EAA05 /* Pods_BuildaKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -229,13 +213,9 @@
 		105246397B31495A090CD1D1 /* Pods-BuildaKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKit/Pods-BuildaKit.release.xcconfig"; sourceTree = "<group>"; };
 		2D7FAD09E7CF5F0D5E6CC526 /* Pods-BuildaHeartbeatKit.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaHeartbeatKit.testing.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaHeartbeatKit/Pods-BuildaHeartbeatKit.testing.xcconfig"; sourceTree = "<group>"; };
 		38739D0E658C834537584B63 /* Pods-BuildaGitServerTests.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaGitServerTests.testing.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaGitServerTests/Pods-BuildaGitServerTests.testing.xcconfig"; sourceTree = "<group>"; };
-		3A0034EF1C5975C000A4ECB5 /* bitbucket_post_status.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bitbucket_post_status.json; path = Data/bitbucket_post_status.json; sourceTree = "<group>"; };
-		3A0034F11C59775100A4ECB5 /* bitbucket_get_status.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bitbucket_get_status.json; path = Data/bitbucket_get_status.json; sourceTree = "<group>"; };
 		3A014BA41C57A94B00B82B4A /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		3A08B3601C58301D00ED7A1F /* github.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = github.png; path = Meta/github.png; sourceTree = SOURCE_ROOT; };
-		3A08B3631C5837EA00ED7A1F /* ServiceAuthentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAuthentication.swift; sourceTree = "<group>"; };
 		3A0BE6E21C5A754E00AC9C57 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		3A0FF59F1BBFDA7E00FB8051 /* RACUIExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACUIExtensions.swift; sourceTree = "<group>"; };
 		3A0FF5A11BBFE8BA00FB8051 /* SyncerConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerConfig.swift; sourceTree = "<group>"; };
 		3A0FF5A31BBFF9FA00FB8051 /* ProjectConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		3A0FF5AD1BC0067700FB8051 /* SyncerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerManager.swift; sourceTree = "<group>"; };
@@ -256,7 +236,6 @@
 		3A4C159E1BBB2DD0007FA970 /* WorkspaceMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceMetadata.swift; sourceTree = "<group>"; };
 		3A56556D1BC059E7008BD142 /* SyncerProducerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerProducerFactory.swift; sourceTree = "<group>"; };
 		3A56556F1BC05ACF008BD142 /* SyncerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerFactory.swift; sourceTree = "<group>"; };
-		3A5655711BC06A55008BD142 /* EmptyXcodeServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyXcodeServerViewController.swift; sourceTree = "<group>"; };
 		3A5687701A3B93BD0066DB2B /* Buildasaur.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Buildasaur.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5687741A3B93BD0066DB2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3A5687751A3B93BD0066DB2B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -264,8 +243,6 @@
 		3A56877C1A3B93BD0066DB2B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3A58B1521A3B967C003E0266 /* GitHubServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubServer.swift; sourceTree = "<group>"; };
 		3A58B1581A3B96C9003E0266 /* GitHubServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubServerTests.swift; sourceTree = "<group>"; };
-		3A5B04A91AB4ABEB00F60536 /* TriggerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriggerViewController.swift; sourceTree = "<group>"; };
-		3A5B04AF1AB5144700F60536 /* ManualBotManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManualBotManagementViewController.swift; sourceTree = "<group>"; };
 		3A6355D71A3BBCD200545BF9 /* GitHubEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubEndpoints.swift; sourceTree = "<group>"; };
 		3A6355DF1A3BC77F00545BF9 /* GitHubUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitHubUser.swift; path = GitHub/GitHubUser.swift; sourceTree = "<group>"; };
 		3A6355E11A3BCD2800545BF9 /* GitHubRepo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitHubRepo.swift; path = GitHub/GitHubRepo.swift; sourceTree = "<group>"; };
@@ -274,37 +251,14 @@
 		3A756DBF1BAB425E00508B69 /* BuildaHeartbeatKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuildaHeartbeatKit.h; sourceTree = "<group>"; };
 		3A756DC11BAB425E00508B69 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3A756DCA1BAB42C200508B69 /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
-		3A7577AA1C593A740023F08C /* bitbucket_get_prs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bitbucket_get_prs.json; path = Data/bitbucket_get_prs.json; sourceTree = "<group>"; };
-		3A7577AC1C593C5C0023F08C /* BitBucketPullRequestBranch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketPullRequestBranch.swift; path = BitBucket/BitBucketPullRequestBranch.swift; sourceTree = "<group>"; };
-		3A7577AE1C59621E0023F08C /* bitbucket_get_pr.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bitbucket_get_pr.json; path = Data/bitbucket_get_pr.json; sourceTree = "<group>"; };
-		3A7577B01C5963440023F08C /* bitbucket_get_repo.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bitbucket_get_repo.json; path = Data/bitbucket_get_repo.json; sourceTree = "<group>"; };
-		3A7577B21C5963BF0023F08C /* BitBucketComment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketComment.swift; path = BitBucket/BitBucketComment.swift; sourceTree = "<group>"; };
-		3A7577B41C5966530023F08C /* bitbucket_get_comments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bitbucket_get_comments.json; path = Data/bitbucket_get_comments.json; sourceTree = "<group>"; };
-		3A7577B61C59691A0023F08C /* BitBucketStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketStatus.swift; path = BitBucket/BitBucketStatus.swift; sourceTree = "<group>"; };
 		3A7AF60D1C590CC4000FD726 /* bitbucket.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bitbucket.png; path = Meta/bitbucket.png; sourceTree = SOURCE_ROOT; };
-		3A7AF60F1C591FAD000FD726 /* BitBucketServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BitBucketServerTests.swift; sourceTree = "<group>"; };
-		3A7AF6111C592023000FD726 /* BitBucketServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketServer.swift; path = BitBucket/BitBucketServer.swift; sourceTree = "<group>"; };
-		3A7AF6131C592055000FD726 /* BitBucketEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketEndpoints.swift; path = BitBucket/BitBucketEndpoints.swift; sourceTree = "<group>"; };
 		3A7AF6151C5923A4000FD726 /* GitServerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitServerFactory.swift; sourceTree = "<group>"; };
-		3A7AF6171C592919000FD726 /* BitBucketEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketEntity.swift; path = BitBucket/BitBucketEntity.swift; sourceTree = "<group>"; };
-		3A7AF6191C592975000FD726 /* BitBucketPullRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketPullRequest.swift; path = BitBucket/BitBucketPullRequest.swift; sourceTree = "<group>"; };
-		3A7AF61B1C592A17000FD726 /* BitBucketIssue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketIssue.swift; path = BitBucket/BitBucketIssue.swift; sourceTree = "<group>"; };
-		3A7AF61D1C592A90000FD726 /* BitBucketRepo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketRepo.swift; path = BitBucket/BitBucketRepo.swift; sourceTree = "<group>"; };
-		3A7AF61F1C592B2C000FD726 /* BitBucketRateLimit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitBucketRateLimit.swift; path = BitBucket/BitBucketRateLimit.swift; sourceTree = "<group>"; };
 		3A7F0CC71BC1508C0079A511 /* GeneralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralTests.swift; sourceTree = "<group>"; };
 		3A81BB161B5A77E9004732CD /* BuildaKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BuildaKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A81BB181B5A77E9004732CD /* BuildaKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuildaKit.h; sourceTree = "<group>"; };
 		3A81BB1A1B5A77E9004732CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3A81BB1F1B5A77E9004732CD /* BuildaKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuildaKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A81BB281B5A77E9004732CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3A81BB3B1B5A7994004732CD /* UIUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIUtils.swift; sourceTree = "<group>"; };
-		3A9109BA1BC27C3700C2AECA /* MainEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainEditorViewController.swift; sourceTree = "<group>"; };
-		3A9109BC1BC27C5500C2AECA /* EditorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorState.swift; sourceTree = "<group>"; };
-		3A9109BE1BC29E0A00C2AECA /* EditorViewControllerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorViewControllerFactory.swift; sourceTree = "<group>"; };
-		3A9109C01BC2A42600C2AECA /* EditorContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorContext.swift; sourceTree = "<group>"; };
-		3A9109C21BC2B05C00C2AECA /* MainEditor_EditeeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainEditor_EditeeDelegate.swift; sourceTree = "<group>"; };
-		3A9109C41BC2B0B200C2AECA /* MainEditor_ViewManipulation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainEditor_ViewManipulation.swift; sourceTree = "<group>"; };
-		3A9109C61BC2B67100C2AECA /* EditableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditableViewController.swift; sourceTree = "<group>"; };
 		3A9BB91C1BCEFE8F0049C0C0 /* launch_item.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = launch_item.plist; sourceTree = "<group>"; };
 		3A9C95A41BBDAE9F00D37135 /* SyncerLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerLogic.swift; sourceTree = "<group>"; };
 		3A9D741C1BCBDDA200DCA23C /* PersistenceMigrator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceMigrator.swift; sourceTree = "<group>"; };
@@ -313,11 +267,6 @@
 		3A9D74231BCC103E00DCA23C /* Buildasaur-format-1-example1 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Buildasaur-format-1-example1"; path = "Migration/Buildasaur-format-1-example1"; sourceTree = "<group>"; };
 		3A9D74251BCC19BB00DCA23C /* Buildasaur-format-2-example1 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Buildasaur-format-2-example1"; path = "Migration/Buildasaur-format-2-example1"; sourceTree = "<group>"; };
 		3A9DEC7A1A3BDA6C008C8270 /* GitHubPullRequestBranch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitHubPullRequestBranch.swift; path = GitHub/GitHubPullRequestBranch.swift; sourceTree = "<group>"; };
-		3AA573051BCD70FC00172D3E /* URLUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLUtils.swift; sourceTree = "<group>"; };
-		3AAA1B651AAB6E9800FA1598 /* SeparatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
-		3AAA1B671AAB722600FA1598 /* ProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectViewController.swift; sourceTree = "<group>"; };
-		3AAA1B751AAC504700FA1598 /* XcodeServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodeServerViewController.swift; sourceTree = "<group>"; };
-		3AAA1B771AAC508A00FA1598 /* ConfigEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigEditViewController.swift; sourceTree = "<group>"; };
 		3AAF6E671A3CC1F400C657FB /* GitHubEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitHubEntity.swift; path = GitHub/GitHubEntity.swift; sourceTree = "<group>"; };
 		3AAF6E691A3CCA0900C657FB /* GitHubBranch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitHubBranch.swift; path = GitHub/GitHubBranch.swift; sourceTree = "<group>"; };
 		3AAF6E6B1A3CCA3B00C657FB /* GitHubCommit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitHubCommit.swift; path = GitHub/GitHubCommit.swift; sourceTree = "<group>"; };
@@ -327,12 +276,7 @@
 		3AAF6EEE1A3CE5BA00C657FB /* BuildaGitServerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuildaGitServerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AAF6EF61A3CE5BA00C657FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3AAF6F031A3CE66A00C657FB /* GitServerPublic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GitServerPublic.swift; path = BuildaGitServer/GitServerPublic.swift; sourceTree = SOURCE_ROOT; };
-		3AB3FDCA1B05644300021197 /* MenuItemManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuItemManager.swift; sourceTree = "<group>"; };
-		3AC156231BB95C0C0068A1A3 /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
-		3AC2E4321BC444DF009095F7 /* EmptyBuildTemplateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyBuildTemplateViewController.swift; sourceTree = "<group>"; };
 		3AC2E4341BC44CC3009095F7 /* Availability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
-		3AC7D5DE1BBC22A900786198 /* PresentableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentableViewController.swift; sourceTree = "<group>"; };
-		3AC7D5E01BBC231400786198 /* StoryboardLoadingUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardLoadingUtils.swift; sourceTree = "<group>"; };
 		3ACBADD61B5ADE0E00204457 /* MockHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockHelpers.swift; sourceTree = "<group>"; };
 		3ACBADD81B5ADE1400204457 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		3ACBADD91B5ADE1400204457 /* sampleFinishedIntegration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sampleFinishedIntegration.json; sourceTree = "<group>"; };
@@ -367,24 +311,17 @@
 		3ACBADFB1B5ADE2A00204457 /* XcodeServerSyncerUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodeServerSyncerUtils.swift; sourceTree = "<group>"; };
 		3ACF93A71BBEC7AB00CD888C /* XcodeProjectXMLParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodeProjectXMLParser.swift; sourceTree = "<group>"; };
 		3ACF93A81BBEC7AB00CD888C /* XcodeScheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodeScheme.swift; sourceTree = "<group>"; };
-		3AD338AF1AAE31D500ECD0F2 /* BuildTemplateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildTemplateViewController.swift; sourceTree = "<group>"; };
 		3AD5D2E71BD01EAF008DBB45 /* SummaryBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SummaryBuilder.swift; sourceTree = "<group>"; };
 		3AD5D2E91BD02144008DBB45 /* GitHubSummaryBuilderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubSummaryBuilderTests.swift; sourceTree = "<group>"; };
-		3AE0AB2A1BB991AB00A52D20 /* SyncerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerViewModel.swift; sourceTree = "<group>"; };
-		3AE4F6CD1BBC88450006CA1C /* RACUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACUtils.swift; sourceTree = "<group>"; };
-		3AE4F6CF1BBC8D250006CA1C /* EmptyProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyProjectViewController.swift; sourceTree = "<group>"; };
 		3AE8B79A1C52DAD20033F6EF /* Buildasaur-format-2-example2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Buildasaur-format-2-example2"; path = "Migration/Buildasaur-format-2-example2"; sourceTree = "<group>"; };
 		3AED13121C529BB600E3B7FF /* Buildasaur-format-3-example1 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Buildasaur-format-3-example1"; path = "Migration/Buildasaur-format-3-example1"; sourceTree = "<group>"; };
 		3AED13141C52A1A300E3B7FF /* SecurePersistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurePersistence.swift; sourceTree = "<group>"; };
-		3AF090B71B1134AA0058567F /* BranchWatchingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchWatchingViewController.swift; sourceTree = "<group>"; };
-		3AF1B1231AAC7CA500917EF3 /* SyncerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerViewController.swift; sourceTree = "<group>"; };
 		3D172B5BBA1416D1EE92A8A5 /* Pods-BuildaKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKitTests/Pods-BuildaKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		41155620B4193BDB27CD7E83 /* Pods_BuildaHeartbeatKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BuildaHeartbeatKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E8AF72E61B7A15D6E70352 /* Pods-BuildaGitServer.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaGitServer.testing.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaGitServer/Pods-BuildaGitServer.testing.xcconfig"; sourceTree = "<group>"; };
 		4A4FCE02D4B5A180AAF85C12 /* Pods-BuildaGitServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaGitServer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaGitServer/Pods-BuildaGitServer.debug.xcconfig"; sourceTree = "<group>"; };
 		4EC43508E8A4F9D6E5ED0126 /* Pods_BuildaKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BuildaKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0C42D6343BC2A4C4C899AB /* Pods-BuildaHeartbeatKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaHeartbeatKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaHeartbeatKit/Pods-BuildaHeartbeatKit.release.xcconfig"; sourceTree = "<group>"; };
-		6DF2EAF91D1C6DDF006FC52B /* SelectTriggerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTriggerViewController.swift; sourceTree = "<group>"; };
 		6DF2EB2F1D1EB0F0006FC52B /* ExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionTests.swift; sourceTree = "<group>"; };
 		7827BDC6B1752C193A0EAA05 /* Pods_BuildaKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BuildaKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		785688001CDD4843009EEB72 /* WorkspaceMetadataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceMetadataTests.swift; sourceTree = "<group>"; };
@@ -399,7 +336,38 @@
 		D0F6A06E560D8D41488E34CB /* Pods-BuildaKitTests.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKitTests.testing.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKitTests/Pods-BuildaKitTests.testing.xcconfig"; sourceTree = "<group>"; };
 		DBBDB133AF2AD2E2CA9AEB13 /* Pods-BuildaKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKitTests/Pods-BuildaKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DC5ECE2BBCC7B037A35A3BE9 /* Pods-BuildaHeartbeatKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaHeartbeatKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaHeartbeatKit/Pods-BuildaHeartbeatKit.debug.xcconfig"; sourceTree = "<group>"; };
+		E41183521FC31D9500C112F6 /* TriggerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerConfig.swift; sourceTree = "<group>"; };
 		E44B7C2CE3D5BFAC8FF7EBDD /* Pods-BuildaKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKit/Pods-BuildaKit.debug.xcconfig"; sourceTree = "<group>"; };
+		E46BFA941FBF79EA00F1FF72 /* ServiceAuthentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAuthentication.swift; sourceTree = "<group>"; };
+		E46BFA971FBF7A4300F1FF72 /* ManualBotManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManualBotManagementViewController.swift; sourceTree = "<group>"; };
+		E46BFA981FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardLoadingUtils.swift; sourceTree = "<group>"; };
+		E46BFA991FBF7A4300F1FF72 /* EmptyBuildTemplateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyBuildTemplateViewController.swift; sourceTree = "<group>"; };
+		E46BFA9A1FBF7A4300F1FF72 /* EditorViewControllerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorViewControllerFactory.swift; sourceTree = "<group>"; };
+		E46BFA9B1FBF7A4300F1FF72 /* UIUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIUtils.swift; sourceTree = "<group>"; };
+		E46BFA9C1FBF7A4300F1FF72 /* BranchWatchingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchWatchingViewController.swift; sourceTree = "<group>"; };
+		E46BFA9D1FBF7A4300F1FF72 /* SyncerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerViewController.swift; sourceTree = "<group>"; };
+		E46BFA9E1FBF7A4300F1FF72 /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
+		E46BFA9F1FBF7A4300F1FF72 /* SeparatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
+		E46BFAA01FBF7A4300F1FF72 /* XcodeServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodeServerViewController.swift; sourceTree = "<group>"; };
+		E46BFAA11FBF7A4300F1FF72 /* BuildTemplateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildTemplateViewController.swift; sourceTree = "<group>"; };
+		E46BFAA21FBF7A4300F1FF72 /* EditableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditableViewController.swift; sourceTree = "<group>"; };
+		E46BFAA31FBF7A4300F1FF72 /* TriggerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriggerViewController.swift; sourceTree = "<group>"; };
+		E46BFAA41FBF7A4300F1FF72 /* URLUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLUtils.swift; sourceTree = "<group>"; };
+		E46BFAA51FBF7A4300F1FF72 /* SyncerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerViewModel.swift; sourceTree = "<group>"; };
+		E46BFAA61FBF7A4300F1FF72 /* EditorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorState.swift; sourceTree = "<group>"; };
+		E46BFAA71FBF7A4300F1FF72 /* MainEditor_ViewManipulation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainEditor_ViewManipulation.swift; sourceTree = "<group>"; };
+		E46BFAA81FBF7A4300F1FF72 /* EmptyXcodeServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyXcodeServerViewController.swift; sourceTree = "<group>"; };
+		E46BFAA91FBF7A4300F1FF72 /* PresentableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentableViewController.swift; sourceTree = "<group>"; };
+		E46BFAAA1FBF7A4300F1FF72 /* MainEditor_EditeeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainEditor_EditeeDelegate.swift; sourceTree = "<group>"; };
+		E46BFAAB1FBF7A4300F1FF72 /* EditorContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorContext.swift; sourceTree = "<group>"; };
+		E46BFAAC1FBF7A4300F1FF72 /* MainEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainEditorViewController.swift; sourceTree = "<group>"; };
+		E46BFAAD1FBF7A4300F1FF72 /* ConfigEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigEditViewController.swift; sourceTree = "<group>"; };
+		E46BFAAE1FBF7A4300F1FF72 /* MenuItemManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuItemManager.swift; sourceTree = "<group>"; };
+		E46BFAAF1FBF7A4300F1FF72 /* SelectTriggerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTriggerViewController.swift; sourceTree = "<group>"; };
+		E46BFAB01FBF7A4300F1FF72 /* ProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectViewController.swift; sourceTree = "<group>"; };
+		E46BFAB11FBF7A4300F1FF72 /* EmptyProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyProjectViewController.swift; sourceTree = "<group>"; };
+		E46BFAD41FBF82D900F1FF72 /* NSButton+OnClick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSButton+OnClick.swift"; sourceTree = "<group>"; };
+		E46BFAD81FBF90CA00F1FF72 /* NSStepper+ValueChanged.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSStepper+ValueChanged.swift"; sourceTree = "<group>"; };
 		F105E28B52A2616166887266 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F29FCDBD0B3B9740956E5206 /* Pods_BuildaGitServerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BuildaGitServerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBFCE164C6B59B0C7DC8FBEE /* Pods-BuildaGitServerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaGitServerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaGitServerTests/Pods-BuildaGitServerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -473,28 +441,10 @@
 			name = "Service Logos";
 			sourceTree = "<group>";
 		};
-		3A08B3621C5837D400ED7A1F /* Authentication */ = {
-			isa = PBXGroup;
-			children = (
-				3A08B3631C5837EA00ED7A1F /* ServiceAuthentication.swift */,
-			);
-			name = Authentication;
-			sourceTree = "<group>";
-		};
 		3A0BE6E11C5A753F00AC9C57 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				3A0BE6E21C5A754E00AC9C57 /* Extensions.swift */,
-			);
-			name = Utils;
-			sourceTree = "<group>";
-		};
-		3A0FF59E1BBFDA5C00FB8051 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				3AC7D5E01BBC231400786198 /* StoryboardLoadingUtils.swift */,
-				3A0FF59F1BBFDA7E00FB8051 /* RACUIExtensions.swift */,
-				3AA573051BCD70FC00172D3E /* URLUtils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -545,12 +495,12 @@
 				3A5687751A3B93BD0066DB2B /* AppDelegate.swift */,
 				3A5687791A3B93BD0066DB2B /* Images.xcassets */,
 				3A56877B1A3B93BD0066DB2B /* Main.storyboard */,
+				E46BFA961FBF7A4300F1FF72 /* ViewControllers */,
+				E46BFAD31FBF821200F1FF72 /* ViewModels */,
+				E46BFACF1FBF7A8E00F1FF72 /* Views */,
+				E46BFAD01FBF7A9F00F1FF72 /* Utils */,
+				E46BFA931FBF79EA00F1FF72 /* Authentication */,
 				3A5687731A3B93BD0066DB2B /* Supporting Files */,
-				3AAA1B631AAB6E6800FA1598 /* ViewController */,
-				3AE0AB291BB9919700A52D20 /* ViewModels */,
-				3AAA1B641AAB6E8500FA1598 /* Views */,
-				3A08B3621C5837D400ED7A1F /* Authentication */,
-				3A0FF59E1BBFDA5C00FB8051 /* Utils */,
 			);
 			path = Buildasaur;
 			sourceTree = "<group>";
@@ -605,19 +555,6 @@
 			path = BuildaHeartbeatKit;
 			sourceTree = "<group>";
 		};
-		3A7577A91C593A6A0023F08C /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				3A0034F11C59775100A4ECB5 /* bitbucket_get_status.json */,
-				3A0034EF1C5975C000A4ECB5 /* bitbucket_post_status.json */,
-				3A7577B41C5966530023F08C /* bitbucket_get_comments.json */,
-				3A7577B01C5963440023F08C /* bitbucket_get_repo.json */,
-				3A7577AE1C59621E0023F08C /* bitbucket_get_pr.json */,
-				3A7577AA1C593A740023F08C /* bitbucket_get_prs.json */,
-			);
-			name = Data;
-			sourceTree = "<group>";
-		};
 		3A81BB171B5A77E9004732CD /* BuildaKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -649,20 +586,6 @@
 			path = BuildaKitTests;
 			sourceTree = "<group>";
 		};
-		3A9109B91BC27C1900C2AECA /* Editor */ = {
-			isa = PBXGroup;
-			children = (
-				3A9109BA1BC27C3700C2AECA /* MainEditorViewController.swift */,
-				3A9109C21BC2B05C00C2AECA /* MainEditor_EditeeDelegate.swift */,
-				3A9109C41BC2B0B200C2AECA /* MainEditor_ViewManipulation.swift */,
-				3A9109BC1BC27C5500C2AECA /* EditorState.swift */,
-				3A9109BE1BC29E0A00C2AECA /* EditorViewControllerFactory.swift */,
-				3A9109C01BC2A42600C2AECA /* EditorContext.swift */,
-				3A9109C61BC2B67100C2AECA /* EditableViewController.swift */,
-			);
-			name = Editor;
-			sourceTree = "<group>";
-		};
 		3A9D741E1BCBF86900DCA23C /* Migration */ = {
 			isa = PBXGroup;
 			children = (
@@ -676,33 +599,12 @@
 			name = Migration;
 			sourceTree = "<group>";
 		};
-		3AAA1B631AAB6E6800FA1598 /* ViewController */ = {
-			isa = PBXGroup;
-			children = (
-				3AC2E4311BC444AB009095F7 /* Base */,
-				3AC156251BB95C130068A1A3 /* Dashboard */,
-				3A9109B91BC27C1900C2AECA /* Editor */,
-				3AC156261BB95C190068A1A3 /* Editables */,
-			);
-			name = ViewController;
-			sourceTree = "<group>";
-		};
-		3AAA1B641AAB6E8500FA1598 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				3AAA1B651AAB6E9800FA1598 /* SeparatorView.swift */,
-				3A81BB3B1B5A7994004732CD /* UIUtils.swift */,
-			);
-			name = Views;
-			sourceTree = "<group>";
-		};
 		3AAF6EE51A3CE5BA00C657FB /* BuildaGitServer */ = {
 			isa = PBXGroup;
 			children = (
 				3AAF6EE81A3CE5BA00C657FB /* BuildaGitServer.h */,
 				3AAF6F031A3CE66A00C657FB /* GitServerPublic.swift */,
 				3A35CD6B1BE96E880088D57A /* Base */,
-				3ABF0ADC1C51A47A00882A40 /* BitBucket */,
 				3A6355DB1A3BBDB000545BF9 /* GitHub */,
 				3AAF6EE61A3CE5BA00C657FB /* Supporting Files */,
 				3A0BE6E11C5A753F00AC9C57 /* Utils */,
@@ -721,8 +623,6 @@
 		3AAF6EF41A3CE5BA00C657FB /* BuildaGitServerTests */ = {
 			isa = PBXGroup;
 			children = (
-				3A7577A91C593A6A0023F08C /* Data */,
-				3A7AF60F1C591FAD000FD726 /* BitBucketServerTests.swift */,
 				3A58B1581A3B96C9003E0266 /* GitHubServerTests.swift */,
 				3AAF6EF51A3CE5BA00C657FB /* Supporting Files */,
 			);
@@ -735,58 +635,6 @@
 				3AAF6EF61A3CE5BA00C657FB /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		3ABF0ADC1C51A47A00882A40 /* BitBucket */ = {
-			isa = PBXGroup;
-			children = (
-				3ABF0ADD1C51A48C00882A40 /* Entities */,
-				3A7AF6111C592023000FD726 /* BitBucketServer.swift */,
-				3A7AF6131C592055000FD726 /* BitBucketEndpoints.swift */,
-				3A7AF61F1C592B2C000FD726 /* BitBucketRateLimit.swift */,
-			);
-			name = BitBucket;
-			sourceTree = "<group>";
-		};
-		3ABF0ADD1C51A48C00882A40 /* Entities */ = {
-			isa = PBXGroup;
-			children = (
-				3A7AF6171C592919000FD726 /* BitBucketEntity.swift */,
-				3A7AF6191C592975000FD726 /* BitBucketPullRequest.swift */,
-				3A7577AC1C593C5C0023F08C /* BitBucketPullRequestBranch.swift */,
-				3A7AF61B1C592A17000FD726 /* BitBucketIssue.swift */,
-				3A7AF61D1C592A90000FD726 /* BitBucketRepo.swift */,
-				3A7577B21C5963BF0023F08C /* BitBucketComment.swift */,
-				3A7577B61C59691A0023F08C /* BitBucketStatus.swift */,
-			);
-			name = Entities;
-			sourceTree = "<group>";
-		};
-		3AC156251BB95C130068A1A3 /* Dashboard */ = {
-			isa = PBXGroup;
-			children = (
-				3AC156231BB95C0C0068A1A3 /* DashboardViewController.swift */,
-				3AB3FDCA1B05644300021197 /* MenuItemManager.swift */,
-			);
-			name = Dashboard;
-			sourceTree = "<group>";
-		};
-		3AC156261BB95C190068A1A3 /* Editables */ = {
-			isa = PBXGroup;
-			children = (
-				3A5655711BC06A55008BD142 /* EmptyXcodeServerViewController.swift */,
-				3AAA1B751AAC504700FA1598 /* XcodeServerViewController.swift */,
-				3AE4F6CF1BBC8D250006CA1C /* EmptyProjectViewController.swift */,
-				3AAA1B671AAB722600FA1598 /* ProjectViewController.swift */,
-				3AC2E4321BC444DF009095F7 /* EmptyBuildTemplateViewController.swift */,
-				3AD338AF1AAE31D500ECD0F2 /* BuildTemplateViewController.swift */,
-				3A5B04A91AB4ABEB00F60536 /* TriggerViewController.swift */,
-				3AF1B1231AAC7CA500917EF3 /* SyncerViewController.swift */,
-				3AF090B71B1134AA0058567F /* BranchWatchingViewController.swift */,
-				3A5B04AF1AB5144700F60536 /* ManualBotManagementViewController.swift */,
-				6DF2EAF91D1C6DDF006FC52B /* SelectTriggerViewController.swift */,
-			);
-			name = Editables;
 			sourceTree = "<group>";
 		};
 		3AC156271BB964720068A1A3 /* Persistence */ = {
@@ -819,7 +667,6 @@
 				3ACBADE61B5ADE2A00204457 /* SSHKeyVerification.swift */,
 				3ACBADE81B5ADE2A00204457 /* StorageUtils.swift */,
 				3ACBADFB1B5ADE2A00204457 /* XcodeServerSyncerUtils.swift */,
-				3AE4F6CD1BBC88450006CA1C /* RACUtils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -877,25 +724,9 @@
 				3A56556D1BC059E7008BD142 /* SyncerProducerFactory.swift */,
 				3A56556F1BC05ACF008BD142 /* SyncerFactory.swift */,
 				3A28AF521BC984850011756E /* ConfigTriplet.swift */,
+				E41183521FC31D9500C112F6 /* TriggerConfig.swift */,
 			);
 			name = "Model Classes";
-			sourceTree = "<group>";
-		};
-		3AC2E4311BC444AB009095F7 /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				3AC7D5DE1BBC22A900786198 /* PresentableViewController.swift */,
-				3AAA1B771AAC508A00FA1598 /* ConfigEditViewController.swift */,
-			);
-			name = Base;
-			sourceTree = "<group>";
-		};
-		3AE0AB291BB9919700A52D20 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				3AE0AB2A1BB991AB00A52D20 /* SyncerViewModel.swift */,
-			);
-			name = ViewModels;
 			sourceTree = "<group>";
 		};
 		4014768B3F6B8B7FEEFE1654 /* Pods */ = {
@@ -921,6 +752,103 @@
 				A588086CCA23190FC2B378E5 /* Pods-Buildasaur.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		E46BFA931FBF79EA00F1FF72 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFA941FBF79EA00F1FF72 /* ServiceAuthentication.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		E46BFA961FBF7A4300F1FF72 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFACD1FBF7A6100F1FF72 /* Base */,
+				E46BFACE1FBF7A7000F1FF72 /* Dashboard */,
+				E46BFAD11FBF7ABB00F1FF72 /* Editor */,
+				E46BFAD21FBF7AF600F1FF72 /* Editables */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		E46BFACD1FBF7A6100F1FF72 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFAAD1FBF7A4300F1FF72 /* ConfigEditViewController.swift */,
+				E46BFAA91FBF7A4300F1FF72 /* PresentableViewController.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		E46BFACE1FBF7A7000F1FF72 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFA9E1FBF7A4300F1FF72 /* DashboardViewController.swift */,
+				E46BFAAE1FBF7A4300F1FF72 /* MenuItemManager.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		E46BFACF1FBF7A8E00F1FF72 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFA9F1FBF7A4300F1FF72 /* SeparatorView.swift */,
+				E46BFA9B1FBF7A4300F1FF72 /* UIUtils.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E46BFAD01FBF7A9F00F1FF72 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFA981FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift */,
+				E46BFAA41FBF7A4300F1FF72 /* URLUtils.swift */,
+				E46BFAD41FBF82D900F1FF72 /* NSButton+OnClick.swift */,
+				E46BFAD81FBF90CA00F1FF72 /* NSStepper+ValueChanged.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		E46BFAD11FBF7ABB00F1FF72 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFAA21FBF7A4300F1FF72 /* EditableViewController.swift */,
+				E46BFAAB1FBF7A4300F1FF72 /* EditorContext.swift */,
+				E46BFAA61FBF7A4300F1FF72 /* EditorState.swift */,
+				E46BFA9A1FBF7A4300F1FF72 /* EditorViewControllerFactory.swift */,
+				E46BFAAA1FBF7A4300F1FF72 /* MainEditor_EditeeDelegate.swift */,
+				E46BFAA71FBF7A4300F1FF72 /* MainEditor_ViewManipulation.swift */,
+				E46BFAAC1FBF7A4300F1FF72 /* MainEditorViewController.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		E46BFAD21FBF7AF600F1FF72 /* Editables */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFA9C1FBF7A4300F1FF72 /* BranchWatchingViewController.swift */,
+				E46BFAA11FBF7A4300F1FF72 /* BuildTemplateViewController.swift */,
+				E46BFA991FBF7A4300F1FF72 /* EmptyBuildTemplateViewController.swift */,
+				E46BFAB11FBF7A4300F1FF72 /* EmptyProjectViewController.swift */,
+				E46BFAA81FBF7A4300F1FF72 /* EmptyXcodeServerViewController.swift */,
+				E46BFA971FBF7A4300F1FF72 /* ManualBotManagementViewController.swift */,
+				E46BFAB01FBF7A4300F1FF72 /* ProjectViewController.swift */,
+				E46BFAAF1FBF7A4300F1FF72 /* SelectTriggerViewController.swift */,
+				E46BFA9D1FBF7A4300F1FF72 /* SyncerViewController.swift */,
+				E46BFAA31FBF7A4300F1FF72 /* TriggerViewController.swift */,
+				E46BFAA01FBF7A4300F1FF72 /* XcodeServerViewController.swift */,
+			);
+			path = Editables;
+			sourceTree = "<group>";
+		};
+		E46BFAD31FBF821200F1FF72 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E46BFAA51FBF7A4300F1FF72 /* SyncerViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		EC921E1EDA3F075BEF11727F /* Frameworks */ = {
@@ -972,6 +900,7 @@
 			buildConfigurationList = 3A56878C1A3B93BD0066DB2B /* Build configuration list for PBXNativeTarget "Buildasaur" */;
 			buildPhases = (
 				7F7B5A38B90C0DC548380B41 /* [CP] Check Pods Manifest.lock */,
+				E46BFA901FBF15B800F1FF72 /* Swiftlint */,
 				3A56876C1A3B93BD0066DB2B /* Sources */,
 				3A56876D1A3B93BD0066DB2B /* Frameworks */,
 				3A56876E1A3B93BD0066DB2B /* Resources */,
@@ -1107,8 +1036,9 @@
 				TargetAttributes = {
 					3A56876F1A3B93BD0066DB2B = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 2UH3E86XLG;
 						LastSwiftMigration = 0830;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -1208,12 +1138,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A7577B51C5966530023F08C /* bitbucket_get_comments.json in Resources */,
-				3A7577AF1C59621E0023F08C /* bitbucket_get_pr.json in Resources */,
-				3A0034F21C59775100A4ECB5 /* bitbucket_get_status.json in Resources */,
-				3A0034F01C5975C000A4ECB5 /* bitbucket_post_status.json in Resources */,
-				3A7577B11C5963440023F08C /* bitbucket_get_repo.json in Resources */,
-				3A7577AB1C593A740023F08C /* bitbucket_get_prs.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1229,9 +1153,6 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-BuildaGitServerTests/Pods-BuildaGitServerTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BuildaUtils/BuildaUtils.framework",
 				"${BUILT_PRODUCTS_DIR}/Keys/Keys.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveCocoa/ReactiveCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveSwift/ReactiveSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSafe/SwiftSafe.framework",
 				"${BUILT_PRODUCTS_DIR}/DVR/DVR.framework",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
@@ -1240,9 +1161,6 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BuildaUtils.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Keys.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSafe.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DVR.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
@@ -1360,9 +1278,6 @@
 				"${BUILT_PRODUCTS_DIR}/Ji/Ji.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
 				"${BUILT_PRODUCTS_DIR}/Keys/Keys.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveCocoa/ReactiveCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveSwift/ReactiveSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework.dSYM",
 				"${BUILT_PRODUCTS_DIR}/SwiftSafe/SwiftSafe.framework",
@@ -1379,9 +1294,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Ji.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Keys.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
 				"${DWARF_DSYM_FOLDER_PATH}/Sparkle.framework.dSYM",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSafe.framework",
@@ -1442,9 +1354,6 @@
 				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
 				"${BUILT_PRODUCTS_DIR}/Keys/Keys.framework",
 				"${BUILT_PRODUCTS_DIR}/OAuthSwift/OAuthSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveCocoa/ReactiveCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveSwift/ReactiveSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework.dSYM",
 				"${BUILT_PRODUCTS_DIR}/SwiftSafe/SwiftSafe.framework",
@@ -1460,9 +1369,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Keys.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OAuthSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
 				"${DWARF_DSYM_FOLDER_PATH}/Sparkle.framework.dSYM",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSafe.framework",
@@ -1543,6 +1449,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E46BFA901FBF15B800F1FF72 /* Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Swiftlint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo ${PODS_ROOT}\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint --path ${SRCROOT} --config ${SRCROOT}/.swiftlint.yml\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
 		FCA2AC3A5FAE55B062298D99 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1565,36 +1485,37 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A9109BF1BC29E0A00C2AECA /* EditorViewControllerFactory.swift in Sources */,
-				6DF2EAFA1D1C6DDF006FC52B /* SelectTriggerViewController.swift in Sources */,
-				3A0FF5A01BBFDA7E00FB8051 /* RACUIExtensions.swift in Sources */,
-				3AE0AB2B1BB991AB00A52D20 /* SyncerViewModel.swift in Sources */,
-				3AAA1B761AAC504700FA1598 /* XcodeServerViewController.swift in Sources */,
-				3A9109BB1BC27C3700C2AECA /* MainEditorViewController.swift in Sources */,
-				3AC2E4331BC444DF009095F7 /* EmptyBuildTemplateViewController.swift in Sources */,
-				3A5655721BC06A55008BD142 /* EmptyXcodeServerViewController.swift in Sources */,
-				3AF090B81B1134AA0058567F /* BranchWatchingViewController.swift in Sources */,
-				3A9109C11BC2A42600C2AECA /* EditorContext.swift in Sources */,
-				3A5B04AA1AB4ABEB00F60536 /* TriggerViewController.swift in Sources */,
-				3AF1B1241AAC7CA500917EF3 /* SyncerViewController.swift in Sources */,
-				3A5B04B01AB5144700F60536 /* ManualBotManagementViewController.swift in Sources */,
-				3AC156241BB95C0C0068A1A3 /* DashboardViewController.swift in Sources */,
-				3A81BB3C1B5A7994004732CD /* UIUtils.swift in Sources */,
-				3AE4F6D01BBC8D250006CA1C /* EmptyProjectViewController.swift in Sources */,
+				E46BFAC11FBF7A4300F1FF72 /* EditorState.swift in Sources */,
+				E46BFABA1FBF7A4300F1FF72 /* SeparatorView.swift in Sources */,
+				E46BFABE1FBF7A4300F1FF72 /* TriggerViewController.swift in Sources */,
+				E46BFAC31FBF7A4300F1FF72 /* EmptyXcodeServerViewController.swift in Sources */,
+				E46BFAC71FBF7A4300F1FF72 /* MainEditorViewController.swift in Sources */,
+				E46BFAC91FBF7A4300F1FF72 /* MenuItemManager.swift in Sources */,
+				E46BFABC1FBF7A4300F1FF72 /* BuildTemplateViewController.swift in Sources */,
+				E46BFAC61FBF7A4300F1FF72 /* EditorContext.swift in Sources */,
 				3A5687761A3B93BD0066DB2B /* AppDelegate.swift in Sources */,
-				3AC7D5DF1BBC22A900786198 /* PresentableViewController.swift in Sources */,
-				3AAA1B781AAC508A00FA1598 /* ConfigEditViewController.swift in Sources */,
-				3A9109C51BC2B0B200C2AECA /* MainEditor_ViewManipulation.swift in Sources */,
-				3AC7D5E11BBC231400786198 /* StoryboardLoadingUtils.swift in Sources */,
-				3AAA1B661AAB6E9800FA1598 /* SeparatorView.swift in Sources */,
-				3AA573061BCD70FC00172D3E /* URLUtils.swift in Sources */,
-				3A9109C71BC2B67100C2AECA /* EditableViewController.swift in Sources */,
-				3AD338B01AAE31D500ECD0F2 /* BuildTemplateViewController.swift in Sources */,
-				3A9109C31BC2B05C00C2AECA /* MainEditor_EditeeDelegate.swift in Sources */,
-				3A9109BD1BC27C5500C2AECA /* EditorState.swift in Sources */,
-				3AAA1B681AAB722600FA1598 /* ProjectViewController.swift in Sources */,
-				3A08B3641C5837EA00ED7A1F /* ServiceAuthentication.swift in Sources */,
-				3AB3FDCB1B05644300021197 /* MenuItemManager.swift in Sources */,
+				E46BFACC1FBF7A4300F1FF72 /* EmptyProjectViewController.swift in Sources */,
+				E46BFAC21FBF7A4300F1FF72 /* MainEditor_ViewManipulation.swift in Sources */,
+				E46BFA951FBF79EA00F1FF72 /* ServiceAuthentication.swift in Sources */,
+				E46BFAD51FBF82D900F1FF72 /* NSButton+OnClick.swift in Sources */,
+				E46BFAD91FBF90CB00F1FF72 /* NSStepper+ValueChanged.swift in Sources */,
+				E46BFAB41FBF7A4300F1FF72 /* EmptyBuildTemplateViewController.swift in Sources */,
+				E46BFACB1FBF7A4300F1FF72 /* ProjectViewController.swift in Sources */,
+				E46BFAB71FBF7A4300F1FF72 /* BranchWatchingViewController.swift in Sources */,
+				E46BFAB61FBF7A4300F1FF72 /* UIUtils.swift in Sources */,
+				E46BFAB21FBF7A4300F1FF72 /* ManualBotManagementViewController.swift in Sources */,
+				E46BFABD1FBF7A4300F1FF72 /* EditableViewController.swift in Sources */,
+				E46BFABB1FBF7A4300F1FF72 /* XcodeServerViewController.swift in Sources */,
+				E46BFAC51FBF7A4300F1FF72 /* MainEditor_EditeeDelegate.swift in Sources */,
+				E46BFAC01FBF7A4300F1FF72 /* SyncerViewModel.swift in Sources */,
+				E46BFAB51FBF7A4300F1FF72 /* EditorViewControllerFactory.swift in Sources */,
+				E46BFAB91FBF7A4300F1FF72 /* DashboardViewController.swift in Sources */,
+				E46BFABF1FBF7A4300F1FF72 /* URLUtils.swift in Sources */,
+				E46BFAC41FBF7A4300F1FF72 /* PresentableViewController.swift in Sources */,
+				E46BFAB31FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift in Sources */,
+				E46BFAC81FBF7A4300F1FF72 /* ConfigEditViewController.swift in Sources */,
+				E46BFACA1FBF7A4300F1FF72 /* SelectTriggerViewController.swift in Sources */,
+				E46BFAB81FBF7A4300F1FF72 /* SyncerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1634,6 +1555,7 @@
 				3A3BF8CB1BD7C1E50050A0B7 /* GitRepoMetadataParser.swift in Sources */,
 				3ACBAE041B5ADE2A00204457 /* StorageUtils.swift in Sources */,
 				3A0FF5A21BBFE8BA00FB8051 /* SyncerConfig.swift in Sources */,
+				E41183531FC31D9500C112F6 /* TriggerConfig.swift in Sources */,
 				3A56556E1BC059E7008BD142 /* SyncerProducerFactory.swift in Sources */,
 				3ACBAE0F1B5ADE2A00204457 /* SyncPair.swift in Sources */,
 				3ACBAE061B5ADE2A00204457 /* SyncerBotManipulation.swift in Sources */,
@@ -1645,7 +1567,6 @@
 				3ACBAE151B5ADE2A00204457 /* XcodeProject.swift in Sources */,
 				3A3BF8C71BD7C1680050A0B7 /* CheckoutFileParser.swift in Sources */,
 				3ACBAE161B5ADE2A00204457 /* XcodeProjectParser.swift in Sources */,
-				3AE4F6CE1BBC88450006CA1C /* RACUtils.swift in Sources */,
 				3A4C159F1BBB2DD0007FA970 /* SourceControlFileParser.swift in Sources */,
 				3A0FF5AE1BC0067700FB8051 /* SyncerManager.swift in Sources */,
 				3ACBAE091B5ADE2A00204457 /* SyncerGitHubUtils.swift in Sources */,
@@ -1681,34 +1602,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A7AF6141C592055000FD726 /* BitBucketEndpoints.swift in Sources */,
 				3AB3F0E21A3CEBAC005F717F /* GitHubEntity.swift in Sources */,
 				3A32CD181A3D01E300861A34 /* GitHubIssue.swift in Sources */,
 				3AB3F0E11A3CEBAC005F717F /* GitHubCommit.swift in Sources */,
-				3A7577AD1C593C5C0023F08C /* BitBucketPullRequestBranch.swift in Sources */,
-				3A7577B71C59691A0023F08C /* BitBucketStatus.swift in Sources */,
 				3A7AF6161C5923A4000FD726 /* GitServerFactory.swift in Sources */,
 				3A0BE6E31C5A754E00AC9C57 /* Extensions.swift in Sources */,
 				3AB3F0E31A3CEBAC005F717F /* GitHubPullRequest.swift in Sources */,
 				3AB3F0E71A3CEBAC005F717F /* GitHubStatus.swift in Sources */,
 				3AB3F0E51A3CEBAC005F717F /* GitHubRepo.swift in Sources */,
-				3A7AF6181C592919000FD726 /* BitBucketEntity.swift in Sources */,
-				3A7AF61E1C592A90000FD726 /* BitBucketRepo.swift in Sources */,
 				3AB3F0E01A3CEBAC005F717F /* GitHubBranch.swift in Sources */,
 				3AB3F0EB1A3CEBE9005F717F /* GitServerPublic.swift in Sources */,
 				3AB3F0E81A3CEBAC005F717F /* GitHubEndpoints.swift in Sources */,
-				3A7AF61C1C592A17000FD726 /* BitBucketIssue.swift in Sources */,
 				3A32CD141A3D00F800861A34 /* GitHubComment.swift in Sources */,
 				3A35CD6E1BE96E9B0088D57A /* BaseTypes.swift in Sources */,
-				3A7577B31C5963BF0023F08C /* BitBucketComment.swift in Sources */,
 				3AB3F0EA1A3CEBAC005F717F /* GitHubServer.swift in Sources */,
 				3AB3F0E41A3CEBAC005F717F /* GitHubPullRequestBranch.swift in Sources */,
 				3AB3F0E61A3CEBAC005F717F /* GitHubUser.swift in Sources */,
-				3A7AF6121C592023000FD726 /* BitBucketServer.swift in Sources */,
 				3A35CD6F1BE96E9B0088D57A /* SourceServerExtensions.swift in Sources */,
-				3A7AF6201C592B2C000FD726 /* BitBucketRateLimit.swift in Sources */,
 				3A3BDC1F1AF6D34900D2CD99 /* GitHubRateLimit.swift in Sources */,
-				3A7AF61A1C592975000FD726 /* BitBucketPullRequest.swift in Sources */,
 				3A014BA51C57A94B00B82B4A /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1717,7 +1628,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A7AF6101C591FAD000FD726 /* BitBucketServerTests.swift in Sources */,
 				3AAF6F0B1A3CE82B00C657FB /* GitHubServerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1878,10 +1788,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2UH3E86XLG;
 				INFOPLIST_FILE = Buildasaur/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -1899,10 +1809,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2UH3E86XLG;
 				ENABLE_NS_ASSERTIONS = YES;
 				INFOPLIST_FILE = Buildasaur/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -2061,10 +1971,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2UH3E86XLG;
 				ENABLE_NS_ASSERTIONS = YES;
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = Buildasaur/Info.plist;

@@ -12,14 +12,14 @@ import BuildaGitServer
 import BuildaUtils
 
 extension StandardSyncer {
-    
-    //MARK: Bot manipulation utils
-    
-    func cancelIntegrations(integrations: [Integration], completion: @escaping () -> ()) {
-        
-        integrations.mapVoidAsync(transformAsync: { (integration, itemCompletion) -> () in
-            
-            self._xcodeServer.cancelIntegration(integration.id, completion: { (success, error) -> () in
+
+    // MARK: Bot manipulation utils
+
+    func cancelIntegrations(integrations: [Integration], completion: @escaping () -> Void) {
+
+        integrations.mapVoidAsync(transformAsync: { (integration, itemCompletion) -> Void in
+
+            self._xcodeServer.cancelIntegration(integration.id, completion: { (_, error) -> Void in
                 if error != nil {
                     self.notifyError(error: error, context: "Failed to cancel integration \(integration.number)")
                 } else {
@@ -27,14 +27,14 @@ extension StandardSyncer {
                 }
                 itemCompletion()
             })
-            
+
             }, completion: completion)
     }
-    
-    func deleteBot(bot: Bot, completion: @escaping () -> ()) {
-        
-        self._xcodeServer.deleteBot(bot.id, revision: bot.rev, completion: { (success, error) -> () in
-            
+
+    func deleteBot(bot: Bot, completion: @escaping () -> Void) {
+
+        self._xcodeServer.deleteBot(bot.id, revision: bot.rev, completion: { (_, error) -> Void in
+
             if error != nil {
                 self.notifyError(error: error, context: "Failed to delete bot with name \(bot.name)")
             } else {
@@ -43,9 +43,9 @@ extension StandardSyncer {
             completion()
         })
     }
-    
-    private func createBotFromName(botName: String, branch: String, repo: RepoType, completion: @escaping () -> ()) {
-        
+
+    private func createBotFromName(botName: String, branch: String, repo: RepoType, completion: @escaping () -> Void) {
+
         /*
         synced bots must have a manual schedule, Builda tells the bot to reintegrate in case of a new commit.
         this has the advantage in cases when someone pushes 10 commits. if we were using Xcode Server's "On Commit"
@@ -57,14 +57,14 @@ extension StandardSyncer {
         */
         let schedule = BotSchedule.manualBotSchedule()
         let template = self.buildTemplate
-        
+
         //to handle forks
         let headOriginUrl = repo.originUrlSSH
         let localProjectOriginUrl = self._project.workspaceMetadata!.projectURL.absoluteString
-        
+
         let project: Project
         if headOriginUrl != localProjectOriginUrl {
-            
+
             //we have a fork, duplicate the metadata with the fork's origin
             do {
                 let source = try self._project.duplicateForForkAtOriginURL(forkURL: headOriginUrl)
@@ -78,31 +78,31 @@ extension StandardSyncer {
             //a normal PR in the same repo, no need to duplicate, just use the existing project
             project = self._project
         }
-        
+
         let xcodeServer = self._xcodeServer
-        
-        XcodeServerSyncerUtils.createBotFromBuildTemplate(botName: botName, syncer: self, template: template, project: project, branch: branch, scheduleOverride: schedule, xcodeServer: xcodeServer) { (bot, error) -> () in
-            
+
+        XcodeServerSyncerUtils.createBotFromBuildTemplate(botName: botName, syncer: self, template: template, project: project, branch: branch, scheduleOverride: schedule, xcodeServer: xcodeServer) { (_, error) -> Void in
+
             if error != nil {
                 self.notifyError(error: error, context: "Failed to create bot with name \(botName)")
             }
             completion()
         }
     }
-    
-    func createBotFromPR(pr: PullRequestType, completion: @escaping () -> ()) {
-        
+
+    func createBotFromPR(pr: PullRequestType, completion: @escaping () -> Void) {
+
         let branchName = pr.headName
         let botName = BotNaming.nameForBotWithPR(pr: pr, repoName: self.repoName()!)
-        
+
         self.createBotFromName(botName: botName, branch: branchName, repo: pr.headRepo, completion: completion)
     }
-    
-    func createBotFromBranch(branch: BranchType, repo: RepoType, completion: @escaping () -> ()) {
-        
+
+    func createBotFromBranch(branch: BranchType, repo: RepoType, completion: @escaping () -> Void) {
+
         let branchName = branch.name
         let botName = BotNaming.nameForBotWithBranch(branch: branch, repoName: self.repoName()!)
-        
+
         self.createBotFromName(botName: botName, branch: branchName, repo: repo, completion: completion)
     }
 }

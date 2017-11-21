@@ -11,27 +11,27 @@ import XcodeServerSDK
 import BuildaGitServer
 
 class BotNaming {
-    
+
     class func isBuildaBot(bot: Bot) -> Bool {
         return bot.name.hasPrefix(self.prefixForBuildaBot())
     }
-    
+
     class func isBuildaBotBelongingToRepoWithName(bot: Bot, repoName: String) -> Bool {
         return bot.name.hasPrefix(self.prefixForBuildaBotInRepoWithName(repoName: repoName))
     }
-    
+
     class func nameForBotWithBranch(branch: BranchType, repoName: String) -> String {
         return "\(self.prefixForBuildaBotInRepoWithName(repoName: repoName)) |-> \(branch.name)"
     }
-    
+
     class func nameForBotWithPR(pr: PullRequestType, repoName: String) -> String {
         return "\(self.prefixForBuildaBotInRepoWithName(repoName: repoName)) PR #\(pr.number)"
     }
-    
+
     class func prefixForBuildaBotInRepoWithName(repoName: String) -> String {
         return "\(self.prefixForBuildaBot()) [\(repoName)]"
     }
-    
+
     class func prefixForBuildaBot() -> String {
         return "BuildaBot"
     }

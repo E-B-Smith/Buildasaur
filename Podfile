@@ -20,10 +20,6 @@ def pods_for_errbody
     pod 'BuildaUtils', '~> 0.4.1'
 end
 
-def rac
-    pod 'ReactiveCocoa', '~> 7.0.0-rc.1'
-end
-
 def also_xcode_pods
     pods_for_errbody
     pod 'XcodeServerSDK', '~> 0.7.3'
@@ -32,7 +28,6 @@ end
 
 def buildasaur_app_pods
     also_xcode_pods
-    rac
     pod 'Ji', '~> 2.0.1'
     pod 'CryptoSwift', '~> 0.7.2'
     pod 'Sparkle'
@@ -48,6 +43,7 @@ target 'Buildasaur' do
     buildasaur_app_pods
     pod 'Crashlytics'
     pod 'OAuthSwift'
+    pod 'SwiftLint'
 end
 
 target 'BuildaKit' do
@@ -61,12 +57,10 @@ end
 
 target 'BuildaGitServer' do
     pods_for_errbody
-    rac
 end
 
 target 'BuildaGitServerTests' do
     pods_for_errbody
-    rac
     test_pods
 end
 

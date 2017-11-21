@@ -12,50 +12,50 @@ import BuildaGitServer
 import BuildaUtils
 
 public class SyncPair_Branch_Bot: SyncPair {
-    
+
     let branch: BranchType
     let bot: Bot
     let resolver: SyncPairBranchResolver
-    
+
     public init(branch: BranchType, bot: Bot, resolver: SyncPairBranchResolver) {
         self.branch = branch
         self.bot = bot
         self.resolver = resolver
         super.init()
     }
-    
+
     override func sync(completion: @escaping Completion) {
-        
+
         //sync the branch with the bot
         self.syncBranchWithBot(completion: completion)
     }
-    
+
     override func syncPairName() -> String {
         return "Branch (\(self.branch.name)) + Bot (\(self.bot.name))"
     }
-    
-    //MARK: Internal
-    
+
+    // MARK: Internal
+
     private func syncBranchWithBot(completion: @escaping Completion) {
-        
+
         let bot = self.bot
         let headCommit = self.branch.commitSHA
         let issue: IssueType? = nil //TODO: only pull/create if we're failing
-        
-        self.syncer.xcodeServer.getHostname { (hostname, error) -> () in
-            
+
+        self.syncer.xcodeServer.getHostname { (hostname, error) -> Void in
+
             if let error = error {
                 completion(error)
                 return
             }
-            
-            self.getIntegrations(bot: bot, completion: { (integrations, error) -> () in
-                
+
+            self.getIntegrations(bot: bot, completion: { (integrations, error) -> Void in
+
                 if let error = error {
                     completion(error)
                     return
                 }
-                
+
                 let actions = self.resolver.resolveActionsForCommitAndIssueWithBotIntegrations(
                     commit: headCommit,
                     issue: issue,
@@ -63,11 +63,11 @@ public class SyncPair_Branch_Bot: SyncPair {
                     hostname: hostname!,
                     buildStatusCreator: self.syncer,
                     integrations: integrations)
-                
+
                 //in case of branches, we also (optionally) want to add functionality for creating an issue if the branch starts failing and updating with comments the same way we do with PRs.
                 //also, when the build is finally successful on the branch, the issue will be automatically closed.
                 //TODO: add this functionality here and add it as another action available from a sync pair
-                
+
                 self.performActions(actions: actions, completion: completion)
             })
         }
