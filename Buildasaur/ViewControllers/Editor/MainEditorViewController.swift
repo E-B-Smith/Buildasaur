@@ -117,7 +117,16 @@ class MainEditorViewController: PresentableViewController {
 
     //not verified that vc is okay with it
     func _previous(animated: Bool) {
-        if let previous = self.state.0.previous() {
+        // Special case, if we started editing a syncer a click on previous should get back to it
+        let previousState: EditorState?
+        if let emptyXcodeServerViewController = self._contentViewController as? EmptyXcodeServerViewController,
+            emptyXcodeServerViewController.existingConfigId != nil {
+            previousState = .syncer
+        } else {
+            previousState = self.state.0.previous()
+        }
+
+        if let previous = previousState {
             self.state = (previous, animated)
         } else {
             //we're at the beginning, dismiss?
