@@ -32,7 +32,8 @@ extension StandardSyncer {
     var _buildTemplate: BuildTemplate { return self.buildTemplate }
     var _waitForLttm: Bool { return self.config.waitForLttm }
     var _postStatusComments: Bool { return self.config.postStatusComments }
-    var _watchedBranchNames: [String] { return self.config.watchedBranchNames }
+    var _watchingBranches: [String: Bool] { return self.config.watchingBranches }
+    var _automaticallyWatchNewBranches: Bool { return self.config.automaticallyWatchNewBranches }
     var _slackWebhook: String? { return self.config.slackWebhook?.nonEmpty() }
 
     public typealias BotActions = (
@@ -91,7 +92,7 @@ extension StandardSyncer {
     private func syncRepoWithPRs(repoName: String, repo: RepoType, prs: [PullRequestType], completion: @escaping () -> Void) {
         //only fetch branches if there are any watched ones. there might be tens or hundreds of branches
         //so we don't want to fetch them unless user actually is watching any non-PR branches.
-        if !self._watchedBranchNames.isEmpty {
+        if !self._watchingBranches.filter({ $0.value == true }).isEmpty || self._automaticallyWatchNewBranches {
 
             //we have PRs, now fetch branches
             self._sourceServer.getBranchesOfRepo(repo: repoName, completion: { (branches, error) -> Void in
@@ -222,8 +223,18 @@ extension StandardSyncer {
             let branchesDictionary = branches.toDictionary { $0.name }
 
             //filter just the ones we want
-            let foundBranchesToWatch = self._watchedBranchNames.filter({ branchesDictionary[$0] != nil })
-            let branchesToWatch = foundBranchesToWatch.map({ branchesDictionary[$0]! })
+            var newBranchesSet = Set(branchesDictionary.keys)
+            let watchedBranchesSet = Set(self._watchingBranches.keys)
+
+            //Get new branches to watch
+            newBranchesSet.subtract(watchedBranchesSet)
+            //Add existing branches
+            newBranchesSet = newBranchesSet.union(watchedBranchesSet.filter { branch -> Bool in
+                return self._watchingBranches[branch] == true && branchesDictionary.keys.contains(branch)
+            })
+            //Remove branches attached to a PR
+            newBranchesSet.subtract(prs.map { $0.headName })
+            let branchesToWatch = newBranchesSet.map { branchesDictionary[$0]! }
 
             //what do we do with deleted branches still in the list of branches to watch long term?
             //we unwatch them right here by just keeping the valid, found branches

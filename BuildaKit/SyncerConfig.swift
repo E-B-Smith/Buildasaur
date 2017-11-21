@@ -53,7 +53,8 @@ public struct SyncerConfig {
     public var postStatusComments: Bool
     public var syncInterval: TimeInterval
     public var waitForLttm: Bool
-    public var watchedBranchNames: [String]
+    public var watchingBranches: [String: Bool]
+    public var automaticallyWatchNewBranches: Bool
     public var slackWebhook: String?
 
     //creates a default syncer config
@@ -65,7 +66,8 @@ public struct SyncerConfig {
         self.postStatusComments = true
         self.syncInterval = 15
         self.waitForLttm = false
-        self.watchedBranchNames = []
+        self.watchingBranches = [:]
+        self.automaticallyWatchNewBranches = false
         self.slackWebhook = nil
     }
 }
@@ -80,7 +82,8 @@ private struct Keys {
     static let PostStatusComments = "post_status_comments"
     static let SyncInterval = "sync_interval"
     static let WaitForLttm = "wait_for_lttm"
-    static let WatchedBranches = "watched_branches"
+    static let WatchingBranches = "watching_branches"
+    static let AutomaticallyWatchNewBranches = "automatically_watch_new_branches"
     static let SlackWebhook = "slack_webhook"
 }
 
@@ -95,7 +98,8 @@ extension SyncerConfig: JSONSerializable {
             Keys.PostStatusComments: self.postStatusComments,
             Keys.SyncInterval: self.syncInterval,
             Keys.WaitForLttm: self.waitForLttm,
-            Keys.WatchedBranches: self.watchedBranchNames,
+            Keys.WatchingBranches: self.watchingBranches,
+            Keys.AutomaticallyWatchNewBranches: self.automaticallyWatchNewBranches,
             Keys.SlackWebhook: self.slackWebhook ?? ""
         ]
     }
@@ -107,7 +111,8 @@ extension SyncerConfig: JSONSerializable {
         self.postStatusComments = json[Keys.PostStatusComments] as! Bool
         self.syncInterval = json[Keys.SyncInterval] as! TimeInterval
         self.waitForLttm = json[Keys.WaitForLttm] as! Bool
-        self.watchedBranchNames = json[Keys.WatchedBranches] as! [String]
+        self.watchingBranches = json[Keys.WatchingBranches] as! [String: Bool]
+        self.automaticallyWatchNewBranches = json[Keys.AutomaticallyWatchNewBranches] as! Bool
         self.slackWebhook = (json[Keys.SlackWebhook] as? String)?.nonEmpty()
         self.id = (json[Keys.Id] as? RefType) ?? Ref.new()
     }
