@@ -30,12 +30,12 @@ class BlueprintFileParser: SourceControlFileParser {
         var primaryRemoteRepositoryDictionary: NSDictionary?
         if let wccId = projectWCCIdentifier {
             if let wcConfigs = dictionary["DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey"] as? [NSDictionary] {
-                primaryRemoteRepositoryDictionary = wcConfigs.filter({
+                primaryRemoteRepositoryDictionary = wcConfigs.first(where: {
                     if let loopWccId = $0.optionalStringForKey("DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey") {
                         return loopWccId == wccId
                     }
                     return false
-                }).first
+                })
             }
         }
 

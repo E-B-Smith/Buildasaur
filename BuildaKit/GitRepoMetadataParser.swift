@@ -26,7 +26,7 @@ class GitRepoMetadataParser: SourceControlFileParser {
         var fetchRemote = fetchRemotes.first
         if fetchRemotes.count > 1 {
             //choose the one named "origin" if it exists, best guess
-            if let origin = fetchRemotes.filter({ $0.hasPrefix("origin") }).first {
+            if let origin = fetchRemotes.first(where: { $0.hasPrefix("origin") }) {
                 fetchRemote = origin
             }
         }

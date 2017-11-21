@@ -80,7 +80,6 @@ class SyncerViewController: ConfigEditViewController {
 
     private var isSyncing: Bool = false {
         didSet {
-            self.previousAllowed = !self.isSyncing
             self.editing = !self.isSyncing
 
             self.startStopButton.title = self.isSyncing ? "Stop" : "Start"
@@ -136,6 +135,7 @@ class SyncerViewController: ConfigEditViewController {
         super.viewWillAppear()
         self.nextTitle = "Done"
         self.nextAllowed = true
+        self.previousAllowed = false
 
         self.update(forSyncer: self.syncer)
     }

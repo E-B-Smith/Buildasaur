@@ -27,12 +27,12 @@ class CheckoutFileParser: SourceControlFileParser {
         let projectWCCName = { () -> String? in
             if let wccId = projectWCCIdentifier {
                 if let wcConfigs = dictionary["IDESourceControlProjectWCConfigurations"] as? [NSDictionary] {
-                    if let foundConfig = wcConfigs.filter({
+                    if let foundConfig = wcConfigs.first(where: {
                         if let loopWccId = $0.optionalStringForKey("IDESourceControlWCCIdentifierKey") {
                             return loopWccId == wccId
                         }
                         return false
-                    }).first {
+                    }) {
                         //so much effort for this little key...
                         return foundConfig.optionalStringForKey("IDESourceControlWCCName")
                     }

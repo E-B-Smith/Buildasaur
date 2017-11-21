@@ -42,6 +42,7 @@ class EmptyXcodeServerViewController: EditableViewController {
     override func viewWillAppear() {
         super.viewWillAppear()
         self.nextTitle = "Next"
+        self.previousAllowed = self.existingConfigId != nil
     }
 
     override func viewDidAppear() {

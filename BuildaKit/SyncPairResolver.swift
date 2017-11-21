@@ -277,7 +277,7 @@ public class SyncPairResolver {
             summary.statusCreator = statusCreator
 
             //if there are any succeeded, it wins - iterating from the end
-            if let passingIntegration = sortedDesc.filter({ (integration: Integration) -> Bool in
+            if let passingIntegration = sortedDesc.first(where: { (integration: Integration) -> Bool in
                 switch integration.result! {
 
                 case .Succeeded, .Warnings, .AnalyzerWarnings:
@@ -285,31 +285,31 @@ public class SyncPairResolver {
                 default:
                     return false
                 }
-            }).first {
+            }) {
 
                 return summary.buildPassing(integration: passingIntegration)
             }
 
             //ok, no succeeded, warnings or analyzer warnings, get down to test failures
-            if let testFailingIntegration = sortedDesc.filter({
+            if let testFailingIntegration = sortedDesc.first(where: {
                 $0.result! == .TestFailures
-            }).first {
+            }) {
 
                 return summary.buildFailingTests(integration: testFailingIntegration)
             }
 
             //ok, the build didn't even run then. it either got cancelled or failed
-            if let errorredIntegration = sortedDesc.filter({
+            if let errorredIntegration = sortedDesc.first(where: {
                 $0.result! != .Canceled
-            }).first {
+            }) {
 
                 return summary.buildErrorredIntegration(integration: errorredIntegration)
             }
 
             //cool, not even build error. it must be just canceled ones then.
-            if let canceledIntegration = sortedDesc.filter({
+            if let canceledIntegration = sortedDesc.first(where: {
                 $0.result! == .Canceled
-            }).first {
+            }) {
 
                 return summary.buildCanceledIntegration(integration: canceledIntegration)
             }

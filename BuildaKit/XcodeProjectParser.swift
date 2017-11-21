@@ -70,9 +70,9 @@ public class XcodeProjectParser {
 
         let pathExtension = url.pathExtension
 
-        let maybeParser = self.sourceControlFileParsers.filter {
+        let maybeParser = self.sourceControlFileParsers.first {
             Set($0.supportedFileExtensions()).contains(pathExtension)
-        }.first
+        }
         guard let parser = maybeParser else {
             throw XcodeDeviceParserError.with("Could not find a parser for path extension \(pathExtension)")
         }

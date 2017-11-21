@@ -45,30 +45,6 @@ class EditableViewController: NSViewController {
     var onWantsNext: ((Bool) -> Void)?
     var onWantsPrevious: ((Bool) -> Void)?
 
-    //TODO ???
-    /*typealias ActionSignal = Signal<Void, NoError>
-    typealias AnimatableSignal = Signal<Bool, NoError>
-    private typealias ActionObserver = ActionSignal.Observer
-    private typealias AnimatableObserver = AnimatableSignal.Observer
-
-    var wantsNext: AnimatableSignal!
-    var wantsPrevious: ActionSignal!
-
-    private var sinkNext: AnimatableObserver!
-    private var sinkPrevious: ActionObserver!*/
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        //TODO ???
-        /*let (wn, sn) = AnimatableSignal.pipe()
-        self.wantsNext = wn
-        self.sinkNext = sn
-        let (wp, sp) = ActionSignal.pipe()
-        self.wantsPrevious = wp
-        self.sinkPrevious = sp*/
-    }
-
     //call from inside of controllers, e.g.
     //when shouldGoNext starts validating and it succeeds some time later,
     //call goNext to finish going next. otherwise don't call
