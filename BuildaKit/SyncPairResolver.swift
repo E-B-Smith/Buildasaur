@@ -201,7 +201,7 @@ public class SyncPairResolver {
         //turn opens Xcode on the integration page. all good!
 
 //        let link = "xcbot://\(hostname)/botID/\(bot.id)/integrationID/\(integration.id)"
-        let link = "https://stlt.herokuapp.com/v1/xcs_deeplink/\(hostname)/\(bot.id)/\(integration.id!)"
+        let link = "https://stlt.herokuapp.com/v1/xcs_deeplink/\(hostname)/\(bot.id!)/\(integration.id!)"
         return link
     }
 
