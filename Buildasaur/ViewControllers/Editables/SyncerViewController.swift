@@ -30,7 +30,7 @@ class SyncerViewController: ConfigEditViewController {
             self.syncInterval = self.syncerConfig.syncInterval
             self.lttmToggle.on = self.syncerConfig.waitForLttm
             self.postStatusCommentsToggle.on = self.syncerConfig.postStatusComments
-            self.watchedBranches = self.syncerConfig.watchedBranchNames
+            self.watchingBranches = self.syncerConfig.watchingBranches
             self.slackWebhook = self.syncerConfig.slackWebhook
 
             self.generateConfig()
@@ -116,7 +116,12 @@ class SyncerViewController: ConfigEditViewController {
             self.generateConfig()
         }
     }
-    private var watchedBranches: [String] = [] {
+    private var watchingBranches: [String: Bool] = [:] {
+        didSet {
+            self.generateConfig()
+        }
+    }
+    private var automaticallyWatchNewBranches: Bool = false {
         didSet {
             self.generateConfig()
         }
@@ -197,14 +202,15 @@ class SyncerViewController: ConfigEditViewController {
         let waitForLttm = self.lttmToggle.on
         let postStatusComments = self.postStatusCommentsToggle.on
         let syncInterval = self.syncInterval
-        let watchedBranches = self.watchedBranches
+        let watchingBranches = self.watchingBranches
         let slackWebHook = self.slackWebhook
 
         var config = original!
         config.waitForLttm = waitForLttm
         config.postStatusComments = postStatusComments
         config.syncInterval = syncInterval
-        config.watchedBranchNames = watchedBranches
+        config.watchingBranches = watchingBranches
+        config.automaticallyWatchNewBranches = automaticallyWatchNewBranches
         config.slackWebhook = slackWebHook
 
         self.generatedConfig = config
@@ -332,8 +338,9 @@ extension SyncerViewController {
 
 extension SyncerViewController: BranchWatchingViewControllerDelegate {
 
-    func didUpdateWatchedBranches(_ branches: [String]) {
-        self.watchedBranches = branches
+    func didUpdateWatchedBranches(_ branches: [String: Bool], _ automaticallyWatchNewBranches: Bool) {
+        self.watchingBranches = branches
+        self.automaticallyWatchNewBranches = automaticallyWatchNewBranches
         self.save()
     }
 }

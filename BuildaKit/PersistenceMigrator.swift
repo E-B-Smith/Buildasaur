@@ -50,7 +50,8 @@ public class CompositeMigrator: MigratorType {
         self.childMigrators = [
             Migrator_v0_v1(persistence: persistence),
             Migrator_v1_v2(persistence: persistence),
-            Migrator_v2_v3(persistence: persistence)
+            Migrator_v2_v3(persistence: persistence),
+            Migrator_v3_v4(persistence: persistence)
         ]
     }
 
@@ -397,5 +398,48 @@ class Migrator_v2_v3: MigratorType {
                 pers.copyFileToFolder(fileName: $0, folder: "Logs")
                 pers.deleteFile(name: $0)
         }
+    }
+}
+
+/*
+ - Syncers.json: watched branched moved to dictionary [String: Bool] instead of list of currently watching branches
+                 add automatically watching new branches option
+ */
+class Migrator_v3_v4: MigratorType {
+    internal var persistence: Persistence
+    required init(persistence: Persistence) {
+        self.persistence = persistence
+    }
+
+    func isMigrationRequired() -> Bool {
+
+        return self.persistenceVersion() == 3
+    }
+
+    func attemptMigration() throws {
+        self.migrateSyncers()
+
+        let config = self.config()
+        let mutableConfig = config.mutableCopy() as! NSMutableDictionary
+        mutableConfig[kPersistenceVersion] = 4
+
+        //save the updated config
+        self.persistence.saveDictionary(name: "Config.json", item: mutableConfig)
+    }
+
+    func migrateSyncers() {
+        let syncers = self.persistence.loadArrayOfDictionariesFromFile(name: "Syncers.json") ?? []
+        let mutableSyncers = syncers.map { $0.mutableCopy() as! NSMutableDictionary }
+
+        for syncer in mutableSyncers {
+            syncer.optionallyAddValueForKey((syncer["watched_branches"] as? [String] ?? []).reduce(NSMutableDictionary()) { (result, branch) -> NSMutableDictionary in
+                result[branch] = true
+                return result
+            }, key: "watching_branches")
+            syncer.optionallyAddValueForKey(false as AnyObject, key: "automatically_watch_new_branches")
+            syncer.removeObject(forKey: "watched_branches")
+        }
+
+        self.persistence.saveArray(name: "Syncers.json", items: mutableSyncers as NSArray)
     }
 }

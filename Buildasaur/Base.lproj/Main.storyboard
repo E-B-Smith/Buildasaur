@@ -3386,6 +3386,13 @@ Gw
                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="SAg-Zh-mDU">
                                 <rect key="frame" x="198" y="301" width="16" height="16"/>
                             </progressIndicator>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="bmh-th-CR9">
+                                <rect key="frame" x="184" y="270" width="233" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically watch new branches" bezelStyle="regularSquare" imagePosition="right" state="on" inset="2" id="LcU-40-B0i">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YkO-Wz-Ncg">
                                 <rect key="frame" x="69" y="18" width="116" height="25"/>
                                 <constraints>
@@ -3413,13 +3420,13 @@ Gw
                                 </connections>
                             </button>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vg9-HZ-Xv0">
-                                <rect key="frame" x="50" y="60" width="501" height="230"/>
+                                <rect key="frame" x="50" y="60" width="501" height="196"/>
                                 <clipView key="contentView" id="3Xt-4Y-pgX">
-                                    <rect key="frame" x="1" y="1" width="499" height="228"/>
+                                    <rect key="frame" x="1" y="1" width="499" height="194"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="18" rowSizeStyle="automatic" viewBased="YES" id="jDu-Ec-web">
-                                            <rect key="frame" x="0.0" y="0.0" width="499" height="228"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="499" height="194"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -3499,18 +3506,21 @@ Gw
                             <constraint firstAttribute="bottom" secondItem="YkO-Wz-Ncg" secondAttribute="bottom" constant="20" id="1Y6-EX-GlU"/>
                             <constraint firstAttribute="centerX" secondItem="JGX-Vl-8cd" secondAttribute="centerX" id="2i3-90-lZM"/>
                             <constraint firstItem="JGX-Vl-8cd" firstAttribute="top" secondItem="Wgg-Ri-IDL" secondAttribute="top" constant="20" id="2zl-E8-WVM"/>
-                            <constraint firstItem="vg9-HZ-Xv0" firstAttribute="top" secondItem="JGX-Vl-8cd" secondAttribute="bottom" constant="8" id="9kH-4Z-osO"/>
                             <constraint firstItem="YkO-Wz-Ncg" firstAttribute="leading" secondItem="Wgg-Ri-IDL" secondAttribute="leading" constant="69" id="Axz-BO-JlU"/>
                             <constraint firstItem="SAg-Zh-mDU" firstAttribute="centerY" secondItem="JGX-Vl-8cd" secondAttribute="centerY" id="DUP-TA-rhC"/>
                             <constraint firstItem="baK-Qc-zQp" firstAttribute="leading" secondItem="YkO-Wz-Ncg" secondAttribute="trailing" constant="81" id="QGh-74-KgS"/>
                             <constraint firstItem="vg9-HZ-Xv0" firstAttribute="leading" secondItem="Wgg-Ri-IDL" secondAttribute="leading" constant="50" id="S7x-8X-1Kq"/>
                             <constraint firstItem="JGX-Vl-8cd" firstAttribute="leading" secondItem="SAg-Zh-mDU" secondAttribute="trailing" constant="8" id="Ufw-of-bxF"/>
+                            <constraint firstItem="vg9-HZ-Xv0" firstAttribute="top" secondItem="bmh-th-CR9" secondAttribute="bottom" constant="16" id="VM1-JX-zbg"/>
                             <constraint firstAttribute="trailing" secondItem="vg9-HZ-Xv0" secondAttribute="trailing" constant="49" id="dAe-Dd-LpO"/>
                             <constraint firstItem="YkO-Wz-Ncg" firstAttribute="top" secondItem="vg9-HZ-Xv0" secondAttribute="bottom" constant="18" id="gZb-qm-2i6"/>
                             <constraint firstItem="baK-Qc-zQp" firstAttribute="top" secondItem="YkO-Wz-Ncg" secondAttribute="top" id="is6-fU-6dX"/>
+                            <constraint firstItem="bmh-th-CR9" firstAttribute="centerX" secondItem="Wgg-Ri-IDL" secondAttribute="centerX" id="xlF-ww-0eg"/>
+                            <constraint firstItem="bmh-th-CR9" firstAttribute="top" secondItem="JGX-Vl-8cd" secondAttribute="bottom" constant="12" id="zL9-N8-kkd"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="automaticallyWatchNewBranchesButton" destination="bmh-th-CR9" id="aUD-Pp-RGB"/>
                         <outlet property="branchActivityIndicator" destination="SAg-Zh-mDU" id="y4C-yR-OVa"/>
                         <outlet property="branchesTableView" destination="jDu-Ec-web" id="jGZ-XE-ZjI"/>
                     </connections>

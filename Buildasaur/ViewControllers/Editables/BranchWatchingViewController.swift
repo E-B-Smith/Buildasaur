@@ -14,7 +14,7 @@ import BuildaKit
 
 protocol BranchWatchingViewControllerDelegate: class {
 
-    func didUpdateWatchedBranches(_ branches: [String])
+    func didUpdateWatchedBranches(_ branches: [String: Bool], _ automaticallyWatchNewBranches: Bool)
 }
 
 private struct ShowableBranch {
@@ -26,19 +26,21 @@ class BranchWatchingViewController: NSViewController, NSTableViewDelegate, NSTab
 
     //these two must be set before viewDidLoad by its presenting view controller
     var syncer: StandardSyncer!
-    var watchedBranchNames: Set<String>!
+    var watchingBranches: [String: Bool] = [:]
     weak var delegate: BranchWatchingViewControllerDelegate?
 
     private var branches: [ShowableBranch] = []
 
     @IBOutlet weak var branchActivityIndicator: NSProgressIndicator!
+    @IBOutlet weak var automaticallyWatchNewBranchesButton: NSButton!
     @IBOutlet weak var branchesTableView: NSTableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         assert(self.syncer != nil, "Syncer has not been set")
-        self.watchedBranchNames = Set(self.syncer.config.watchedBranchNames)
+        self.watchingBranches = self.syncer.config.watchingBranches
+        self.automaticallyWatchNewBranchesButton.on = self.syncer.config.automaticallyWatchNewBranches
 
         self.branchesTableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
     }
@@ -59,8 +61,10 @@ class BranchWatchingViewController: NSViewController, NSTableViewDelegate, NSTab
                     let pr = mappedPRs[$0.name]?.number
                     return ShowableBranch(name: $0.name, pr: pr)
                 }
-                sself.branchesTableView.reloadData()
-                sself.branchActivityIndicator.stopAnimation(nil)
+                DispatchQueue.main.async {
+                    sself.branchesTableView.reloadData()
+                    sself.branchActivityIndicator.stopAnimation(nil)
+                }
             }
         }
 
@@ -110,8 +114,8 @@ class BranchWatchingViewController: NSViewController, NSTableViewDelegate, NSTab
     }
 
     @IBAction func doneTapped(_ sender: AnyObject) {
-        let updated = Array(self.watchedBranchNames)
-        self.delegate?.didUpdateWatchedBranches(updated)
+        let updated = self.watchingBranches
+        self.delegate?.didUpdateWatchedBranches(updated, self.automaticallyWatchNewBranchesButton.on)
         self.dismiss(nil)
     }
 
@@ -158,7 +162,7 @@ class BranchWatchingViewController: NSViewController, NSTableViewDelegate, NSTab
                 checkbox.on = true
                 checkbox.isEnabled = false
             } else {
-                checkbox.on = self.watchedBranchNames.contains(branch.name)
+                checkbox.on = self.watchingBranches[branch.name] ?? false
                 checkbox.isEnabled = true
             }
             checkbox.row = row
@@ -175,14 +179,14 @@ class BranchWatchingViewController: NSViewController, NSTableViewDelegate, NSTab
         let branchName = branch.name
 
         //see if we are checking or unchecking
-        let previouslyEnabled = self.watchedBranchNames.contains(branchName)
+        let previouslyEnabled = self.watchingBranches[branchName]!
 
         if previouslyEnabled {
             //disable
-            self.watchedBranchNames.remove(branchName)
+            self.watchingBranches[branchName] = false
         } else {
             //enable
-            self.watchedBranchNames.insert(branchName)
+            self.watchingBranches[branchName] = true
         }
     }
 
