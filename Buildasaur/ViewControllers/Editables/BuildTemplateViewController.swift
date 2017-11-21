@@ -40,6 +40,7 @@ class BuildTemplateViewController: ConfigEditViewController, NSTableViewDataSour
 
             self.allowServerToManageCertificate.on = self.buildTemplate.manageCertsAndProfiles
             self.automaticallyRegisterDevices.on = self.buildTemplate.addMissingDevicesToTeams
+            self.automaticallyRegisterDevices.isEnabled = self.allowServerToManageCertificate.on
 
             let schedule = self.buildTemplate.schedule
             let scheduleIndex = self.schedules.index(of: schedule.schedule)
