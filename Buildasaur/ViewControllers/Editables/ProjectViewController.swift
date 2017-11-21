@@ -41,7 +41,6 @@ class ProjectViewController: ConfigEditViewController {
             self.sshPassphraseTextField.stringValue = projectConfig.sshPassphrase ?? ""
 
             self.updateServiceMeta()
-            self.recheckForAvailability(nil)
         }
     }
     weak var delegate: ProjectViewControllerDelegate?
