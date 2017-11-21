@@ -14,15 +14,18 @@ import BuildaUtils
 public struct StatusAndComment {
     public let status: StatusType
     public let comment: String?
+    public let integration: Integration?
+    public let links: [String: String]?
 
-    public init(status: StatusType, comment: String? = nil) {
+    public init(status: StatusType, comment: String? = nil, integration: Integration? = nil, links: [String: String]? = nil) {
         self.status = status
         self.comment = comment
+        self.integration = integration
+        self.links = links
     }
 }
 
 extension StandardSyncer {
-
     var _project: Project { return self.project }
     var _xcodeServer: XcodeServer { return self.xcodeServer }
     var _sourceServer: SourceServerType { return self.sourceServer }
@@ -30,6 +33,7 @@ extension StandardSyncer {
     var _waitForLttm: Bool { return self.config.waitForLttm }
     var _postStatusComments: Bool { return self.config.postStatusComments }
     var _watchedBranchNames: [String] { return self.config.watchedBranchNames }
+    var _slackWebhook: String? { return self.config.slackWebhook?.nonEmpty() }
 
     public typealias BotActions = (
         prsToSync: [(pr: PullRequestType, bot: Bot)],

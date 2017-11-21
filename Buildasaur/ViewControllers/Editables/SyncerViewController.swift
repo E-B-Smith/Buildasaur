@@ -31,6 +31,7 @@ class SyncerViewController: ConfigEditViewController {
             self.lttmToggle.on = self.syncerConfig.waitForLttm
             self.postStatusCommentsToggle.on = self.syncerConfig.postStatusComments
             self.watchedBranches = self.syncerConfig.watchedBranchNames
+            self.slackWebhook = self.syncerConfig.slackWebhook
 
             self.generateConfig()
         }
@@ -74,6 +75,8 @@ class SyncerViewController: ConfigEditViewController {
     @IBOutlet weak var syncIntervalTextField: NSTextField!
     @IBOutlet weak var lttmToggle: NSButton!
     @IBOutlet weak var postStatusCommentsToggle: NSButton!
+    @IBOutlet weak var slackWebhookLabel: NSTextField!
+    @IBOutlet weak var slackWebhookTextField: NSTextField!
 
     @IBOutlet weak var manualBotManagementButton: NSButton!
     @IBOutlet weak var branchWatchingButton: NSButton!
@@ -90,6 +93,7 @@ class SyncerViewController: ConfigEditViewController {
             }
             self.manualBotManagementButton.isEnabled = !self.isSyncing
             self.branchWatchingButton.isEnabled = !self.isSyncing
+            self.slackWebhookTextField.isEnabled = !self.isSyncing
 
             self.trashButton.isHidden = self.isSyncing
 
@@ -103,6 +107,12 @@ class SyncerViewController: ConfigEditViewController {
     private var syncInterval: Double = 15 {
         didSet {
             self.syncIntervalTextField.doubleValue = self.syncInterval
+            self.generateConfig()
+        }
+    }
+    private var slackWebhook: String? {
+        didSet {
+            self.slackWebhookTextField.stringValue = self.slackWebhook ?? ""
             self.generateConfig()
         }
     }
@@ -170,6 +180,9 @@ class SyncerViewController: ConfigEditViewController {
     }
 
     func setupBindings() {
+        self.syncIntervalTextField.delegate = self
+        self.slackWebhookTextField.delegate = self
+
         self.lttmToggle.onClick = { [weak self] _ in
             self?.generateConfig()
         }
@@ -185,12 +198,14 @@ class SyncerViewController: ConfigEditViewController {
         let postStatusComments = self.postStatusCommentsToggle.on
         let syncInterval = self.syncInterval
         let watchedBranches = self.watchedBranches
+        let slackWebHook = self.slackWebhook
 
         var config = original!
         config.waitForLttm = waitForLttm
         config.postStatusComments = postStatusComments
         config.syncInterval = syncInterval
         config.watchedBranchNames = watchedBranches
+        config.slackWebhook = slackWebHook
 
         self.generatedConfig = config
 
@@ -297,6 +312,9 @@ extension SyncerViewController {
     @IBAction func helpPostStatusCommentsButtonTapped(_ sender: AnyObject) {
         openLink("https://github.com/czechboy0/Buildasaur/blob/master/README.md#envelope-posting-status-comments")
     }
+    @IBAction func helpSlackIntegration(_ sender: AnyObject) {
+        openLink("https://my.slack.com/services/new/incoming-webhook/")
+    }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
 
@@ -371,7 +389,16 @@ extension SyncerViewController {
 
             //error?
             if let error = ourSyncer.lastSyncError {
-                messages.insert("Last sync failed with error \(error.localizedDescription)", at: 0)
+                let message: String
+                if case .DidFinishSyncing(let error) = ourSyncer.state,
+                    let nsError = error as NSError? {
+                    message = nsError.userInfo["info"] as! String
+                } else if case .DidEncounterError(let error) = ourSyncer.state {
+                    message = (error as NSError).userInfo["info"] as! String
+                } else {
+                    message = error.localizedDescription
+                }
+                messages.insert("Last sync failed with error \(message)", at: 0)
             }
 
             //info reports
@@ -401,5 +428,20 @@ extension SyncerViewController {
 
         strings.forEach { itemsToReport.append($0) }
         return itemsToReport.joined(separator: "\n")
+    }
+}
+
+extension SyncerViewController: NSTextFieldDelegate {
+    override func controlTextDidChange(_ obj: Notification) {
+        if let textField = obj.object as? NSTextField {
+            switch textField {
+            case self.syncIntervalTextField:
+                self.syncInterval = self.syncIntervalTextField.doubleValue
+            case self.slackWebhookTextField:
+                self.slackWebhook = self.slackWebhookTextField.stringValue.nonEmpty()
+            default:
+                break
+            }
+        }
     }
 }

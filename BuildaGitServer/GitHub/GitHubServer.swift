@@ -83,7 +83,7 @@ extension GitHubServer: SourceServerType {
         }
     }
 
-    func createStatusFromState(state buildState: BuildState, description: String?, targetUrl: String?) -> StatusType {
+    func createStatusFromState(state buildState: BuildState, description: String?, targetUrl: [String: String]?) -> StatusType {
 
         let state = GitHubStatus.GitHubState.fromBuildState(buildState: buildState)
         let context = "Buildasaur"
@@ -232,8 +232,13 @@ extension GitHubServer {
                 return
             case 400 ... 500:
                 let message = (body as? NSDictionary)?["message"] as? String ?? "Unknown error"
-                let resultString = "\(statusCode): \(message)"
-                completion(response, body, GithubServerError.with(resultString/*, internalError: error*/))
+                var resultString = "\(statusCode): \(message)"
+                if let errors = (body as? NSDictionary)?["errors"] as? [[String: Any]],
+                    let error = errors.first,
+                    let message = error["message"] {
+                    resultString += " - \(message)"
+                }
+                completion(response, body, GithubServerError.with(resultString))
                 return
             default:
                 break

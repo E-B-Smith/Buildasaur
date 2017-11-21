@@ -16,7 +16,7 @@ class SummaryBuilder {
     var statusCreator: BuildStatusCreator!
     var lines: [String] = []
     let resultString: String
-    var linkBuilder: (Integration) -> String? = { _ in nil }
+    var linkBuilder: (Integration) -> [String: String]? = { _ in [:] }
 
     init() {
         self.resultString = "*Result*: "
@@ -52,7 +52,7 @@ class SummaryBuilder {
         //and code coverage
         self.appendCodeCoverage(buildResultSummary: buildResultSummary)
 
-        return self.buildWithStatus(status: status)
+        return self.buildWithStatus(status: status, integration: integration, links: linkToIntegration)
     }
 
     func buildFailingTests(integration: Integration) -> StatusAndComment {
@@ -64,7 +64,7 @@ class SummaryBuilder {
         let status = self.createStatus(state: .Failure, description: "Build failed tests!", targetUrl: linkToIntegration)
         let buildResultSummary = integration.buildResultSummary!
         self.appendTestFailure(buildResultSummary: buildResultSummary)
-        return self.buildWithStatus(status: status)
+        return self.buildWithStatus(status: status, integration: integration, links: linkToIntegration)
     }
 
     func buildErrorredIntegration(integration: Integration) -> StatusAndComment {
@@ -75,7 +75,7 @@ class SummaryBuilder {
         let status = self.createStatus(state: .Error, description: "Build error!", targetUrl: linkToIntegration)
 
         self.appendErrors(integration: integration)
-        return self.buildWithStatus(status: status)
+        return self.buildWithStatus(status: status, integration: integration, links: linkToIntegration)
     }
 
     func buildCanceledIntegration(integration: Integration) -> StatusAndComment {
@@ -87,7 +87,7 @@ class SummaryBuilder {
         let status = self.createStatus(state: .Error, description: "Build canceled!", targetUrl: linkToIntegration)
 
         self.appendCancel()
-        return self.buildWithStatus(status: status)
+        return self.buildWithStatus(status: status, integration: integration, links: linkToIntegration)
     }
 
     func buildEmptyIntegration() -> StatusAndComment {
@@ -98,7 +98,7 @@ class SummaryBuilder {
 
     // MARK: utils
 
-    private func createStatus(state: BuildState, description: String?, targetUrl: String?) -> StatusType {
+    private func createStatus(state: BuildState, description: String?, targetUrl: [String: String]?) -> StatusType {
 
         let status = self.statusCreator.createStatusFromState(state: state, description: description, targetUrl: targetUrl)
         return status
@@ -109,7 +109,7 @@ class SummaryBuilder {
         var integrationText = "Integration \(integration.number)"
         if let link = self.linkBuilder(integration) {
             //linkify
-            integrationText = "[\(integrationText)](\(link))"
+            integrationText = "[\(integrationText)](\(link["https"]!))"
         }
 
         self.lines.append("Result of \(integrationText)")
@@ -176,7 +176,7 @@ class SummaryBuilder {
         self.lines.append("Build was **manually canceled**.")
     }
 
-    func buildWithStatus(status: StatusType) -> StatusAndComment {
+    func buildWithStatus(status: StatusType, integration: Integration? = nil, links: [String: String]? = nil) -> StatusAndComment {
 
         let comment: String?
         if lines.isEmpty {
@@ -184,7 +184,7 @@ class SummaryBuilder {
         } else {
             comment = lines.joined(separator: "\n")
         }
-        return StatusAndComment(status: status, comment: comment)
+        return StatusAndComment(status: status, comment: comment, integration: integration, links: links)
     }
 }
 

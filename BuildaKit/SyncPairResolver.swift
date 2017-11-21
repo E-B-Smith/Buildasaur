@@ -117,7 +117,7 @@ public class SyncPairResolver {
                 $0.currentStep == .Completed
             }
 
-            let link = { (integration: Integration) -> String? in
+            let link = { (integration: Integration) -> [String: String]? in
                 SyncPairResolver.linkToServer(hostname: hostname, bot: bot, integration: integration)
             }
 
@@ -193,16 +193,16 @@ public class SyncPairResolver {
         return sortedHeadCommitIntegrations
     }
 
-    class func linkToServer(hostname: String, bot: Bot, integration: Integration) -> String {
+    class func linkToServer(hostname: String, bot: Bot, integration: Integration) -> [String: String] {
 
         //unfortunately, since github doesn't allow non-https links anywhere, we
         //must proxy through Satellite (https://github.com/czechboy0/satellite)
         //all it does is it redirects to the desired xcbot://... url, which in
         //turn opens Xcode on the integration page. all good!
-
-//        let link = "xcbot://\(hostname)/botID/\(bot.id)/integrationID/\(integration.id)"
-        let link = "https://stlt.herokuapp.com/v1/xcs_deeplink/\(hostname)/\(bot.id!)/\(integration.id!)"
-        return link
+        return [
+            "xcode": "xcbot://\(hostname)/botID/\(bot.id!)/integrationID/\(integration.id!)",
+            "https": "https://stlt.herokuapp.com/v1/xcs_deeplink/\(hostname)/\(bot.id!)/\(integration.id!)"
+        ]
     }
 
     func resolveCommitStatusFromLatestIntegrations(
@@ -210,7 +210,7 @@ public class SyncPairResolver {
         issue: IssueType?,
         pending: Integration?,
         running: Integration?,
-        link: @escaping (Integration) -> String?,
+        link: @escaping (Integration) -> [String: String]?,
         statusCreator: BuildStatusCreator,
         completed: Set<Integration>) -> SyncPair.Actions {
 
@@ -223,7 +223,7 @@ public class SyncPairResolver {
                 //TODO: show how many builds are ahead in the queue and estimate when it will be
                 //started and when finished? (there is an average running time on each bot, it should be easy)
                 let status = statusCreator.createStatusFromState(state: .Pending, description: "Build waiting in the queue...", targetUrl: link(pending))
-                statusWithComment = StatusAndComment(status: status, comment: nil)
+                statusWithComment = StatusAndComment(status: status, comment: nil, integration: pending, links: link(pending))
 
                 //also, cancel the running integration, if it's there any
                 if let running = running {
@@ -233,13 +233,11 @@ public class SyncPairResolver {
 
                 //there's no pending integration, it's down to running and completed
                 if let running = running {
-
                     //there is a running integration.
                     //TODO: estimate, based on the average running time of this bot and on the started timestamp, when it will finish. add that to the description.
                     let currentStepString = running.currentStep.rawValue
                     let status = statusCreator.createStatusFromState(state: .Pending, description: "Integration step: \(currentStepString)...", targetUrl: link(running))
-                    statusWithComment = StatusAndComment(status: status, comment: nil)
-
+                    statusWithComment = StatusAndComment(status: status, comment: nil, integration: running, links: link(running))
                 } else {
 
                     //there no running integration, we're down to completed integration.
@@ -267,7 +265,7 @@ public class SyncPairResolver {
     func resolveStatusFromCompletedIntegrations(
         integrations: Set<Integration>,
         statusCreator: BuildStatusCreator,
-        link: @escaping (Integration) -> String?
+        link: @escaping (Integration) -> [String: String]?
         ) -> StatusAndComment {
 
             //get integrations sorted by number

@@ -54,6 +54,7 @@ public struct SyncerConfig {
     public var syncInterval: TimeInterval
     public var waitForLttm: Bool
     public var watchedBranchNames: [String]
+    public var slackWebhook: String?
 
     //creates a default syncer config
     public init() {
@@ -65,6 +66,7 @@ public struct SyncerConfig {
         self.syncInterval = 15
         self.waitForLttm = false
         self.watchedBranchNames = []
+        self.slackWebhook = nil
     }
 }
 
@@ -79,6 +81,7 @@ private struct Keys {
     static let SyncInterval = "sync_interval"
     static let WaitForLttm = "wait_for_lttm"
     static let WatchedBranches = "watched_branches"
+    static let SlackWebhook = "slack_webhook"
 }
 
 extension SyncerConfig: JSONSerializable {
@@ -92,7 +95,8 @@ extension SyncerConfig: JSONSerializable {
             Keys.PostStatusComments: self.postStatusComments,
             Keys.SyncInterval: self.syncInterval,
             Keys.WaitForLttm: self.waitForLttm,
-            Keys.WatchedBranches: self.watchedBranchNames
+            Keys.WatchedBranches: self.watchedBranchNames,
+            Keys.SlackWebhook: self.slackWebhook ?? ""
         ]
     }
 
@@ -104,6 +108,7 @@ extension SyncerConfig: JSONSerializable {
         self.syncInterval = json[Keys.SyncInterval] as! TimeInterval
         self.waitForLttm = json[Keys.WaitForLttm] as! Bool
         self.watchedBranchNames = json[Keys.WatchedBranches] as! [String]
+        self.slackWebhook = (json[Keys.SlackWebhook] as? String)?.nonEmpty()
         self.id = (json[Keys.Id] as? RefType) ?? Ref.new()
     }
 }

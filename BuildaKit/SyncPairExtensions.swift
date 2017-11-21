@@ -20,12 +20,10 @@ extension SyncPair {
     }
 
     func performActions(actions: Actions, completion: @escaping Completion) {
-
         let group = DispatchGroup()
         var lastGroupError: Error?
 
         if let integrationsToCancel = actions.integrationsToCancel {
-
             group.enter()
             self.syncer.cancelIntegrations(integrations: integrationsToCancel, completion: { () -> Void in
                 group.leave()
@@ -33,7 +31,6 @@ extension SyncPair {
         }
 
         if let newStatus = actions.statusToSet {
-
             let status = newStatus.status
             let commit = newStatus.commit
             let issue = newStatus.issue
@@ -48,12 +45,10 @@ extension SyncPair {
         }
 
         if let startNewIntegrationBot = actions.startNewIntegrationBot {
-
             let bot = startNewIntegrationBot
 
             group.enter()
             self.syncer._xcodeServer.postIntegration(bot.id, completion: { (integration, error) -> Void in
-
                 if let integration = integration, error == nil {
                     Log.info("Bot \(bot.name) successfully enqueued Integration #\(integration.number)")
                 } else {
@@ -73,7 +68,6 @@ extension SyncPair {
     // MARK: Utility functions
 
     func getIntegrations(bot: Bot, completion: @escaping (_ integrations: [Integration], _ error: Error?) -> Void) {
-
         let syncer = self.syncer
 
         /*
@@ -85,7 +79,6 @@ extension SyncPair {
             "last": "20"
         ]
         syncer?._xcodeServer.getBotIntegrations(bot.id, query: query, completion: { (integrations, error) -> Void in
-
             if error != nil {
                 let e = SyncerError.with("Bot \(bot.name) failed return integrations"/*, internalError: error*/)
                 completion([], e)
@@ -93,7 +86,6 @@ extension SyncPair {
             }
 
             if let integrations = integrations {
-
                 completion(integrations, nil)
 
             } else {

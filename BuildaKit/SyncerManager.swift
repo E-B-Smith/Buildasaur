@@ -15,7 +15,6 @@ import BuildaUtils
 //creating them from configurations
 
 public class SyncerManager {
-
     public let storageManager: StorageManager
     public let factory: SyncerFactoryType
     public let loginItem: LoginItem
@@ -122,7 +121,6 @@ public class SyncerManager {
 }
 
 extension SyncerManager: HeartbeatManagerDelegate {
-
     public func typesOfRunningSyncers() -> [String: Int] {
         return self.syncers.filter { $0.active }.reduce([:]) { (all, syncer) -> [String: Int] in
             var stats = all

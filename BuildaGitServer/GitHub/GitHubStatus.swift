@@ -72,11 +72,11 @@ class GitHubStatus: GitHubEntity {
         try super.init(json: json)
     }
 
-    init(state: GitHubState, description: String?, targetUrl: String?, context: String?) {
+    init(state: GitHubState, description: String?, targetUrl: [String: String]?, context: String?) {
 
         self.githubState = state
         self.description = description
-        self.targetUrl = targetUrl
+        self.targetUrl = targetUrl?["https"]
         self.context = context
         self.creator = nil
         self.created = nil
@@ -98,7 +98,6 @@ class GitHubStatus: GitHubEntity {
 }
 
 extension GitHubStatus: StatusType {
-
     var state: BuildState {
         return self.githubState.toBuildState()
     }

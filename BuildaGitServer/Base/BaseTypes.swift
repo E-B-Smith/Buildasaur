@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol BuildStatusCreator {
-    func createStatusFromState(state: BuildState, description: String?, targetUrl: String?) -> StatusType
+    func createStatusFromState(state: BuildState, description: String?, targetUrl: [String: String]?) -> StatusType
 }
 
 public protocol SourceServerType: BuildStatusCreator {
@@ -80,7 +80,7 @@ public protocol PullRequestType: IssueType {
     var title: String { get }
 }
 
-public enum BuildState {
+public enum BuildState: String {
     case NoState
     case Pending
     case Success
@@ -89,7 +89,6 @@ public enum BuildState {
 }
 
 public protocol StatusType {
-
     var state: BuildState { get }
     var description: String? { get }
     var targetUrl: String? { get }

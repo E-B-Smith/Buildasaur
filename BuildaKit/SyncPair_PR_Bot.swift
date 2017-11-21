@@ -84,7 +84,7 @@ public class SyncPair_PR_Bot: SyncPair {
                     Log.verbose("Bot \(bot.name) is not yet enabled, ignoring...")
 
                     let status = self.syncer.createStatusFromState(state: BuildState.Pending, description: "Waiting for \"lttm\" to start testing", targetUrl: nil)
-                    let notYetEnabled = StatusAndComment(status: status, comment: nil)
+                    let notYetEnabled = StatusAndComment(status: status)
                     syncer?.updateCommitStatusIfNecessary(newStatus: notYetEnabled, commit: headCommit, issue: pr, completion: completion)
                 }
             })
