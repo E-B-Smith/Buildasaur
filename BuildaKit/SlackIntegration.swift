@@ -34,7 +34,7 @@ class SlackIntegration {
         self.session = URLSession(configuration: config)
     }
 
-    func postCommentOnIssue(statusWithComment: StatusAndComment, repo: String, prNumber: Int) {
+    func postCommentOnIssue(statusWithComment: StatusAndComment, repo: String, branch: String, prNumber: Int?) {
         let color: String
         switch statusWithComment.status.state {
         case .Error, .Failure:
@@ -49,13 +49,22 @@ class SlackIntegration {
                 let links = statusWithComment.links else { return }
 
         var notification: [String: Any] = [:]
-        notification["fallback"] = "[\(repo)] PR #\(prNumber): \(statusWithComment.status.state.rawValue)"
-        notification["pretext"] = "[\(repo)] PR #\(prNumber): \(statusWithComment.status.state.rawValue)"
+
+        let title: String
+        if let prNumber = prNumber {
+            title = "#\(prNumber) |-> \(branch) \(integration.result!.rawValue.capitalized)"
+            notification["fallback"] = "[\(repo)] PR #\(prNumber) |-> \(branch): \(statusWithComment.status.state.rawValue)"
+            notification["pretext"] = "[\(repo)] PR #\(prNumber) |-> \(branch): \(statusWithComment.status.state.rawValue)"
+        } else {
+            title = "Branch \(branch) \(integration.result!.rawValue.capitalized)"
+            notification["fallback"] = "[\(repo)] |-> \(branch): \(statusWithComment.status.state.rawValue)"
+            notification["pretext"] = "[\(repo)] |-> \(branch): \(statusWithComment.status.state.rawValue)"
+        }
         notification["color"] = color
         notification["mrkdwn_in"] = [ "pretext", "text", "fallback", "fields" ]
         notification["unfurl_links"] = false
         let field: [String: Any] = [
-            "title": "#\(prNumber) \(integration.result!.rawValue.capitalized)",
+            "title": title,
             "value": statusWithComment.comment?.reformat(link: links["xcode"]!) ?? "",
             "short": false
         ]

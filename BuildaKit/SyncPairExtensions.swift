@@ -15,7 +15,7 @@ extension SyncPair {
 
     public struct Actions {
         public let integrationsToCancel: [Integration]?
-        public let statusToSet: (status: StatusAndComment, commit: String, issue: IssueType?)?
+        public let statusToSet: (status: StatusAndComment, commit: String, branch: String, issue: IssueType?)?
         public let startNewIntegrationBot: Bot? //if non-nil, starts a new integration on this bot
     }
 
@@ -33,10 +33,11 @@ extension SyncPair {
         if let newStatus = actions.statusToSet {
             let status = newStatus.status
             let commit = newStatus.commit
+            let branch = newStatus.branch
             let issue = newStatus.issue
 
             group.enter()
-            self.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, issue: issue, completion: { (error) -> Void in
+            self.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, branch: branch, issue: issue, completion: { (error) -> Void in
                 if let error = error {
                     lastGroupError = error
                 }

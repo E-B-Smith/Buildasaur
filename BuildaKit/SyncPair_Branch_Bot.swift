@@ -39,6 +39,7 @@ public class SyncPair_Branch_Bot: SyncPair {
     private func syncBranchWithBot(completion: @escaping Completion) {
 
         let bot = self.bot
+        let branch = self.branch.name
         let headCommit = self.branch.commitSHA
         let issue: IssueType? = nil //TODO: only pull/create if we're failing
 
@@ -58,6 +59,7 @@ public class SyncPair_Branch_Bot: SyncPair {
 
                 let actions = self.resolver.resolveActionsForCommitAndIssueWithBotIntegrations(
                     commit: headCommit,
+                    branch: branch,
                     issue: issue,
                     bot: bot,
                     hostname: hostname!,

@@ -22,6 +22,7 @@ extension StandardSyncer {
     func updateCommitStatusIfNecessary(
         newStatus: StatusAndComment,
         commit: String,
+        branch: String,
         issue: IssueType?,
         completion: @escaping SyncPair.Completion) {
         let repoName = self.repoName()!
@@ -38,7 +39,7 @@ extension StandardSyncer {
                 //TODO: add logic for handling the creation of a new Issue for branch tracking
                 //and the deletion of it when build succeeds etc.
 
-                self.postStatusWithComment(statusWithComment: newStatus, commit: commit, repo: repoName, issue: issue, completion: completion)
+                self.postStatusWithComment(statusWithComment: newStatus, commit: commit, repo: repoName, branch: branch, issue: issue, completion: completion)
 
             } else {
                 completion(nil)
@@ -46,19 +47,18 @@ extension StandardSyncer {
         })
     }
 
-    func postMessageOnSlackIfPossible(statusWithComment: StatusAndComment, commit: String, repo: String, issue: IssueType?) {
+    func postMessageOnSlackIfPossible(statusWithComment: StatusAndComment, commit: String, repo: String, branch: String, issue: IssueType?) {
         // We prioritise Slack over Github comments
-        if let issue = issue,
-            let slackWebhook = self._slackWebhook,
+        if let slackWebhook = self._slackWebhook,
             statusWithComment.comment != nil {
             SlackIntegration(webhook: slackWebhook)
-                .postCommentOnIssue(statusWithComment: statusWithComment, repo: repo, prNumber: issue.number)
+                .postCommentOnIssue(statusWithComment: statusWithComment, repo: repo, branch: branch, prNumber: issue?.number)
         }
     }
 
-    func postStatusWithComment(statusWithComment: StatusAndComment, commit: String, repo: String, issue: IssueType?, completion: @escaping SyncPair.Completion) {
+    func postStatusWithComment(statusWithComment: StatusAndComment, commit: String, repo: String, branch: String, issue: IssueType?, completion: @escaping SyncPair.Completion) {
 
-        self.postMessageOnSlackIfPossible(statusWithComment: statusWithComment, commit: commit, repo: repo, issue: issue)
+        self.postMessageOnSlackIfPossible(statusWithComment: statusWithComment, commit: commit, repo: repo, branch: branch, issue: issue)
 
         self._sourceServer.postStatusOfCommit(commit: commit, status: statusWithComment.status, repo: repo) { (_, error) -> Void in
 

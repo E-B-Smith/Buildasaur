@@ -70,7 +70,6 @@ public protocol IssueType {
 }
 
 public protocol PullRequestType: IssueType {
-
     var headName: String { get }
     var headCommitSHA: String { get }
     var headRepo: RepoType { get }

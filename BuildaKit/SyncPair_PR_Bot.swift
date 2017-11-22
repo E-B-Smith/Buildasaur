@@ -42,6 +42,7 @@ public class SyncPair_PR_Bot: SyncPair {
         let bot = self.bot
         let pr = self.pr
         let headCommit = pr.headCommitSHA
+        let branch = pr.headName
         let issue = pr
 
         self.getIntegrations(bot: bot, completion: { (integrations, error) -> Void in
@@ -70,6 +71,7 @@ public class SyncPair_PR_Bot: SyncPair {
 
                         let actions = self.resolver.resolveActionsForCommitAndIssueWithBotIntegrations(
                             commit: headCommit,
+                            branch: branch,
                             issue: issue,
                             bot: bot,
                             hostname: hostname!,
@@ -85,7 +87,7 @@ public class SyncPair_PR_Bot: SyncPair {
 
                     let status = self.syncer.createStatusFromState(state: BuildState.Pending, description: "Waiting for \"lttm\" to start testing", targetUrl: nil)
                     let notYetEnabled = StatusAndComment(status: status)
-                    syncer?.updateCommitStatusIfNecessary(newStatus: notYetEnabled, commit: headCommit, issue: pr, completion: completion)
+                    syncer?.updateCommitStatusIfNecessary(newStatus: notYetEnabled, commit: headCommit, branch: pr.headName, issue: pr, completion: completion)
                 }
             })
         })

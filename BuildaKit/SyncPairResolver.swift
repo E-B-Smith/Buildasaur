@@ -19,6 +19,7 @@ public class SyncPairResolver {
 
     public func resolveActionsForCommitAndIssueWithBotIntegrations(
         commit: String,
+        branch: String,
         issue: IssueType?,
         bot: Bot,
         hostname: String,
@@ -124,6 +125,7 @@ public class SyncPairResolver {
             //resolve to a status
             let actions = self.resolveCommitStatusFromLatestIntegrations(
                 commit: commit,
+                branch: branch,
                 issue: issue,
                 pending: latestPendingIntegration,
                 running: runningIntegration,
@@ -207,6 +209,7 @@ public class SyncPairResolver {
 
     func resolveCommitStatusFromLatestIntegrations(
         commit: String,
+        branch: String,
         issue: IssueType?,
         pending: Integration?,
         running: Integration?,
@@ -257,7 +260,7 @@ public class SyncPairResolver {
 
             return SyncPair.Actions(
                 integrationsToCancel: integrationsToCancel,
-                statusToSet: (status: statusWithComment, commit: commit, issue: issue),
+                statusToSet: (status: statusWithComment, commit: commit, branch: branch, issue: issue),
                 startNewIntegrationBot: nil
             )
     }
