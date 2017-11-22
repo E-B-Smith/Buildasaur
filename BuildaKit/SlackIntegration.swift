@@ -12,16 +12,18 @@ import BuildaUtils
 import XcodeServerSDK
 
 private extension String {
-    func reformat(link: String) -> String {
+    func reformat(issues: String?) -> String {
         var result = self.replacingOccurrences(of: "**", with: "")
-        if let regexLink = try? NSRegularExpression(pattern: "\\[(.*)\\]\\((.*)\\)", options: .caseInsensitive) {
+        if let regexLink = try? NSRegularExpression(pattern: "Result of.*\n", options: .caseInsensitive) {
             result = regexLink.stringByReplacingMatches(in: result,
                                                         options: .withTransparentBounds,
                                                         range: NSRange(location: 0, length: result.count),
-                                                        withTemplate: "<\(link)|$1>")
+                                                        withTemplate: "")
         }
-        let newLine = "\n"
-        return result.split(separator: newLine).dropLast().joined(separator: newLine)
+        if let issues = issues {
+            result = result.replacingOccurrences(of: "---", with: "---\n\(issues)---\n")
+        }
+        return result.split(separator: "\n").dropLast().joined(separator: "\n")
     }
 }
 class SlackIntegration {
@@ -34,7 +36,7 @@ class SlackIntegration {
         self.session = URLSession(configuration: config)
     }
 
-    func postCommentOnIssue(statusWithComment: StatusAndComment, repo: String, branch: String, prNumber: Int?) {
+    func postCommentOnIssue(statusWithComment: StatusAndComment, repo: String, branch: String, prNumber: Int?, issues: String?) {
         let color: String
         switch statusWithComment.status.state {
         case .Error, .Failure:
@@ -50,22 +52,24 @@ class SlackIntegration {
 
         var notification: [String: Any] = [:]
 
+        let linkToIntegration = links["xcode"]!
+
         let title: String
         if let prNumber = prNumber {
             title = "#\(prNumber) |-> \(branch) \(integration.result!.rawValue.capitalized)"
-            notification["fallback"] = "[\(repo)] PR #\(prNumber) |-> \(branch): \(statusWithComment.status.state.rawValue)"
-            notification["pretext"] = "[\(repo)] PR #\(prNumber) |-> \(branch): \(statusWithComment.status.state.rawValue)"
+            notification["fallback"] = "[\(repo)] <\(linkToIntegration)|PR #\(prNumber)> |-> \(branch): \(statusWithComment.status.state.rawValue)"
+            notification["pretext"] = "[\(repo)] <\(linkToIntegration)|PR #\(prNumber)> |-> \(branch): \(statusWithComment.status.state.rawValue)"
         } else {
             title = "Branch \(branch) \(integration.result!.rawValue.capitalized)"
-            notification["fallback"] = "[\(repo)] |-> \(branch): \(statusWithComment.status.state.rawValue)"
-            notification["pretext"] = "[\(repo)] |-> \(branch): \(statusWithComment.status.state.rawValue)"
+            notification["fallback"] = "[\(repo)] |-> <\(linkToIntegration)|\(branch)>: \(statusWithComment.status.state.rawValue)"
+            notification["pretext"] = "[\(repo)] |-> <\(linkToIntegration)|\(branch)>: \(statusWithComment.status.state.rawValue)"
         }
         notification["color"] = color
         notification["mrkdwn_in"] = [ "pretext", "text", "fallback", "fields" ]
         notification["unfurl_links"] = false
         let field: [String: Any] = [
             "title": title,
-            "value": statusWithComment.comment?.reformat(link: links["xcode"]!) ?? "",
+            "value": statusWithComment.comment?.reformat(issues: issues) ?? "",
             "short": false
         ]
         notification["fields"] = [ field ]

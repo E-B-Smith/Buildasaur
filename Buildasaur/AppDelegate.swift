@@ -203,7 +203,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension AppDelegate: SUUpdaterDelegate {
 
-    func updater(_ updater: SUUpdater!, willInstallUpdate item: SUAppcastItem!) {
+    func updater(_ updater: SUUpdater, willInstallUpdate item: SUAppcastItem) {
         self.syncerManager.heartbeatManager?.willInstallSparkleUpdate()
     }
 }

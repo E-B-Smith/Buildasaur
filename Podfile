@@ -22,7 +22,7 @@ end
 
 def also_xcode_pods
     pods_for_errbody
-    pod 'XcodeServerSDK', '~> 0.7.3'
+    pod 'XcodeServerSDK', '~> 0.7.4'
     pod 'ekgclient', '~> 0.3.3'
 end
 

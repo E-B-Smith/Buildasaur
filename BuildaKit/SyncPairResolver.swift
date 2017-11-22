@@ -80,7 +80,8 @@ public class SyncPairResolver {
                 return SyncPair.Actions(
                     integrationsToCancel: integrationsToCancel,
                     statusToSet: nil,
-                    startNewIntegrationBot: bot
+                    startNewIntegrationBot: bot,
+                    lastIntegration: nil
                 )
             }
 
@@ -137,7 +138,8 @@ public class SyncPairResolver {
             return SyncPair.Actions(
                 integrationsToCancel: integrationsToCancel + (actions.integrationsToCancel ?? []),
                 statusToSet: actions.statusToSet,
-                startNewIntegrationBot: actions.startNewIntegrationBot ?? (startNewIntegration ? bot : nil)
+                startNewIntegrationBot: actions.startNewIntegrationBot ?? (startNewIntegration ? bot : nil),
+                lastIntegration: integrations.last
             )
     }
 
@@ -217,6 +219,7 @@ public class SyncPairResolver {
         statusCreator: BuildStatusCreator,
         completed: Set<Integration>) -> SyncPair.Actions {
 
+            let integration: Integration?
             let statusWithComment: StatusAndComment
             var integrationsToCancel: [Integration] = []
 
@@ -232,6 +235,8 @@ public class SyncPairResolver {
                 if let running = running {
                     integrationsToCancel.append(running)
                 }
+
+                integration = pending
             } else {
 
                 //there's no pending integration, it's down to running and completed
@@ -256,12 +261,15 @@ public class SyncPairResolver {
                         statusWithComment = StatusAndComment(status: status, comment: "Builda error, unknown state!")
                     }
                 }
+
+                integration = running
             }
 
             return SyncPair.Actions(
                 integrationsToCancel: integrationsToCancel,
                 statusToSet: (status: statusWithComment, commit: commit, branch: branch, issue: issue),
-                startNewIntegrationBot: nil
+                startNewIntegrationBot: nil,
+                lastIntegration: integration
             )
     }
 

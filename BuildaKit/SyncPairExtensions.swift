@@ -17,6 +17,7 @@ extension SyncPair {
         public let integrationsToCancel: [Integration]?
         public let statusToSet: (status: StatusAndComment, commit: String, branch: String, issue: IssueType?)?
         public let startNewIntegrationBot: Bot? //if non-nil, starts a new integration on this bot
+        public let lastIntegration: Integration?
     }
 
     func performActions(actions: Actions, completion: @escaping Completion) {
@@ -37,12 +38,33 @@ extension SyncPair {
             let issue = newStatus.issue
 
             group.enter()
-            self.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, branch: branch, issue: issue, completion: { (error) -> Void in
-                if let error = error {
-                    lastGroupError = error
+
+            let updateCommitStatusIfNecessary: ((IntegrationIssues?) -> Void) = { [weak self] integrationIssues in
+                let issues = self?.buildIssues(integrationIssues: integrationIssues)
+                self?.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, branch: branch, issue: issue, issues: issues, completion: { (error) -> Void in
+                    if let error = error {
+                        lastGroupError = error
+                    }
+                    group.leave()
+                })
+            }
+
+            switch status.status.state {
+            case .NoState, .Pending, .Success:
+                updateCommitStatusIfNecessary(nil)
+            case .Failure, .Error:
+                if let lastIntegration = actions.lastIntegration {
+                    self.getIntegrationIssues(integration: lastIntegration, completion: { (integrationIssues, error) in
+                        if error != nil {
+                            lastGroupError = SyncerError.with("Integration \(lastIntegration.id!) failed to retrieve an integration issues")
+                        }
+                        updateCommitStatusIfNecessary(integrationIssues)
+                    })
+                } else {
+                    updateCommitStatusIfNecessary(nil)
                 }
-                group.leave()
-            })
+            }
+
         }
 
         if let startNewIntegrationBot = actions.startNewIntegrationBot {
@@ -53,8 +75,7 @@ extension SyncPair {
                 if let integration = integration, error == nil {
                     Log.info("Bot \(bot.name) successfully enqueued Integration #\(integration.number)")
                 } else {
-                    let e = SyncerError.with("Bot \(bot.name) failed to enqueue an integration"/*, internalError: error*/)
-                    lastGroupError = e
+                    lastGroupError = SyncerError.with("Bot \(bot.name) failed to enqueue an integration"/*, internalError: error*/)
                 }
 
                 group.leave()
@@ -88,7 +109,6 @@ extension SyncPair {
 
             if let integrations = integrations {
                 completion(integrations, nil)
-
             } else {
                 let e = SyncerError.with("Getting integrations"/*, internalError: SyncerError.with("Nil integrations even after returning nil error!")*/)
                 completion([], e)
@@ -96,4 +116,94 @@ extension SyncPair {
         })
     }
 
+    private func getIntegrationIssues(integration: Integration, completion: @escaping (_ integrationIssues: IntegrationIssues?, _ error: Error?) -> Void) {
+        self.syncer?._xcodeServer.getIntegrationIssues(integration.id, completion: { (integrationIssues, error) in
+            if error != nil {
+                let e = SyncerError.with("Integration \(integration.id) failed return integration issues")
+                completion(nil, e)
+                return
+            }
+
+            if let integrationIssues = integrationIssues {
+                completion(integrationIssues, nil)
+
+            } else {
+                let e = SyncerError.with("Getting integration issues")
+                completion(nil, e)
+            }
+        })
+    }
+}
+
+extension SyncPair {
+    private  func buildIssues(integrationIssues: IntegrationIssues?) -> String? {
+        guard let integrationIssues = integrationIssues else { return nil }
+
+        var str = ""
+        if !integrationIssues.buildServiceErrors.isEmpty {
+            str += "*Service errors*\n"
+            str += self.issues(integrationIssues.buildServiceErrors)
+        }
+        if !integrationIssues.triggerErrors.isEmpty {
+            str += "*Triggers Errors*\n"
+            str += self.issues(integrationIssues.triggerErrors)
+        }
+        if !integrationIssues.errors.isEmpty {
+            str += "*Errors*\n"
+            str += self.issues(integrationIssues.errors)
+        }
+        if !integrationIssues.testFailures.isEmpty {
+            str += "*Test failures*\n"
+            str += self.issues(integrationIssues.testFailures)
+        }
+
+        if !integrationIssues.buildServiceWarnings.isEmpty {
+            str += "*Service warnings*\n"
+            str += self.issues(integrationIssues.buildServiceWarnings)
+        }
+        if !integrationIssues.analyzerWarnings.isEmpty {
+            str += "*Analyzer warnings*\n"
+            str += self.issues(integrationIssues.analyzerWarnings)
+        }
+        if !integrationIssues.warnings.isEmpty {
+            str += "*Warnings*\n"
+            str += self.issues(integrationIssues.warnings)
+        }
+
+        return str
+    }
+
+    private func issues(_ issues: [IntegrationIssue]) -> String {
+        return issues.reduce("", { (str, issue) -> String in
+            var str = str
+            str += self.string(for: issue) + "\n"
+            return str
+        })
+    }
+
+    private func emoji(for issue: IntegrationIssue) -> String {
+        if case .resolved = issue.status {
+            return "✅"
+        } else if case .silenced = issue.status {
+            return "🙊"
+        }
+        let emoji: String
+        switch issue.type {
+        case .BuildServiceError, .TriggerError, .Error, .TestFailure: emoji = "🛑"
+        case .BuildServiceWarning, .Warning, .AnalyzerWarning: emoji = "⚠️"
+        }
+        return emoji
+    }
+
+    private func string(for issue: IntegrationIssue) -> String {
+        var str = "\n" + self.emoji(for: issue) + "  "
+        if let message = issue.message {
+            str += message
+        }
+        if let lineNumber = issue.lineNumber,
+            let file = issue.documentFilePath {
+            str += "\n\tIn \(file):\(lineNumber)"
+        }
+        return str
+    }
 }

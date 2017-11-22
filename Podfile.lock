@@ -2,13 +2,13 @@ PODS:
   - Alamofire (4.5.1)
   - BuildaUtils (0.4.1):
     - SwiftSafe (~> 2.0.1)
-  - Crashlytics (3.7.0):
-    - Fabric (~> 1.6.3)
+  - Crashlytics (3.9.3):
+    - Fabric (~> 1.7.2)
   - CryptoSwift (0.7.2)
   - DVR (1.1.0)
   - ekgclient (0.3.3):
     - Alamofire (~> 4.5.1)
-  - Fabric (1.6.6)
+  - Fabric (1.7.2)
   - Ji (2.0.1):
     - Ji/Ji (= 2.0.1)
   - Ji/Ji (2.0.1):
@@ -18,10 +18,10 @@ PODS:
   - Keys (1.0.0)
   - Nimble (7.0.2)
   - OAuthSwift (1.2.0)
-  - Sparkle (1.13.1)
-  - SwiftLint (0.23.1)
+  - Sparkle (1.18.1)
+  - SwiftLint (0.24.0)
   - SwiftSafe (2.0.1)
-  - XcodeServerSDK (0.7.3):
+  - XcodeServerSDK (0.7.4):
     - BuildaUtils (~> 0.4.1)
 
 DEPENDENCIES:
@@ -37,7 +37,7 @@ DEPENDENCIES:
   - OAuthSwift
   - Sparkle
   - SwiftLint
-  - XcodeServerSDK (~> 0.7.3)
+  - XcodeServerSDK (~> 0.7.4)
 
 EXTERNAL SOURCES:
   Keys:
@@ -46,21 +46,21 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   BuildaUtils: b8c8f7b6a57a294cfcc7d434b55e526520fa76c5
-  Crashlytics: c3a2333dea9e2733d2777f730910321fc9e25c0d
+  Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   CryptoSwift: cd2158be2bf639aabc63ec804707c7137c90157c
   DVR: f785f86273f7a3a94335acf44611ac2cbf5920f9
   ekgclient: f55ba63142c3545e22f98511127812c46a67828b
-  Fabric: 1abc1e59f11fa39ede6f690ef7309d8563e3ec59
+  Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
   Ji: 6bb602a28dd08b804158f64990e6051ed5de0110
   KeychainAccess: 94c5540b32eabf7bc32bfb976a268e8ea05fd6da
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
   OAuthSwift: 7fd6855b8e4d58eb5a30d156ea9bed7a8aecd1ca
-  Sparkle: 2fbd47b869621d1e679c7554e3e19dda02104818
-  SwiftLint: 1b670ce79284c76520f84060e87d645078fd32fa
+  Sparkle: 06ea33170007c5937ee54da481b4481af98fac79
+  SwiftLint: a014c92b4664e8b13f380f8640a51bb1733778ba
   SwiftSafe: bd14d81b4e458790796e089af07ae740147dc6f3
-  XcodeServerSDK: a7f7c8e2e4707a939eca35eb2115a2c812da8b74
+  XcodeServerSDK: 30093232b46f5d18b797f7579ec298bee5686d68
 
-PODFILE CHECKSUM: 65e03e7fe8743f1926b9e4e0eb5998015cd51d50
+PODFILE CHECKSUM: 88d9f823317155e33fe75d3b4195eee389f07fc7
 
 COCOAPODS: 1.3.1
