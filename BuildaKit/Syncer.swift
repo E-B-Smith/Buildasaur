@@ -23,6 +23,22 @@ public enum SyncerEventType {
     case DidEncounterError(Error)
 }
 
+extension SyncerEventType: Equatable {}
+public func == (lhs: SyncerEventType, rhs: SyncerEventType) -> Bool {
+    switch (lhs, rhs) {
+    case (.Initial, .Initial),
+         (.DidBecomeActive, .DidBecomeActive),
+         (.DidStop, .DidStop),
+         (.DidStartSyncing, .DidStartSyncing):
+        return true
+    case let (.DidFinishSyncing(lhs), .DidFinishSyncing(rhs)):
+        return lhs as NSError? == rhs as NSError?
+    case let (.DidEncounterError(lhs), .DidEncounterError(rhs)):
+        return lhs as NSError == rhs as NSError
+    default: return false
+    }
+}
+
 class Trampoline: NSObject {
 
     var block: (() -> Void)?
@@ -37,7 +53,7 @@ public class SyncerError: Error {
 
 @objc public class Syncer: NSObject {
 
-    public private(set) var state: SyncerEventType = .Initial {
+    public internal(set) var state: SyncerEventType = .Initial {
         didSet {
             self.onStateChanged?(self.state)
         }
@@ -56,7 +72,7 @@ public class SyncerError: Error {
     /// How often, in seconds, the syncer should pull data from both sources and resolve pending actions
     public var syncInterval: TimeInterval
 
-    private var isSyncing: Bool {
+    public internal(set) var isSyncing: Bool {
         didSet {
             if !oldValue && self.isSyncing {
                 self.lastSyncStartDate = Date()
@@ -75,8 +91,8 @@ public class SyncerError: Error {
                 let timer = Timer(timeInterval: self.syncInterval, target: self.trampoline, selector: s, userInfo: nil, repeats: true)
                 self.timer = timer
                 RunLoop.main.add(timer, forMode: .commonModes)
-                self._sync() //call for the first time, next one will be called by the timer
                 self.state = .DidBecomeActive
+                self._sync() //call for the first time, next one will be called by the timer
             } else if !active && oldValue {
                 self.timer?.invalidate()
                 self.timer = nil

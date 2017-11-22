@@ -11,7 +11,6 @@ import BuildaKit
 
 struct SyncerStatePresenter {
     static func stringForState(_ state: SyncerEventType, active: Bool) -> String {
-
         guard active else {
             return "🚧 stopped"
         }
@@ -39,7 +38,7 @@ class SyncerViewModel {
     private(set) var syncer: StandardSyncer {
         didSet {
             self.updateFromSync(self.syncer)
-            self.syncer.onRequireUpdate = { [weak self] in
+            self.syncer.onRequireUIUpdate = { [weak self] in
                 guard let sself = self else { return }
                 sself.updateFromSync(sself.syncer)
             }
@@ -110,7 +109,7 @@ class SyncerViewModel {
 
         self.updateFromSync(syncer)
 
-        syncer.onRequireUpdate = { [weak self] in
+        syncer.onRequireUIUpdate = { [weak self] in
             guard let sself = self else { return }
             sself.updateFromSync(sself.syncer)
         }

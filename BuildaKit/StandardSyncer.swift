@@ -11,47 +11,58 @@ import BuildaGitServer
 import XcodeServerSDK
 
 public class StandardSyncer: Syncer {
-
     public var sourceServer: SourceServerType {
         didSet {
-            self.onRequireUpdate?()
+            self.onRequireUIUpdate?()
         }
     }
     public var xcodeServer: XcodeServer {
         didSet {
-            self.onRequireUpdate?()
+            if oldValue != self.xcodeServer {
+                self.onRequireUIUpdate?()
+            }
         }
     }
     public var project: Project {
         didSet {
-            self.onRequireUpdate?()
+            self.onRequireUIUpdate?()
         }
     }
     public var buildTemplate: BuildTemplate {
         didSet {
-            self.onRequireUpdate?()
+            self.onRequireUIUpdate?()
         }
     }
     public var triggers: [Trigger] {
         didSet {
-            self.onRequireUpdate?()
+            self.onRequireUIUpdate?()
         }
     }
 
     public override var active: Bool {
         didSet {
-            self.onRequireUpdate?()
+            if oldValue != self.active {
+                self.onRequireUIUpdate?()
+            }
         }
     }
 
     public var config: SyncerConfig {
         didSet {
             self.syncInterval = self.config.syncInterval
-            self.onRequireUpdate?()
+            self.onRequireUIUpdate?()
         }
     }
 
-    public var onRequireUpdate: (() -> Void)?
+    public override var state: SyncerEventType {
+        didSet {
+            if oldValue != self.state {
+                self.onRequireUIUpdate?()
+            }
+        }
+    }
+
+    public var onRequireUIUpdate: (() -> Void)?
     public var onRequireLog: (() -> Void)?
 
     public var configTriplet: ConfigTriplet {

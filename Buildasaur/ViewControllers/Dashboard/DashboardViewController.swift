@@ -218,26 +218,32 @@ extension DashboardViewController: NSTableViewDataSource {
     }
 
     func bindTextView(_ view: NSTableCellView, column: Column, viewModel: SyncerViewModel) {
+        let update: (NSTextField, String) -> Void = { (textField, text) in
+            DispatchQueue.main.async {
+                textField.stringValue = text
+            }
+        }
         switch column {
         case .Status:
             view.textField!.stringValue = viewModel.status
             viewModel.onStatusChanged = { status in
-                view.textField!.stringValue = status
+                print(status)
+                update(view.textField!, status)
             }
         case .XCSHost:
             view.textField!.stringValue = viewModel.host
             viewModel.onHostChanged = { host in
-                view.textField!.stringValue = host
+                update(view.textField!, host)
             }
         case .ProjectName:
             view.textField!.stringValue = viewModel.projectName
             viewModel.onProjectNameChanged = { projectName in
-                view.textField!.stringValue = projectName
+                update(view.textField!, projectName)
             }
         case .BuildTemplate:
             view.textField!.stringValue = viewModel.buildTemplateName
             viewModel.onBuildTemplateNameChanged = { buildTemplateName in
-                view.textField!.stringValue = buildTemplateName
+                update(view.textField!, buildTemplateName)
             }
         default: break
         }
@@ -248,16 +254,22 @@ extension DashboardViewController: NSTableViewDataSource {
         case .Edit:
             view.title = viewModel.editButtonTitle
             viewModel.onEditButtonTitleChanged = { title in
-                view.title = title
+                DispatchQueue.main.async {
+                    view.title = title
+                }
             }
             view.isEnabled = viewModel.editButtonEnabled
             viewModel.onEditButtonEnabledChanged = { enabled in
-                view.isEnabled = enabled
+                DispatchQueue.main.async {
+                    view.isEnabled = enabled
+                }
             }
         case .Control:
             view.title = viewModel.controlButtonTitle
             viewModel.onControlButtonTitleChanged = { title in
-                view.title = title
+                DispatchQueue.main.async {
+                    view.title = title
+                }
             }
         default: break
         }
