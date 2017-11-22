@@ -107,9 +107,9 @@ class SummaryBuilder {
     func addBaseCommentFromIntegration(integration: Integration) {
 
         var integrationText = "Integration \(integration.number)"
-        if let link = self.linkBuilder(integration) {
+        if let link = self.linkBuilder(integration)?["https"] {
             //linkify
-            integrationText = "[\(integrationText)](\(link["https"]!))"
+            integrationText = "[\(integrationText)](\(link))"
         }
 
         self.lines.append("Result of \(integrationText)")

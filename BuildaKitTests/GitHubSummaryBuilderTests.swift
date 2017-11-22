@@ -21,9 +21,9 @@ class GitHubSummaryBuilderTests: XCTestCase {
         return integration
     }
 
-    func linkBuilder() -> ((Integration) -> String?) {
-        return { integration -> String? in
-            return "https://link/to/\(integration.id!)"
+    func linkBuilder() -> ((Integration) -> [String: String]?) {
+        return { integration -> [String: String]? in
+            return ["https": "https://link/to/\(integration.id!)"]
         }
     }
 

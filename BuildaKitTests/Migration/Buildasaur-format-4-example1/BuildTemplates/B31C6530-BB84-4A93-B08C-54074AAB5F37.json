@@ -1,7 +1,13 @@
 {
   "id" : "B31C6530-BB84-4A93-B08C-54074AAB5F37",
   "project_name" : "Buildasaur-Tester",
-  "should_test" : true,
+  "schedule" : {
+    "weeklyScheduleDay" : 0,
+    "periodicScheduleInterval" : 0,
+    "hourOfIntegration" : 0,
+    "minutesAfterHourToIntegrate" : 0,
+    "scheduleType" : 3
+  },
   "triggers" : [
     "E8F5285A-A262-4630-AF7B-236772B75760",
     "4E66D0D5-D5CC-417E-A40E-73B513CE4E10"
@@ -16,11 +22,5 @@
   ],
   "should_archive" : false,
   "name" : "BuildaTest PR",
-  "schedule" : {
-    "weeklyScheduleDay" : 0,
-    "periodicScheduleInterval" : 0,
-    "hourOfIntegration" : 0,
-    "minutesAfterHourToIntegrate" : 0,
-    "scheduleType" : 3
-  }
+  "should_test" : true
 }

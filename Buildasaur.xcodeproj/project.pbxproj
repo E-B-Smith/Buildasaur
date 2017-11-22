@@ -146,6 +146,7 @@
 		E46BFACC1FBF7A4300F1FF72 /* EmptyProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAB11FBF7A4300F1FF72 /* EmptyProjectViewController.swift */; };
 		E46BFAD51FBF82D900F1FF72 /* NSButton+OnClick.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAD41FBF82D900F1FF72 /* NSButton+OnClick.swift */; };
 		E46BFAD91FBF90CB00F1FF72 /* NSStepper+ValueChanged.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFAD81FBF90CA00F1FF72 /* NSStepper+ValueChanged.swift */; };
+		E47CBEBA1FC57AC1000FDA42 /* Buildasaur-format-4-example1 in Resources */ = {isa = PBXBuildFile; fileRef = E47CBEB91FC57AC0000FDA42 /* Buildasaur-format-4-example1 */; };
 		E9F513792E8C95C43A68D1CD /* Pods_BuildaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7827BDC6B1752C193A0EAA05 /* Pods_BuildaKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -370,6 +371,7 @@
 		E46BFAB11FBF7A4300F1FF72 /* EmptyProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyProjectViewController.swift; sourceTree = "<group>"; };
 		E46BFAD41FBF82D900F1FF72 /* NSButton+OnClick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSButton+OnClick.swift"; sourceTree = "<group>"; };
 		E46BFAD81FBF90CA00F1FF72 /* NSStepper+ValueChanged.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSStepper+ValueChanged.swift"; sourceTree = "<group>"; };
+		E47CBEB91FC57AC0000FDA42 /* Buildasaur-format-4-example1 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Buildasaur-format-4-example1"; path = "Migration/Buildasaur-format-4-example1"; sourceTree = "<group>"; };
 		F105E28B52A2616166887266 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F29FCDBD0B3B9740956E5206 /* Pods_BuildaGitServerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BuildaGitServerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBFCE164C6B59B0C7DC8FBEE /* Pods-BuildaGitServerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaGitServerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaGitServerTests/Pods-BuildaGitServerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -596,6 +598,7 @@
 				3A9D74251BCC19BB00DCA23C /* Buildasaur-format-2-example1 */,
 				3AE8B79A1C52DAD20033F6EF /* Buildasaur-format-2-example2 */,
 				3AED13121C529BB600E3B7FF /* Buildasaur-format-3-example1 */,
+				E47CBEB91FC57AC0000FDA42 /* Buildasaur-format-4-example1 */,
 				3A9D741F1BCBF87900DCA23C /* MigrationTests.swift */,
 			);
 			name = Migration;
@@ -1124,6 +1127,7 @@
 				3A9D74221BCC041600DCA23C /* Buildasaur-format-0-example1 in Resources */,
 				3AED13131C529BB600E3B7FF /* Buildasaur-format-3-example1 in Resources */,
 				3ACBADDD1B5ADE1400204457 /* sampleFinishedIntegration.json in Resources */,
+				E47CBEBA1FC57AC1000FDA42 /* Buildasaur-format-4-example1 in Resources */,
 				3A9D74241BCC103E00DCA23C /* Buildasaur-format-1-example1 in Resources */,
 				3AE8B79B1C52DAD20033F6EF /* Buildasaur-format-2-example2 in Resources */,
 				3A9D74261BCC19BB00DCA23C /* Buildasaur-format-2-example1 in Resources */,

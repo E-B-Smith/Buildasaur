@@ -37,20 +37,6 @@ class WorkspaceMetadataTests: XCTestCase {
                              expectedGitService: GitService.GitHub)
     }
 
-    // MARK: BitBucket
-
-    func test_parse_SSH_withSlash_bitbucket() {
-        help_test_parse_with(urlString: "ssh://git@bitbucket.org/organization/repo",
-                             expectedCheckoutType: CheckoutType.SSH,
-                             expectedGitService: GitService.BitBucket)
-    }
-
-    func test_parse_noSSH_withColon_bitbucket() {
-        help_test_parse_with(urlString: "git@bitbucket.org:organization/repo",
-                             expectedCheckoutType: CheckoutType.SSH,
-                             expectedGitService: GitService.BitBucket)
-    }
-
     // MARK: HTTP
 
     func test_parse_HTTPS() {

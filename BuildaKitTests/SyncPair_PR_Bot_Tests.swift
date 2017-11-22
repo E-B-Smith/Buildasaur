@@ -26,22 +26,23 @@ func XCTBAssertNotNil<T>(_ expression:  @autoclosure () -> T?, message: String =
 
 class SyncPair_PR_Bot_Tests: XCTestCase {
 
-    func mockedPRAndBotAndCommit() -> (PullRequestType, Bot, String, BuildStatusCreator) {
+    func mockedPRAndBotAndCommit() -> (PullRequestType, Bot, String, String, BuildStatusCreator) {
 
         let pr: PullRequestType = MockPullRequest(number: 1, title: "Awesomified The Engine")
         let bot = MockBot(name: "BuildaBot [me/Repo] PR #1")
         let commit = pr.headCommitSHA
+        let branch = pr.headName
         let buildStatusCreator = MockBuildStatusCreator()
 
-        return (pr, bot, commit, buildStatusCreator)
+        return (pr, bot, commit, branch, buildStatusCreator)
     }
 
     func testNoIntegrationsYet() {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [Integration]()
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
         XCTAssertEqual(actions.integrationsToCancel?.count ?? 0, 0)
         XCTBAssertNil(actions.statusToSet)
         XCTAssertNotNil(actions.startNewIntegrationBot)
@@ -49,12 +50,12 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testFirstIntegrationPending() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Pending)
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
         XCTAssertEqual(actions.integrationsToCancel?.count ?? 0, 0)
         XCTAssertNil(actions.startNewIntegrationBot)
         XCTBAssertNotNil(actions.statusToSet)
@@ -63,14 +64,14 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testMultipleIntegrationsPending() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Pending),
             try MockIntegration(number: 2, step: Integration.Step.Pending),
             try MockIntegration(number: 3, step: Integration.Step.Pending)
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
 
         //should cancel all except for the last one
         let toCancel = Set(actions.integrationsToCancel!)
@@ -84,12 +85,12 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testOneIntegrationRunning() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Building)
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
 
         XCTAssertEqual(actions.integrationsToCancel!.count, 0)
         XCTAssertNil(actions.startNewIntegrationBot)
@@ -99,12 +100,12 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testOneIntegrationTestsFailed() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Completed, sha: "head_sha", result: Integration.Result.TestFailures)
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
 
         XCTAssertEqual(actions.integrationsToCancel!.count, 0)
         XCTAssertNil(actions.startNewIntegrationBot)
@@ -114,12 +115,12 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testOneIntegrationSuccess() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Completed, sha: "head_sha", result: Integration.Result.Succeeded)
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
 
         XCTAssertEqual(actions.integrationsToCancel!.count, 0)
         XCTAssertNil(actions.startNewIntegrationBot)
@@ -129,13 +130,13 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testTwoIntegrationOneRunningOnePending() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Building, sha: "head_sha"),
             try MockIntegration(number: 2, step: Integration.Step.Pending, sha: "head_sha")
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
 
         XCTAssertEqual(actions.integrationsToCancel!.count, 1)
         XCTAssertNil(actions.startNewIntegrationBot)
@@ -145,12 +146,12 @@ class SyncPair_PR_Bot_Tests: XCTestCase {
 
     func testTwoIntegrationsDifferentCommits() throws {
 
-        let (pr, bot, commit, statusCreator) = self.mockedPRAndBotAndCommit()
+        let (pr, bot, commit, branch, statusCreator) = self.mockedPRAndBotAndCommit()
         let integrations = [
             try MockIntegration(number: 1, step: Integration.Step.Building, sha: "old_head_sha")
         ]
 
-        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
+        let actions = SyncPairPRResolver().resolveActionsForCommitAndIssueWithBotIntegrations(commit: commit, branch: branch, issue: pr, bot: bot, hostname: "localhost", buildStatusCreator: statusCreator, integrations: integrations)
 
         XCTAssertEqual(actions.integrationsToCancel!.count, 1)
         XCTAssertNotNil(actions.startNewIntegrationBot)

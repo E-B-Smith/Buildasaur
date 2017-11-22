@@ -30,7 +30,7 @@ class MigrationTests: XCTestCase {
 
     func writingURL(name: String) -> URL {
         let dir = NSTemporaryDirectory()
-//        let dir = "/Users/honzadvorsky/Desktop/TestLocation/"
+//        let dir = "/Users/sylvain/Desktop/TestLocation/"
         let path = (dir as NSString).appendingPathComponent(name)
         let writingURL = URL(fileURLWithPath: path, isDirectory: true)
 
@@ -42,7 +42,7 @@ class MigrationTests: XCTestCase {
 
     enum HierarchyError: Error {
         case DifferentFileNames(real: String?, expected: String?)
-        case DifferentFileContents(file: String?)
+        case DifferentFileContents(file: String?, real: String?, expected: String?)
         case DifferentFolderContents(real: [String], expected: [String])
     }
 
@@ -60,7 +60,9 @@ class MigrationTests: XCTestCase {
             let expData = try! Data(contentsOf: urlExpected)
             let realData = try! Data(contentsOf: urlReal)
             if expData != realData {
-                throw HierarchyError.DifferentFileContents(file: real)
+                throw HierarchyError.DifferentFileContents(file: real,
+                                                           real: String(data: realData, encoding: .utf8),
+                                                           expected: String(data: expData, encoding: .utf8))
             }
             return
         }
@@ -129,6 +131,25 @@ class MigrationTests: XCTestCase {
 
         let persistence = Persistence(readingFolder: readingURL, writingFolder: writingURL, fileManager: fileManager)
         let migrator = Migrator_v2_v3(persistence: persistence)
+
+        do {
+            try migrator.attemptMigration()
+            try self.ensureEqualHierarchies(persistence: persistence, urlExpected: expectedURL, urlReal: writingURL)
+        } catch {
+            fail("\(error)")
+        }
+    }
+
+    func testMigration_v3_v4() {
+
+        let readingURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-3-example1")
+        let writingURL = self.writingURL(name: "v3-v4")
+        let expectedURL = self.resourceURLFromTestBundle(name: "Buildasaur-format-4-example1")
+
+        let fileManager = FileManager.default
+
+        let persistence = Persistence(readingFolder: readingURL, writingFolder: writingURL, fileManager: fileManager)
+        let migrator = Migrator_v3_v4(persistence: persistence)
 
         do {
             try migrator.attemptMigration()

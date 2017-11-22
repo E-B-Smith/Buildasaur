@@ -425,6 +425,13 @@ class Migrator_v3_v4: MigratorType {
 
         //save the updated config
         self.persistence.saveDictionary(name: "Config.json", item: mutableConfig)
+
+        //copy the rest
+        self.persistence.copyFileToWriteLocation(name: "Projects.json", isDirectory: false)
+        self.persistence.copyFileToWriteLocation(name: "ServerConfigs.json", isDirectory: false)
+        self.persistence.copyFileToWriteLocation(name: "BuildTemplates", isDirectory: true)
+        self.persistence.copyFileToWriteLocation(name: "Logs", isDirectory: true)
+        self.persistence.copyFileToWriteLocation(name: "Triggers", isDirectory: true)
     }
 
     func migrateSyncers() {

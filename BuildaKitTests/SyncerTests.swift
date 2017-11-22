@@ -48,7 +48,7 @@ class SyncerTests: XCTestCase {
 
     func testCreatingChangeActions_NoPRs_NoBots() {
 
-        let botActions = self.syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: [], branches: [], bots: [])
+        let (botActions, _) = self.syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: [], branches: [], bots: [])
 
         XCTAssertEqual(botActions.prsToSync.count, 0)
         XCTAssertEqual(botActions.prBotsToCreate.count, 0)
@@ -64,7 +64,7 @@ class SyncerTests: XCTestCase {
             MockPullRequest(number: 7, title: "")
         ]
 
-        let botActions = self.syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: prs, branches: [], bots: [])
+        let (botActions, _) = self.syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: prs, branches: [], bots: [])
 
         XCTAssertEqual(botActions.prsToSync.count, 0)
         XCTAssertEqual(botActions.prBotsToCreate.count, 2)
@@ -80,7 +80,7 @@ class SyncerTests: XCTestCase {
             MockBot(name: "BuildaBot [me/Repo] bot2")
         ]
 
-        let botActions = self.syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: [], branches: [], bots: bots)
+        let (botActions, _) = self.syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: [], branches: [], bots: bots)
 
         XCTAssertEqual(botActions.prsToSync.count, 0)
         XCTAssertEqual(botActions.prBotsToCreate.count, 0)
@@ -105,19 +105,20 @@ class SyncerTests: XCTestCase {
         ]
 
         let branches: [BranchType] = [
-            MockBranch(name: "cd/broke_something"),
             MockBranch(name: "ab/fixed_errthing"),
+            MockBranch(name: "cd/broke_something"),
             MockBranch(name: "ef/migrating_from_php_to_mongo_db")
         ]
 
         var config = SyncerConfig()
-        config.watchedBranchNames = [
-            "cd/broke_something",
-            "ef/migrating_from_php_to_mongo_db"
+        config.watchingBranches = [
+            "ab/fixed_errthing": false,
+            "cd/broke_something": true,
+            "ef/migrating_from_php_to_mongo_db": true
         ]
         let syncer = self.mockedSyncer(config: config)
 
-        let botActions = syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: prs, branches: branches, bots: bots)
+        let (botActions, _) = syncer.resolvePRsAndBranchesAndBots(repoName: "me/Repo", prs: prs, branches: branches, bots: bots)
 
         XCTAssertEqual(botActions.prsToSync.count, 1)
         XCTAssertEqual(botActions.prsToSync.first!.bot.name, "BuildaBot [me/Repo] PR #4")
