@@ -16,7 +16,7 @@ public protocol SyncerFactoryType {
     func newEditableTriplet() -> EditableConfigTriplet
     func createXcodeServer(config: XcodeServerConfig) -> XcodeServer
     func createProject(config: ProjectConfig) -> Project?
-    func createSourceServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType
+    func createSourceServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType & Notifier
     func createTrigger(config: TriggerConfig) -> Trigger
 }
 
@@ -129,7 +129,7 @@ public class SyncerFactory: SyncerFactoryType {
         return project
     }
 
-    public func createSourceServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType {
+    public func createSourceServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType & Notifier {
 
         let server = SourceServerFactory().createServer(service: service, auth: auth)
         return server

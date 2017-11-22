@@ -102,7 +102,7 @@ extension SyncPair {
         ]
         syncer?._xcodeServer.getBotIntegrations(bot.id, query: query, completion: { (integrations, error) -> Void in
             if error != nil {
-                let e = SyncerError.with("Bot \(bot.name) failed return integrations"/*, internalError: error*/)
+                let e = SyncerError.with("Bot \(bot.name) failed return integrations")
                 completion([], e)
                 return
             }
@@ -110,7 +110,7 @@ extension SyncPair {
             if let integrations = integrations {
                 completion(integrations, nil)
             } else {
-                let e = SyncerError.with("Getting integrations"/*, internalError: SyncerError.with("Nil integrations even after returning nil error!")*/)
+                let e = SyncerError.with("Getting integrations")
                 completion([], e)
             }
         })
@@ -202,8 +202,8 @@ extension SyncPair {
         }
         if let lineNumber = issue.lineNumber,
             let file = issue.documentFilePath {
-            str += "\n\tIn \(file):\(lineNumber)"
+            str += "\n\t- In `\(file):\(lineNumber)`"
         }
-        return str
+        return str + "\n\n"
     }
 }

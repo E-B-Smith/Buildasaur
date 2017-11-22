@@ -11,9 +11,9 @@ import BuildaUtils
 
 class GitServerFactory {
 
-    class func server(service: GitService, auth: ProjectAuthenticator?, http: HTTP? = nil) -> SourceServerType {
+    class func server(service: GitService, auth: ProjectAuthenticator?, http: HTTP? = nil) -> SourceServerType & Notifier {
 
-        let server: SourceServerType
+        let server: SourceServerType & Notifier
 
         switch service {
         case .GitHub:

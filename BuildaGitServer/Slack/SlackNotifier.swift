@@ -7,9 +7,7 @@
 //
 
 import Foundation
-import BuildaGitServer
 import BuildaUtils
-import XcodeServerSDK
 
 private extension String {
     func reformat(issues: String?) -> String {
@@ -26,19 +24,20 @@ private extension String {
         return result.split(separator: "\n").dropLast().joined(separator: "\n")
     }
 }
-class SlackIntegration {
-    private let webhook: String
+
+public class SlackNotifier: Notifier {
+    private let webhookURL: URL
     private let session: URLSession
 
-    init(webhook: String) {
-        self.webhook = webhook
+    public init(webhookURL: URL) {
+        self.webhookURL = webhookURL
         let config = URLSessionConfiguration.default
         self.session = URLSession(configuration: config)
     }
 
-    func postCommentOnIssue(statusWithComment: StatusAndComment, repo: String, branch: String, prNumber: Int?, issues: String?) {
+    public func postCommentOnIssue(notification: NotifierNotification, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> Void) {
         let color: String
-        switch statusWithComment.status.state {
+        switch notification.status.state {
         case .Error, .Failure:
             color = "danger"
         case .NoState, .Pending:
@@ -47,35 +46,34 @@ class SlackIntegration {
             color = "good"
         }
 
-        guard let integration = statusWithComment.integration,
-                let links = statusWithComment.links else { return }
+        guard let link = notification.linksToIntegration?["xcode"],
+            let linkToIntegration = URL(string: link),
+            let integrationResult = notification.integrationResult else { return }
 
-        var notification: [String: Any] = [:]
-
-        let linkToIntegration = links["xcode"]!
+        var slackNotification: [String: Any] = [:]
 
         let title: String
-        if let prNumber = prNumber {
-            title = "#\(prNumber) |-> \(branch) \(integration.result!.rawValue.capitalized)"
-            notification["fallback"] = "[\(repo)] <\(linkToIntegration)|PR #\(prNumber)> |-> \(branch): \(statusWithComment.status.state.rawValue)"
-            notification["pretext"] = "[\(repo)] <\(linkToIntegration)|PR #\(prNumber)> |-> \(branch): \(statusWithComment.status.state.rawValue)"
+        if let issueNumber = notification.issueNumber {
+            title = "#\(issueNumber) |-> \(notification.branch) \(integrationResult.capitalized)"
+            slackNotification["fallback"] = "[\(notification.repo)] <\(linkToIntegration)|PR #\(issueNumber)> |-> \(notification.branch): \(notification.status.state.rawValue)"
+            slackNotification["pretext"] = "[\(notification.repo)] <\(linkToIntegration)|PR #\(issueNumber)> |-> \(notification.branch): \(notification.status.state.rawValue)"
         } else {
-            title = "Branch \(branch) \(integration.result!.rawValue.capitalized)"
-            notification["fallback"] = "[\(repo)] |-> <\(linkToIntegration)|\(branch)>: \(statusWithComment.status.state.rawValue)"
-            notification["pretext"] = "[\(repo)] |-> <\(linkToIntegration)|\(branch)>: \(statusWithComment.status.state.rawValue)"
+            title = "Branch \(notification.branch) \(integrationResult.capitalized)"
+            slackNotification["fallback"] = "[\(notification.repo)] |-> <\(linkToIntegration)|\(notification.branch)>: \(notification.status.state.rawValue)"
+            slackNotification["pretext"] = "[\(notification.repo)] |-> <\(linkToIntegration)|\(notification.branch)>: \(notification.status.state.rawValue)"
         }
-        notification["color"] = color
-        notification["mrkdwn_in"] = [ "pretext", "text", "fallback", "fields" ]
-        notification["unfurl_links"] = false
+        slackNotification["color"] = color
+        slackNotification["mrkdwn_in"] = [ "pretext", "text", "fallback", "fields" ]
+        slackNotification["unfurl_links"] = false
         let field: [String: Any] = [
             "title": title,
-            "value": statusWithComment.comment?.reformat(issues: issues) ?? "",
+            "value": notification.comment.reformat(issues: notification.issues),
             "short": false
         ]
-        notification["fields"] = [ field ]
-        let attachements = [ "attachments": [notification] ]
+        slackNotification["fields"] = [ field ]
+        let attachements = [ "attachments": [slackNotification] ]
         let body = try! JSONSerialization.data(withJSONObject: attachements, options: [])
-        let urlRequest = NSMutableURLRequest(url: URL(string: self.webhook)!)
+        let urlRequest = NSMutableURLRequest(url: self.webhookURL)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = body

@@ -69,13 +69,6 @@ extension GitHubServer: SourceServerType {
         }
     }
 
-    func postCommentOnIssue(comment: String, issueNumber: Int, repo: String, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> Void) {
-
-        self._postCommentOnIssue(commentBody: comment, issueNumber: issueNumber, repo: repo) { (comment, error) -> Void in
-            completion(comment, error)
-        }
-    }
-
     func getCommentsOfIssue(issueNumber: Int, repo: String, completion: @escaping (_ comments: [CommentType]?, _ error: Error?) -> Void) {
 
         self._getCommentsOfIssue(issueNumber: issueNumber, repo: repo) { (comments, error) -> Void in
@@ -88,6 +81,14 @@ extension GitHubServer: SourceServerType {
         let state = GitHubStatus.GitHubState.fromBuildState(buildState: buildState)
         let context = "Buildasaur"
         return GitHubStatus(state: state, description: description, targetUrl: targetUrl, context: context)
+    }
+}
+
+extension GitHubServer: Notifier {
+    func postCommentOnIssue(notification: NotifierNotification, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> Void) {
+        self._postCommentOnIssue(commentBody: notification.comment, issueNumber: notification.issueNumber!, repo: notification.repo) { (comment, error) -> Void in
+            completion(comment, error)
+        }
     }
 }
 

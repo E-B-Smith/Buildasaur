@@ -19,15 +19,40 @@ public protocol SourceServerType: BuildStatusCreator {
     func getRepo(repo: String, completion: @escaping (_ repo: RepoType?, _ error: Error?) -> Void)
     func getStatusOfCommit(commit: String, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> Void)
     func postStatusOfCommit(commit: String, status: StatusType, repo: String, completion: @escaping (_ status: StatusType?, _ error: Error?) -> Void)
-    func postCommentOnIssue(comment: String, issueNumber: Int, repo: String, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> Void)
     func getCommentsOfIssue(issueNumber: Int, repo: String, completion: @escaping (_ comments: [CommentType]?, _ error: Error?) -> Void)
+}
+
+public struct NotifierNotification {
+    public let comment: String
+    public let issueNumber: Int?
+    public let repo: String
+    public let branch: String
+    public let status: StatusType
+    public let integrationResult: String?
+    public let linksToIntegration: [String: String]?
+    public let issues: String?
+
+    public init(comment: String, issueNumber: Int?, repo: String, branch: String, status: StatusType, integrationResult: String?, linksToIntegration: [String: String]?, issues: String?) {
+        self.comment = comment
+        self.issueNumber = issueNumber
+        self.repo = repo
+        self.branch = branch
+        self.status = status
+        self.integrationResult = integrationResult
+        self.linksToIntegration = linksToIntegration
+        self.issues = issues
+    }
+}
+
+public protocol Notifier {
+    func postCommentOnIssue(notification: NotifierNotification, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> Void)
 }
 
 public class SourceServerFactory {
 
     public init() { }
 
-    public func createServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType {
+    public func createServer(service: GitService, auth: ProjectAuthenticator?) -> SourceServerType & Notifier {
 
         if let auth = auth {
             precondition(service == auth.service)

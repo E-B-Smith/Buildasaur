@@ -88,7 +88,7 @@
 		3ACBAE051B5ADE2A00204457 /* Syncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADE91B5ADE2A00204457 /* Syncer.swift */; };
 		3ACBAE061B5ADE2A00204457 /* SyncerBotManipulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADEA1B5ADE2A00204457 /* SyncerBotManipulation.swift */; };
 		3ACBAE071B5ADE2A00204457 /* SyncerBotNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADEB1B5ADE2A00204457 /* SyncerBotNaming.swift */; };
-		3ACBAE091B5ADE2A00204457 /* SyncerGitHubUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADED1B5ADE2A00204457 /* SyncerGitHubUtils.swift */; };
+		3ACBAE091B5ADE2A00204457 /* SyncerNotifierUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADED1B5ADE2A00204457 /* SyncerNotifierUtils.swift */; };
 		3ACBAE0A1B5ADE2A00204457 /* SyncPair_Branch_Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADEE1B5ADE2A00204457 /* SyncPair_Branch_Bot.swift */; };
 		3ACBAE0B1B5ADE2A00204457 /* SyncPair_Branch_NoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADEF1B5ADE2A00204457 /* SyncPair_Branch_NoBot.swift */; };
 		3ACBAE0C1B5ADE2A00204457 /* SyncPair_Deletable_Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACBADF01B5ADE2A00204457 /* SyncPair_Deletable_Bot.swift */; };
@@ -114,8 +114,8 @@
 		775501D89C0E4D209E6EE5D0 /* Pods_BuildaGitServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9139F7877761955F17C535E /* Pods_BuildaGitServer.framework */; };
 		785688011CDD4843009EEB72 /* WorkspaceMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785688001CDD4843009EEB72 /* WorkspaceMetadataTests.swift */; };
 		D59A4C6EEE903468E69AEA81 /* Pods_BuildaKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC43508E8A4F9D6E5ED0126 /* Pods_BuildaKitTests.framework */; };
-		E400D0B81FC4359100EE329B /* SlackIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E400D0B71FC4359100EE329B /* SlackIntegration.swift */; };
 		E41183531FC31D9500C112F6 /* TriggerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41183521FC31D9500C112F6 /* TriggerConfig.swift */; };
+		E45CCF0E1FC60F45009F01B7 /* SlackNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E400D0B71FC4359100EE329B /* SlackNotifier.swift */; };
 		E46BFA951FBF79EA00F1FF72 /* ServiceAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA941FBF79EA00F1FF72 /* ServiceAuthentication.swift */; };
 		E46BFAB21FBF7A4300F1FF72 /* ManualBotManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA971FBF7A4300F1FF72 /* ManualBotManagementViewController.swift */; };
 		E46BFAB31FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46BFA981FBF7A4300F1FF72 /* StoryboardLoadingUtils.swift */; };
@@ -296,7 +296,7 @@
 		3ACBADE91B5ADE2A00204457 /* Syncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Syncer.swift; sourceTree = "<group>"; };
 		3ACBADEA1B5ADE2A00204457 /* SyncerBotManipulation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerBotManipulation.swift; sourceTree = "<group>"; };
 		3ACBADEB1B5ADE2A00204457 /* SyncerBotNaming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerBotNaming.swift; sourceTree = "<group>"; };
-		3ACBADED1B5ADE2A00204457 /* SyncerGitHubUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerGitHubUtils.swift; sourceTree = "<group>"; };
+		3ACBADED1B5ADE2A00204457 /* SyncerNotifierUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncerNotifierUtils.swift; sourceTree = "<group>"; };
 		3ACBADEE1B5ADE2A00204457 /* SyncPair_Branch_Bot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncPair_Branch_Bot.swift; sourceTree = "<group>"; };
 		3ACBADEF1B5ADE2A00204457 /* SyncPair_Branch_NoBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncPair_Branch_NoBot.swift; sourceTree = "<group>"; };
 		3ACBADF01B5ADE2A00204457 /* SyncPair_Deletable_Bot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncPair_Deletable_Bot.swift; sourceTree = "<group>"; };
@@ -338,7 +338,7 @@
 		D0F6A06E560D8D41488E34CB /* Pods-BuildaKitTests.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKitTests.testing.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKitTests/Pods-BuildaKitTests.testing.xcconfig"; sourceTree = "<group>"; };
 		DBBDB133AF2AD2E2CA9AEB13 /* Pods-BuildaKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKitTests/Pods-BuildaKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DC5ECE2BBCC7B037A35A3BE9 /* Pods-BuildaHeartbeatKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaHeartbeatKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaHeartbeatKit/Pods-BuildaHeartbeatKit.debug.xcconfig"; sourceTree = "<group>"; };
-		E400D0B71FC4359100EE329B /* SlackIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackIntegration.swift; sourceTree = "<group>"; };
+		E400D0B71FC4359100EE329B /* SlackNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackNotifier.swift; sourceTree = "<group>"; };
 		E41183521FC31D9500C112F6 /* TriggerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerConfig.swift; sourceTree = "<group>"; };
 		E44B7C2CE3D5BFAC8FF7EBDD /* Pods-BuildaKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BuildaKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BuildaKit/Pods-BuildaKit.debug.xcconfig"; sourceTree = "<group>"; };
 		E46BFA941FBF79EA00F1FF72 /* ServiceAuthentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAuthentication.swift; sourceTree = "<group>"; };
@@ -611,6 +611,7 @@
 				3AAF6F031A3CE66A00C657FB /* GitServerPublic.swift */,
 				3A35CD6B1BE96E880088D57A /* Base */,
 				3A6355DB1A3BBDB000545BF9 /* GitHub */,
+				E45CCF0C1FC60E4D009F01B7 /* Slack */,
 				3AAF6EE61A3CE5BA00C657FB /* Supporting Files */,
 				3A0BE6E11C5A753F00AC9C57 /* Utils */,
 			);
@@ -672,7 +673,6 @@
 				3ACBADE61B5ADE2A00204457 /* SSHKeyVerification.swift */,
 				3ACBADE81B5ADE2A00204457 /* StorageUtils.swift */,
 				3ACBADFB1B5ADE2A00204457 /* XcodeServerSyncerUtils.swift */,
-				E400D0B71FC4359100EE329B /* SlackIntegration.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -685,7 +685,7 @@
 				3ACBADE91B5ADE2A00204457 /* Syncer.swift */,
 				3ACBADEA1B5ADE2A00204457 /* SyncerBotManipulation.swift */,
 				3ACBADEB1B5ADE2A00204457 /* SyncerBotNaming.swift */,
-				3ACBADED1B5ADE2A00204457 /* SyncerGitHubUtils.swift */,
+				3ACBADED1B5ADE2A00204457 /* SyncerNotifierUtils.swift */,
 				3A9C95A41BBDAE9F00D37135 /* SyncerLogic.swift */,
 				3ACBADEE1B5ADE2A00204457 /* SyncPair_Branch_Bot.swift */,
 				3ACBADEF1B5ADE2A00204457 /* SyncPair_Branch_NoBot.swift */,
@@ -758,6 +758,14 @@
 				A588086CCA23190FC2B378E5 /* Pods-Buildasaur.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		E45CCF0C1FC60E4D009F01B7 /* Slack */ = {
+			isa = PBXGroup;
+			children = (
+				E400D0B71FC4359100EE329B /* SlackNotifier.swift */,
+			);
+			path = Slack;
 			sourceTree = "<group>";
 		};
 		E46BFA931FBF79EA00F1FF72 /* Authentication */ = {
@@ -1576,11 +1584,10 @@
 				3ACBAE161B5ADE2A00204457 /* XcodeProjectParser.swift in Sources */,
 				3A4C159F1BBB2DD0007FA970 /* SourceControlFileParser.swift in Sources */,
 				3A0FF5AE1BC0067700FB8051 /* SyncerManager.swift in Sources */,
-				3ACBAE091B5ADE2A00204457 /* SyncerGitHubUtils.swift in Sources */,
+				3ACBAE091B5ADE2A00204457 /* SyncerNotifierUtils.swift in Sources */,
 				3ACBAE001B5ADE2A00204457 /* Persistence.swift in Sources */,
 				3ACBAE0B1B5ADE2A00204457 /* SyncPair_Branch_NoBot.swift in Sources */,
 				3A395B551BCF007000BB6947 /* LoginItem.swift in Sources */,
-				E400D0B81FC4359100EE329B /* SlackIntegration.swift in Sources */,
 				3A9D741D1BCBDDA200DCA23C /* PersistenceMigrator.swift in Sources */,
 				3ACBAE011B5ADE2A00204457 /* Project.swift in Sources */,
 				3ACBAE0D1B5ADE2A00204457 /* SyncPair_PR_Bot.swift in Sources */,
@@ -1618,6 +1625,7 @@
 				3AB3F0E31A3CEBAC005F717F /* GitHubPullRequest.swift in Sources */,
 				3AB3F0E71A3CEBAC005F717F /* GitHubStatus.swift in Sources */,
 				3AB3F0E51A3CEBAC005F717F /* GitHubRepo.swift in Sources */,
+				E45CCF0E1FC60F45009F01B7 /* SlackNotifier.swift in Sources */,
 				3AB3F0E01A3CEBAC005F717F /* GitHubBranch.swift in Sources */,
 				3AB3F0EB1A3CEBE9005F717F /* GitServerPublic.swift in Sources */,
 				3AB3F0E81A3CEBAC005F717F /* GitHubEndpoints.swift in Sources */,

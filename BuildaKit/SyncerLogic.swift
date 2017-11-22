@@ -35,6 +35,16 @@ extension StandardSyncer {
     var _watchingBranches: [String: Bool] { return self.config.watchingBranches }
     var _automaticallyWatchNewBranches: Bool { return self.config.automaticallyWatchNewBranches }
     var _slackWebhook: String? { return self.config.slackWebhook?.nonEmpty() }
+    var _notifiers: [Notifier]? {
+        var notifiers: [Notifier] = []
+        if self._postStatusComments {
+            notifiers.append(self.sourceNotifier)
+        }
+        if let slackNotifier = self.slackNotifier {
+            notifiers.append(slackNotifier)
+        }
+        return notifiers
+    }
 
     public typealias BotActions = (
         prsToSync: [(pr: PullRequestType, bot: Bot)],
