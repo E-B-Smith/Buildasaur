@@ -47,12 +47,12 @@ extension StandardSyncer {
         return self._project.serviceRepoName()
     }
 
-    internal func syncRepoWithName(repoName: String, completion: @escaping () -> Void) {
+    internal func syncRepoWithName(repoName: String, completion: @escaping ([String: Bool]?) -> Void) {
         self._sourceServer.getRepo(repo: repoName, completion: { (repo, error) -> Void in
             if error != nil {
                 //whoops, no more syncing for now
                 self.notifyError(error: error, context: "Fetching Repo")
-                completion()
+                completion(nil)
                 return
             }
 
@@ -61,19 +61,19 @@ extension StandardSyncer {
                 self.syncRepoWithNameAndMetadata(repoName: repoName, repo: repo, completion: completion)
             } else {
                 self.notifyErrorString(errorString: "Repo is nil and error is nil", context: "Fetching Repo")
-                completion()
+                completion(nil)
             }
         })
     }
 
-    private func syncRepoWithNameAndMetadata(repoName: String, repo: RepoType, completion: @escaping () -> Void) {
+    private func syncRepoWithNameAndMetadata(repoName: String, repo: RepoType, completion: @escaping ([String: Bool]?) -> Void) {
         //pull PRs from source server
         self._sourceServer.getOpenPullRequests(repo: repoName, completion: { (prs, error) -> Void in
 
             if error != nil {
                 //whoops, no more syncing for now
                 self.notifyError(error: error, context: "Fetching PRs")
-                completion()
+                completion(nil)
                 return
             }
 
@@ -84,12 +84,12 @@ extension StandardSyncer {
 
             } else {
                 self.notifyErrorString(errorString: "PRs are nil and error is nil", context: "Fetching PRs")
-                completion()
+                completion(nil)
             }
         })
     }
 
-    private func syncRepoWithPRs(repoName: String, repo: RepoType, prs: [PullRequestType], completion: @escaping () -> Void) {
+    private func syncRepoWithPRs(repoName: String, repo: RepoType, prs: [PullRequestType], completion: @escaping ([String: Bool]?) -> Void) {
         //only fetch branches if there are any watched ones. there might be tens or hundreds of branches
         //so we don't want to fetch them unless user actually is watching any non-PR branches.
         if !self._watchingBranches.filter({ $0.value == true }).isEmpty || self._automaticallyWatchNewBranches {
@@ -100,7 +100,7 @@ extension StandardSyncer {
                 if error != nil {
                     //whoops, no more syncing for now
                     self.notifyError(error: error, context: "Fetching branches")
-                    completion()
+                    completion(nil)
                     return
                 }
 
@@ -109,7 +109,7 @@ extension StandardSyncer {
                     self.syncRepoWithPRsAndBranches(repoName: repoName, repo: repo, prs: prs, branches: branches, completion: completion)
                 } else {
                     self.notifyErrorString(errorString: "Branches are nil and error is nil", context: "Fetching branches")
-                    completion()
+                    completion(nil)
                 }
             })
         } else {
@@ -119,14 +119,14 @@ extension StandardSyncer {
         }
     }
 
-    private func syncRepoWithPRsAndBranches(repoName: String, repo: RepoType, prs: [PullRequestType], branches: [BranchType], completion: @escaping () -> Void) {
+    private func syncRepoWithPRsAndBranches(repoName: String, repo: RepoType, prs: [PullRequestType], branches: [BranchType], completion: @escaping ([String: Bool]?) -> Void) {
         //we have branches, now fetch bots
         self._xcodeServer.getBots({ (bots, error) -> Void in
 
             if let error = error {
                 //whoops, no more syncing for now
                 self.notifyError(error: error, context: "Fetching Bots")
-                completion()
+                completion(nil)
                 return
             }
 
@@ -135,7 +135,7 @@ extension StandardSyncer {
                 self.reports["All Bots"] = "\(bots.count)"
 
                 //we have both PRs and Bots, resolve
-                self.syncPRsAndBranchesAndBots(repo: repo, repoName: repoName, prs: prs, branches: branches, bots: bots, completion: {
+                self.syncPRsAndBranchesAndBots(repo: repo, repoName: repoName, prs: prs, branches: branches, bots: bots, completion: { branches in
 
                     //everything is done, report the damage of the server's rate limit
                     if let rateLimitInfo = repo.latestRateLimitInfo {
@@ -145,16 +145,16 @@ extension StandardSyncer {
                         Log.info("Rate Limit: \(report)")
                     }
 
-                    completion()
+                    completion(branches)
                 })
             } else {
                 self.notifyErrorString(errorString: "Nil bots even when error was nil", context: "Fetching Bots")
-                completion()
+                completion(nil)
             }
         })
     }
 
-    public func syncPRsAndBranchesAndBots(repo: RepoType, repoName: String, prs: [PullRequestType], branches: [BranchType], bots: [Bot], completion: @escaping () -> Void) {
+    public func syncPRsAndBranchesAndBots(repo: RepoType, repoName: String, prs: [PullRequestType], branches: [BranchType], bots: [Bot], completion: @escaping ([String: Bool]?) -> Void) {
         let prsDescription = prs.map { (pr: PullRequestType) -> String in
             "    PR \(pr.number): \(pr.title) [\(pr.headName) -> \(pr.baseName)]"
             }.joined(separator: "\n")
@@ -165,13 +165,15 @@ extension StandardSyncer {
         Log.verbose("Resolving prs:\n\(prsDescription) \nand branches:\n\(branchesDescription)\nand bots:\n\(botsDescription)")
 
         //create the changes necessary
-        let botActions = self.resolvePRsAndBranchesAndBots(repoName: repoName, prs: prs, branches: branches, bots: bots)
+        let (botActions, branchesToWatch) = self.resolvePRsAndBranchesAndBots(repoName: repoName, prs: prs, branches: branches, bots: bots)
 
         //create actions from changes, so called "SyncPairs"
         let syncPairs = self.createSyncPairsFrom(repo: repo, botActions: botActions)
 
         //start these actions
-        self.applyResolvedSyncPairs(syncPairs: syncPairs, completion: completion)
+        self.applyResolvedSyncPairs(syncPairs: syncPairs) {
+            completion(branchesToWatch)
+        }
     }
 
     public func resolvePRsAndBranchesAndBots(
@@ -179,7 +181,7 @@ extension StandardSyncer {
         prs: [PullRequestType],
         branches: [BranchType],
         bots: [Bot])
-        -> BotActions {
+        -> (BotActions, [String: Bool]?) {
 
             //first filter only builda's bots, don't manipulate manually created bots
             //also filter only bots that belong to this project
@@ -236,12 +238,6 @@ extension StandardSyncer {
             newBranchesSet.subtract(prs.map { $0.headName })
             let branchesToWatch = newBranchesSet.map { branchesDictionary[$0]! }
 
-            //what do we do with deleted branches still in the list of branches to watch long term?
-            //we unwatch them right here by just keeping the valid, found branches
-//            self.watchedBranchNames.value = foundBranchesToWatch
-            //EDIT: let's not do that for now. i don't like the syncer changing
-            //its own configuration at runtime.
-
             //go through the branches to track
             for branch in branchesToWatch {
 
@@ -264,7 +260,18 @@ extension StandardSyncer {
             //bots that don't have a PR or a branch, to delete
             let botsToDelete = Array(mappedBots.values)
 
-            return (prsToSync, prBotsToCreate, branchesToSync, branchBotsToCreate, botsToDelete)
+            let watchingBranches: [String: Bool]?
+            if !self._watchingBranches.filter({ $0.value == true }).isEmpty || self._automaticallyWatchNewBranches {
+                watchingBranches = branches.reduce([String: Bool]()) { (result, branch) -> [String: Bool] in
+                    var result = result
+                    result[branch.name] = branchesToWatch.contains(where: { $0.name == branch.name })
+                    return result
+                }
+            } else {
+                watchingBranches = nil
+            }
+
+            return ((prsToSync, prBotsToCreate, branchesToSync, branchBotsToCreate, botsToDelete), watchingBranches)
     }
 
     public func createSyncPairsFrom(repo: RepoType, botActions: BotActions) -> [SyncPair] {

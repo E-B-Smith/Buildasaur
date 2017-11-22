@@ -76,7 +76,12 @@ public class StandardSyncer: Syncer {
 
     public override func sync(completion: @escaping () -> Void) {
         if let repoName = self.repoName() {
-            self.syncRepoWithName(repoName: repoName, completion: completion)
+            self.syncRepoWithName(repoName: repoName) { [weak self] watchingBranches in
+                if let watchingBranches = watchingBranches {
+                    self?.config.watchingBranches = watchingBranches
+                }
+                completion()
+            }
         } else {
             self.notifyErrorString(errorString: "Nil repo name", context: "Syncing")
             completion()
