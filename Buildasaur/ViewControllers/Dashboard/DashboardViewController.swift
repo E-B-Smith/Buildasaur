@@ -17,6 +17,7 @@ class DashboardViewController: PresentableViewController {
     @IBOutlet weak var startAllButton: NSButton!
     @IBOutlet weak var stopAllButton: NSButton!
     @IBOutlet weak var autostartButton: NSButton!
+    @IBOutlet weak var logButton: NSButton!
     @IBOutlet weak var launchOnLoginButton: NSButton!
 
     private(set) var config: [String: AnyObject] = [:] {
@@ -76,10 +77,17 @@ class DashboardViewController: PresentableViewController {
         //setup config
         self.config = self.syncerManager.storageManager.config
         self.autostartButton.on = self.config["autostart"] as? Bool ?? false
+        self.logButton.on = self.syncerManager.storageManager.logInFile
 
         self.autostartButton.onClick = { [weak self] sender in
             if let sender = sender as? NSButton {
                 self?.config["autostart"] = sender.on as AnyObject
+            }
+        }
+
+        self.logButton.onClick = { [weak self] sender in
+            if let sender = sender as? NSButton {
+                self?.syncerManager.storageManager.logInFile = sender.on
             }
         }
 
@@ -88,10 +96,11 @@ class DashboardViewController: PresentableViewController {
     }
 
     private func configTableView() {
-        let tableView = self.syncersTableView
-        tableView?.dataSource = self
-        tableView?.delegate = self
-        tableView?.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
+        if let tableView = self.syncersTableView {
+            tableView.dataSource = self
+            tableView.delegate = self
+            tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
+        }
     }
 
     private func updateSyncerViewModels() {

@@ -660,13 +660,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wph-xW-ouc">
-                                <rect key="frame" x="0.0" y="0.0" width="700" height="239"/>
+                                <rect key="frame" x="0.0" y="0.0" width="700" height="244"/>
                                 <clipView key="contentView" id="B8g-nx-Ahe">
-                                    <rect key="frame" x="1" y="0.0" width="698" height="238"/>
+                                    <rect key="frame" x="1" y="0.0" width="698" height="243"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="wIH-7K-Ol7" viewBased="YES" id="D3C-wr-ynD">
-                                            <rect key="frame" x="0.0" y="0.0" width="698" height="215"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="698" height="220"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -891,10 +891,10 @@
                                 </tableHeaderView>
                             </scrollView>
                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l5l-vU-g4x">
-                                <rect key="frame" x="147" y="249" width="533" height="41"/>
+                                <rect key="frame" x="98" y="254" width="582" height="36"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E55-J5-dz5">
-                                        <rect key="frame" x="-6" y="3" width="115" height="32"/>
+                                        <rect key="frame" x="-6" y="1" width="115" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="103" id="8g1-rS-Nen"/>
                                         </constraints>
@@ -907,7 +907,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oQI-eo-8zz">
-                                        <rect key="frame" x="105" y="3" width="89" height="32"/>
+                                        <rect key="frame" x="105" y="1" width="89" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="77" id="6A5-PT-zZb"/>
                                         </constraints>
@@ -919,8 +919,22 @@
                                             <action selector="startAllButtonClicked:" target="fGl-D9-6Tw" id="75u-gC-5hy"/>
                                         </connections>
                                     </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f7Q-ra-uiy">
+                                        <rect key="frame" x="190" y="1" width="89" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="77" id="bQU-rX-9Zu"/>
+                                            <constraint firstAttribute="height" constant="21" id="zvj-lh-RjQ"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="push" title="Stop All" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fin-Vj-0Os">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="stopAllButtonClicked:" target="fGl-D9-6Tw" id="pHR-m2-BVt"/>
+                                        </connections>
+                                    </button>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tKA-DU-Jvj">
-                                        <rect key="frame" x="196" y="3" width="181" height="36"/>
+                                        <rect key="frame" x="281" y="0.0" width="181" height="36"/>
                                         <subviews>
                                             <button translatesAutoresizingMaskIntoConstraints="NO" id="Z79-7V-Vm9">
                                                 <rect key="frame" x="-2" y="20" width="165" height="18"/>
@@ -949,22 +963,15 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f7Q-ra-uiy">
-                                        <rect key="frame" x="379" y="3" width="89" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="77" id="bQU-rX-9Zu"/>
-                                            <constraint firstAttribute="height" constant="21" id="zvj-lh-RjQ"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Stop All" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fin-Vj-0Os">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="2q5-Pq-Fjl">
+                                        <rect key="frame" x="468" y="9" width="45" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Log" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="TRy-Wc-Ibn">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
-                                        <connections>
-                                            <action selector="stopAllButtonClicked:" target="fGl-D9-6Tw" id="pHR-m2-BVt"/>
-                                        </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="x6z-V9-yJw">
-                                        <rect key="frame" x="470" y="13" width="32" height="16"/>
+                                        <rect key="frame" x="519" y="10" width="32" height="16"/>
                                         <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSInfo" imagePosition="only" alignment="center" controlSize="mini" imageScaling="proportionallyDown" inset="2" id="yzS-7U-OPv">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="miniSystem"/>
@@ -974,7 +981,7 @@
                                         </connections>
                                     </button>
                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6RQ-o1-Zdf">
-                                        <rect key="frame" x="505" y="6" width="33" height="28"/>
+                                        <rect key="frame" x="554" y="3" width="33" height="28"/>
                                         <buttonCell key="cell" type="push" alternateTitle="Check for updates" bezelStyle="rounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Y0u-Tr-VEb">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -991,8 +998,10 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -1002,7 +1011,7 @@
                                 </customSpacing>
                             </stackView>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="akn-cG-ddX">
-                                <rect key="frame" x="20" y="245" width="48" height="48"/>
+                                <rect key="frame" x="20" y="248" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="akn-cG-ddX" secondAttribute="height" multiplier="1:1" id="MLS-Jo-ra4"/>
                                     <constraint firstAttribute="width" constant="48" id="Y5w-Ex-tFb"/>
@@ -1016,7 +1025,6 @@
                             <constraint firstItem="akn-cG-ddX" firstAttribute="centerY" secondItem="l5l-vU-g4x" secondAttribute="centerY" id="Bm1-HH-mIg"/>
                             <constraint firstItem="wph-xW-ouc" firstAttribute="top" secondItem="l5l-vU-g4x" secondAttribute="bottom" constant="10" id="Tp8-af-6nn"/>
                             <constraint firstItem="akn-cG-ddX" firstAttribute="leading" secondItem="B7s-MS-Jnq" secondAttribute="leading" constant="20" id="U4h-jw-drO"/>
-                            <constraint firstItem="wph-xW-ouc" firstAttribute="top" secondItem="B7s-MS-Jnq" secondAttribute="top" constant="61" id="XLd-Jf-psf"/>
                             <constraint firstItem="l5l-vU-g4x" firstAttribute="top" secondItem="B7s-MS-Jnq" secondAttribute="top" constant="10" id="Zxd-hV-M88"/>
                             <constraint firstItem="wph-xW-ouc" firstAttribute="leading" secondItem="B7s-MS-Jnq" secondAttribute="leading" id="dB3-9p-ifh"/>
                             <constraint firstAttribute="bottom" secondItem="wph-xW-ouc" secondAttribute="bottom" id="xe6-q0-TJh"/>
@@ -1025,6 +1033,7 @@
                     <connections>
                         <outlet property="autostartButton" destination="Z79-7V-Vm9" id="6kv-Ce-nwi"/>
                         <outlet property="launchOnLoginButton" destination="9MG-Rp-sKt" id="Sgh-qM-WfR"/>
+                        <outlet property="logButton" destination="2q5-Pq-Fjl" id="Xpq-vp-sBJ"/>
                         <outlet property="startAllButton" destination="oQI-eo-8zz" id="hn5-aV-N88"/>
                         <outlet property="stopAllButton" destination="f7Q-ra-uiy" id="O6F-H8-VoB"/>
                         <outlet property="syncersTableView" destination="D3C-wr-ynD" id="kMa-jK-0v8"/>

@@ -105,11 +105,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         //migration
         self.migratePersistence(persistence)
 
-        //setup logging
-        Logging.setup(persistence: persistence, alsoIntoFile: true)
-
         //create storage manager
         let storageManager = StorageManager(persistence: persistence)
+
+        //setup logging
+        Logging.setup(persistence: persistence, alsoIntoFile: storageManager.logInFile)
+
         let factory = SyncerFactory()
         factory.syncerLifetimeChangeObserver = storageManager
         let loginItem = LoginItem()

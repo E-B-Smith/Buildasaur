@@ -52,6 +52,16 @@ public class StorageManager {
             self.saveConfig(config: self.config)
         }
     }
+    public var logInFile: Bool {
+        get {
+            return self.config["logInFile"] as? Bool ?? true
+        }
+        set {
+            Logging.setupFileLogger(persistence: self.persistence, enable: newValue)
+            self.config["logInFile"] = newValue as AnyObject
+            self.saveConfig(config: self.config)
+        }
+    }
 
     public var onUpdateSyncerConfigs: (() -> Void)?
     public var onUpdateServerConfigs: (() -> Void)?

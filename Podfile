@@ -17,7 +17,7 @@ use_frameworks!
 inhibit_all_warnings!
 
 def pods_for_errbody
-    pod 'BuildaUtils', '~> 0.4.1'
+    pod 'BuildaUtils', '~> 0.4.2'
 end
 
 def also_xcode_pods
