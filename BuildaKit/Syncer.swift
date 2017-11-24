@@ -173,7 +173,11 @@ public class SyncerError: Error {
         var message = "Syncing encountered a problem. "
 
         if let error = error {
-            message += "Error: \(error.userInfo["info"]!). "
+            if let info = error.userInfo["info"] {
+                message += "Error: \(info)."
+            } else {
+                message += "Error: \(error)."
+            }
         }
         if let context = context {
             message += "Context: \(context)"
