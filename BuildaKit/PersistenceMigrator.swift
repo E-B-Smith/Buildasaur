@@ -250,7 +250,12 @@ class Migrator_v1_v2: MigratorType {
         //get just the projects
         let finalProjects = removedTemplate.map { $0.1 }
 
-        let firstTemplate = removedTemplate.map { $0.0 }.first!
+        let firstTemplate: RefType?
+        if let template = removedTemplate.map({ $0.0 }).first {
+            firstTemplate = template
+        } else {
+            firstTemplate = nil
+        }
         let firstProject = finalProjects.first?["id"] as? RefType
 
         //save
