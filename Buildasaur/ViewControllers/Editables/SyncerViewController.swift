@@ -399,9 +399,9 @@ extension SyncerViewController {
                 let message: String
                 if case .DidFinishSyncing(let error) = ourSyncer.state,
                     let nsError = error as NSError? {
-                    message = nsError.userInfo["info"] as! String
+                    message = (nsError.userInfo["info"] as? String) ?? nsError.localizedDescription
                 } else if case .DidEncounterError(let error) = ourSyncer.state {
-                    message = (error as NSError).userInfo["info"] as! String
+                    message = ((error as NSError).userInfo["info"] as? String) ?? error.localizedDescription
                 } else {
                     message = error.localizedDescription
                 }
