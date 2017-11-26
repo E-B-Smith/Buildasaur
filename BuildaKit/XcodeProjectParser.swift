@@ -96,7 +96,7 @@ public class XcodeProjectParser {
                 return try parser.parseFileAtUrl(url: url)
             } catch {
                 //no we're definitely unable to parse workspace metadata
-                throw XcodeDeviceParserError.with("Cannot find the Checkout/Blueprint file and failed to parse repository metadata directly. Please create an issue on GitHub with anonymized information about your repository. (Error \((error as NSError).localizedDescription))")
+                throw XcodeDeviceParserError.with("Cannot find the Checkout/Blueprint file and failed to parse repository metadata directly. Please create an issue on GitHub with anonymized information about your repository. (Error \((error as NSError).userInfo["info"] ?? "Unknown"))")
             }
         }
     }
