@@ -72,7 +72,9 @@ public class SlackNotifier: Notifier {
         ]
         slackNotification["fields"] = [ field ]
         let attachements = [ "attachments": [slackNotification] ]
-        let body = try! JSONSerialization.data(withJSONObject: attachements, options: [])
+
+        guard let body = try? JSONSerialization.data(withJSONObject: attachements, options: []) else { return }
+
         let urlRequest = NSMutableURLRequest(url: self.webhookURL)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")

@@ -41,12 +41,12 @@ extension SyncPair {
 
             let updateCommitStatusIfNecessary: ((IntegrationIssues?) -> Void) = { [weak self] integrationIssues in
                 let issues = self?.buildIssues(integrationIssues: integrationIssues)
-                self?.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, branch: branch, issue: issue, issues: issues, completion: { (error) -> Void in
+                self?.syncer.updateCommitStatusIfNecessary(newStatus: status, commit: commit, branch: branch, issue: issue, issues: issues) { (error) -> Void in
                     if let error = error {
                         lastGroupError = error
                     }
                     group.leave()
-                })
+                }
             }
 
             switch status.status.state {
@@ -54,12 +54,12 @@ extension SyncPair {
                 updateCommitStatusIfNecessary(nil)
             case .Failure, .Error:
                 if let lastIntegration = actions.lastIntegration {
-                    self.getIntegrationIssues(integration: lastIntegration, completion: { (integrationIssues, error) in
+                    self.getIntegrationIssues(integration: lastIntegration) { (integrationIssues, error) in
                         if error != nil {
                             lastGroupError = SyncerError.with("Integration \(lastIntegration.id!) failed to retrieve an integration issues")
                         }
                         updateCommitStatusIfNecessary(integrationIssues)
-                    })
+                    }
                 } else {
                     updateCommitStatusIfNecessary(nil)
                 }
@@ -71,7 +71,7 @@ extension SyncPair {
             let bot = startNewIntegrationBot
 
             group.enter()
-            self.syncer._xcodeServer.postIntegration(bot.id, completion: { (integration, error) -> Void in
+            self.syncer._xcodeServer.postIntegration(bot.id) { (integration, error) -> Void in
                 if let integration = integration, error == nil {
                     Log.info("Bot \(bot.name) successfully enqueued Integration #\(integration.number)")
                 } else {
@@ -79,7 +79,7 @@ extension SyncPair {
                 }
 
                 group.leave()
-            })
+            }
         }
 
         group.notify(queue: DispatchQueue.main) {

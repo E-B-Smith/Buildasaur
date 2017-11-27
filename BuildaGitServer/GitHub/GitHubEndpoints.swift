@@ -38,25 +38,26 @@ class GitHubEndpoints {
         self.auth = auth
     }
 
+    // swiftlint:disable cyclomatic_complexity
     private func endpointURL(endpoint: Endpoint, params: [String: String]? = nil) -> String {
-
+        let path: String
         switch endpoint {
         case .users:
 
             if let user = params?["user"] {
-                return "/users/\(user)"
+                path = "/users/\(user)"
             } else {
-                return "/user"
+                path = "/user"
             }
 
             //FYI - repo must be in its full name, e.g. czechboy0/Buildasaur, not just Buildasaur
         case .repos:
 
             if let repo = params?["repo"] {
-                return "/repos/\(repo)"
+                path = "/repos/\(repo)"
             } else {
                 let user = self.endpointURL(endpoint: .users, params: params)
-                return "\(user)/repos"
+                path = "\(user)/repos"
             }
 
         case .pullRequests:
@@ -66,9 +67,9 @@ class GitHubEndpoints {
             let pulls = "\(repo)/pulls"
 
             if let pr = params?["pr"] {
-                return "\(pulls)/\(pr)"
+                path = "\(pulls)/\(pr)"
             } else {
-                return pulls
+                path = pulls
             }
 
         case .issues:
@@ -78,9 +79,9 @@ class GitHubEndpoints {
             let issues = "\(repo)/issues"
 
             if let issue = params?["issue"] {
-                return "\(issues)/\(issue)"
+                path = "\(issues)/\(issue)"
             } else {
-                return issues
+                path = issues
             }
 
         case .branches:
@@ -89,9 +90,9 @@ class GitHubEndpoints {
             let branches = "\(repo)/branches"
 
             if let branch = params?["branch"] {
-                return "\(branches)/\(branch)"
+                path = "\(branches)/\(branch)"
             } else {
-                return branches
+                path = branches
             }
 
         case .commits:
@@ -100,26 +101,26 @@ class GitHubEndpoints {
             let commits = "\(repo)/commits"
 
             if let commit = params?["commit"] {
-                return "\(commits)/\(commit)"
+                path = "\(commits)/\(commit)"
             } else {
-                return commits
+                path = commits
             }
 
         case .statuses:
 
             let sha = params!["sha"]!
             let method = params?["method"]
-            if let method = method {
-                if method == HTTP.Method.post.rawValue {
-                    //POST, we need slightly different url
-                    let repo = self.endpointURL(endpoint: .repos, params: params)
-                    return "\(repo)/statuses/\(sha)"
-                }
+            if let method = method,
+                method == HTTP.Method.post.rawValue {
+                //POST, we need slightly different url
+                let repo = self.endpointURL(endpoint: .repos, params: params)
+                path = "\(repo)/statuses/\(sha)"
+                break
             }
 
             //GET, default
             let commits = self.endpointURL(endpoint: .commits, params: params)
-            return "\(commits)/\(sha)/statuses"
+            path = "\(commits)/\(sha)/statuses"
 
         case .issueComments:
 
@@ -127,18 +128,21 @@ class GitHubEndpoints {
             let comments = "\(issues)/comments"
 
             if let comment = params?["comment"] {
-                return "\(comments)/\(comment)"
+                path = "\(comments)/\(comment)"
             } else {
-                return comments
+                path = comments
             }
 
         case .merges:
 
             assert(params?["repo"] != nil, "A repo must be specified")
             let repo = self.endpointURL(endpoint: .repos, params: params)
-            return "\(repo)/merges"
+            path = "\(repo)/merges"
         }
+
+        return path
     }
+    // swiftlint:enable cyclomatic_complexity
 
     func createRequest(method: HTTP.Method, endpoint: Endpoint, params: [String: String]? = nil, query: [String: String]? = nil, body: NSDictionary? = nil) throws -> NSMutableURLRequest {
 

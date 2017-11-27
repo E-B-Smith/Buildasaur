@@ -30,17 +30,15 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
     }
 
     func supplyViewControllerForState(_ state: EditorState, context: EditorContext) -> EditableViewController? {
+        let editableViewController: EditableViewController?
         switch state {
-
         case .noServer:
             let vc: EmptyXcodeServerViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.EmptyXcodeServerVC.rawValue)
             vc.syncerManager = context.syncerManager
             vc.loadView()
-            if let serverConfig = context.configTriplet.server {
-                vc.existingConfigId = serverConfig.id
-            }
+            vc.existingConfigId = context.configTriplet.server?.id
             vc.emptyServerDelegate = context.editeeDelegate
-            return vc
+            editableViewController = vc
 
         case .editingServer:
             let vc: XcodeServerViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.XcodeServerVC.rawValue)
@@ -48,17 +46,15 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.loadView()
             vc.serverConfig = context.configTriplet.server!
             vc.delegate = context.editeeDelegate
-            return vc
+            editableViewController = vc
 
         case .noProject:
             let vc: EmptyProjectViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.EmptyProjectVC.rawValue)
             vc.syncerManager = context.syncerManager
             vc.loadView()
-            if let projectConfig = context.configTriplet.project {
-                vc.existingConfigId = projectConfig.id
-            }
+            vc.existingConfigId = context.configTriplet.project?.id
             vc.emptyProjectDelegate = context.editeeDelegate
-            return vc
+            editableViewController = vc
 
         case .editingProject:
             let vc: ProjectViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.ProjectVC.rawValue)
@@ -67,18 +63,16 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.projectConfig = context.configTriplet.project!
             vc.delegate = context.editeeDelegate
             vc.serviceAuthenticator = self.serviceAuthenticator
-            return vc
+            editableViewController = vc
 
         case .noBuildTemplate:
             let vc: EmptyBuildTemplateViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.EmptyBuildTemplateVC.rawValue)
             vc.syncerManager = context.syncerManager
-            if let buildTemplate = context.configTriplet.buildTemplate {
-                vc.existingTemplateId = buildTemplate.id
-            }
+            vc.existingTemplateId = context.configTriplet.buildTemplate?.id
             vc.projectName = context.configTriplet.project!.name
             vc.existingTemplateId = context.configTriplet.buildTemplate?.id
             vc.emptyTemplateDelegate = context.editeeDelegate
-            return vc
+            editableViewController = vc
 
         case .editingBuildTemplate:
             let vc: BuildTemplateViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.BuildTemplateVC.rawValue)
@@ -88,7 +82,7 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.xcodeServerRef = context.configTriplet.server!.id
             vc.buildTemplate = context.configTriplet.buildTemplate!
             vc.delegate = context.editeeDelegate
-            return vc
+            editableViewController = vc
 
         case .syncer:
             let vc: SyncerViewController = self.storyboardLoader.typedViewControllerWithStoryboardIdentifier(EditorVCType.SyncerStatusVC.rawValue)
@@ -106,11 +100,14 @@ class EditorViewControllerFactory: EditorViewControllerFactoryType {
             vc.xcodeServerConfig = triplet.server!
             vc.projectConfig = triplet.project!
             vc.buildTemplate = triplet.buildTemplate!
-            return vc
+            editableViewController = vc
 
-        default:
-            return nil
+        case .initial:
+             editableViewController = nil
+        case .final:
+            editableViewController = nil
         }
-//        fatalError("No controller for state \(state)")
+
+        return editableViewController
     }
 }

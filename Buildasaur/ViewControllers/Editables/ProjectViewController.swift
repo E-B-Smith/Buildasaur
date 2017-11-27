@@ -30,7 +30,7 @@ class ProjectViewController: ConfigEditViewController {
 
     var projectConfig: ProjectConfig! = nil {
         didSet {
-            self.project = try! Project(config: self.projectConfig)
+            self.project = try? Project(config: self.projectConfig)
 
             self.authenticator = self.projectConfig.serverAuthentication
 
@@ -286,12 +286,16 @@ class ProjectViewController: ConfigEditViewController {
 
         self.userWantsTokenAuth = false
 
-        let service = self.project.workspaceMetadata!.service
+        guard let service = self.project.workspaceMetadata?.service else {
+            UIUtils.showAlertWithError(XcodeServerError.with("Workspace invalid"))
+            return
+        }
+
         self.serviceAuthenticator.getAccess(service) { (auth, _) -> Void in
 
             guard let auth = auth else {
                 //TODO: show UI error that login failed
-                UIUtils.showAlertWithError(XcodeServerError.with("Failed to log in, please try again"/*, internalError: (error as! NSError), userInfo: nil*/))
+                UIUtils.showAlertWithError(XcodeServerError.with("Failed to log in, please try again"))
                 self.authenticator = nil
                 return
             }

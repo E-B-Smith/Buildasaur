@@ -125,9 +125,9 @@ class XcodeServerViewController: ConfigEditViewController {
 
         if let host = host {
             let oldConfigId = self.serverConfig.id
-            let config = try! XcodeServerConfig(host: host, user: user, password: password, id: oldConfigId)
 
             do {
+                let config = try XcodeServerConfig(host: host, user: user, password: password, id: oldConfigId)
                 try self.storageManager.addServerConfig(config: config)
                 return config
             } catch StorageManagerError.DuplicateServerConfig(let duplicate) {

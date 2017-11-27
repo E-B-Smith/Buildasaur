@@ -177,6 +177,18 @@ extension GitHubServer {
         return linkDict
     }
 
+    private func _parseRateLimitInfo(headers: [AnyHashable: Any]) {
+        if let resetTime = (headers["X-RateLimit-Reset"] as? NSString)?.doubleValue,
+            let limit = (headers["X-RateLimit-Limit"] as? NSString)?.integerValue,
+            let remaining = (headers["X-RateLimit-Remaining"] as? NSString)?.integerValue {
+
+            self.latestRateLimitInfo = GitHubRateLimit(resetTime: resetTime, limit: limit, remaining: remaining)
+
+        } else {
+            Log.error("No X-RateLimit info provided by GitHub in headers: \(headers), we're unable to detect the remaining number of allowed requests. GitHub might fail to return data any time now :(")
+        }
+    }
+
     private func _sendRequest(request: NSMutableURLRequest, completion: @escaping HTTP.Completion) {
 
         let cachedInfo = self.cache.getCachedInfoForRequest(request as URLRequest)
@@ -197,19 +209,7 @@ extension GitHubServer {
             }
 
             if let response = response {
-                let headers = response.allHeaderFields
-
-                if
-                    let resetTime = (headers["X-RateLimit-Reset"] as? NSString)?.doubleValue,
-                    let limit = (headers["X-RateLimit-Limit"] as? NSString)?.integerValue,
-                    let remaining = (headers["X-RateLimit-Remaining"] as? NSString)?.integerValue {
-
-                        let rateLimitInfo = GitHubRateLimit(resetTime: resetTime, limit: limit, remaining: remaining)
-                        self.latestRateLimitInfo = rateLimitInfo
-
-                } else {
-                    Log.error("No X-RateLimit info provided by GitHub in headers: \(headers), we're unable to detect the remaining number of allowed requests. GitHub might fail to return data any time now :(")
-                }
+                self._parseRateLimitInfo(headers: response.allHeaderFields)
             }
 
             if

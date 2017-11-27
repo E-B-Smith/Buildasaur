@@ -17,7 +17,7 @@ public protocol HeartbeatManagerDelegate: class {
 //READ: https://github.com/czechboy0/Buildasaur/tree/master#heartpulse-heartbeat
 @objc public class HeartbeatManager: NSObject {
 
-    public var delegate: HeartbeatManagerDelegate?
+    public weak var delegate: HeartbeatManagerDelegate?
 
     private let client: EkgClient
     private let creationTime: Double
