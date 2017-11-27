@@ -133,9 +133,8 @@ class ProjectViewController: ConfigEditViewController {
     }
 
     private func updateServiceMeta() {
-        if let project = self.project,
-            let authenticator = self.authenticator {
-            self.updateServiceMeta(project, auth: authenticator, userWantsTokenAuth: self.userWantsTokenAuth)
+        if let project = self.project {
+            self.updateServiceMeta(project, auth: self.authenticator, userWantsTokenAuth: self.userWantsTokenAuth)
         }
     }
 
@@ -156,13 +155,19 @@ class ProjectViewController: ConfigEditViewController {
     }
 
     func updateServiceMeta(_ proj: Project, auth: ProjectAuthenticator?, userWantsTokenAuth: Bool) {
+        let alreadyHasAuth = auth != nil
+
+        self.loginButton.isHidden = alreadyHasAuth
+        self.logoutButton.isHidden = !alreadyHasAuth
+
+        let showTokenField = userWantsTokenAuth && proj.workspaceMetadata?.service == .GitHub && (auth?.type == .PersonalToken || auth == nil)
+        self.tokenStackView.isHidden = !showTokenField
+
         guard let service = proj.workspaceMetadata?.service else { return }
 
         let name = "\(service.prettyName())"
         self.serviceName.stringValue = name
         self.serviceLogo.image = NSImage(named: NSImage.Name(rawValue: service.logoName()))
-
-        let alreadyHasAuth = auth != nil
 
         switch service {
         case .GitHub:
@@ -171,14 +176,7 @@ class ProjectViewController: ConfigEditViewController {
             } else {
                 self.tokenTextField.stringValue = ""
             }
-            self.useTokenButton.isHidden = alreadyHasAuth
         }
-
-        self.loginButton.isHidden = alreadyHasAuth
-        self.logoutButton.isHidden = !alreadyHasAuth
-
-        let showTokenField = userWantsTokenAuth && service == .GitHub && (auth?.type == .PersonalToken || auth == nil)
-        self.tokenStackView.isHidden = !showTokenField
     }
 
     override func shouldGoNext() -> Bool {
@@ -313,6 +311,7 @@ class ProjectViewController: ConfigEditViewController {
         self.authenticator = nil
         self.userWantsTokenAuth = false
         self.tokenTextField.stringValue = ""
+        self.updateServiceMeta()
     }
 
 }

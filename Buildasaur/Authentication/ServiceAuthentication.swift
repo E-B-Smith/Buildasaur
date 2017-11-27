@@ -12,6 +12,8 @@ import BuildaGitServer
 
 class ServiceAuthenticator {
 
+    private var oauth: OAuth2Swift?
+
     enum ParamKey: String {
         case ConsumerId
         case ConsumerSecret
@@ -35,18 +37,18 @@ class ServiceAuthenticator {
 
         let (params, secretFromResponseParams) = self.paramsForService(service)
 
-        let oauth = OAuth2Swift(
+        self.oauth = OAuth2Swift(
             consumerKey: params[.ConsumerId]!,
             consumerSecret: params[.ConsumerSecret]!,
             authorizeUrl: params[.AuthorizeUrl]!,
             accessTokenUrl: params[.AccessTokenUrl]!,
             responseType: params[.ResponseType]!
         )
-        oauth.authorize(withCallbackURL:
+        self.oauth?.authorize(withCallbackURL:
             URL(string: params[.CallbackUrl]!)!,
-                        scope: params[.Scope]!,
-                        state: params[.State]!,
-                        success: { _, _, parameters in
+                              scope: params[.Scope]!,
+                              state: params[.State]!,
+                              success: { _, _, parameters in
 
                 let secret = secretFromResponseParams(parameters as! [String : String])
                 let auth = ProjectAuthenticator(service: service, username: "GIT", type: .OAuthToken, secret: secret)

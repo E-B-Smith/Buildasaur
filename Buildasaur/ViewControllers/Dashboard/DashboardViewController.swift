@@ -236,7 +236,6 @@ extension DashboardViewController: NSTableViewDataSource {
         case .Status:
             view.textField!.stringValue = viewModel.status
             viewModel.onStatusChanged = { status in
-                print(status)
                 update(view.textField!, status)
             }
         case .XCSHost:

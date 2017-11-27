@@ -144,7 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func handleUrl(_ url: URL) {
 
-        print("Handling incoming url")
+        print("Handling incoming url \(url)")
 
         if url.host == "oauth-callback" {
             self.serviceAuthenticator.handleUrl(url)

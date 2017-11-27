@@ -55,6 +55,6 @@ extension ProjectAuthenticator: KeychainStringSerializable {
             self.username,
             self.type.rawValue,
             self.secret
-            ].joined(separator: ":")
+        ].joined(separator: ":")
     }
 }
