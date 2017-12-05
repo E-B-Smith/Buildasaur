@@ -45,9 +45,8 @@ public protocol HeartbeatManagerDelegate: class {
     }
 
     public func start() {
-        // Server seems dead
-        //self.sendLaunchedEvent()
-        //self.startSendingHeartbeat()
+        self.sendLaunchedEvent()
+        self.startSendingHeartbeat()
     }
 
     public func stop() {

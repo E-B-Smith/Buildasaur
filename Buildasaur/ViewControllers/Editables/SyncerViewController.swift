@@ -166,8 +166,10 @@ class SyncerViewController: ConfigEditViewController {
 
         if let syncer = self.syncer {
             let checkSyncer = { [weak self] in
-                self?.stateLabel.stringValue = SyncerStatePresenter.stringForState(syncer.state, active: syncer.active)
-                self?.statusTextField.stringValue = SyncerViewController.stringForEvent(syncer.state, syncer: syncer)
+                DispatchQueue.main.async {
+                    self?.stateLabel.stringValue = SyncerStatePresenter.stringForState(syncer.state, active: syncer.active)
+                    self?.statusTextField.stringValue = SyncerViewController.stringForEvent(syncer.state, syncer: syncer)
+                }
 
             }
             syncer.onActiveChanged = { [weak self] active in

@@ -35,10 +35,22 @@ extension StandardSyncer {
                 return
             }
 
-            if status == nil || !newStatus.status.isEqual(rhs: status!) {
+            if newStatus.status.state != status?.state {
 
                 //TODO: add logic for handling the creation of a new Issue for branch tracking
                 //and the deletion of it when build succeeds etc.
+
+                // Update commit status
+                self._sourceServer.postStatusOfCommit(commit: commit, status: newStatus.status, repo: repoName) { (_, error) -> Void in
+
+                    if let error = error as NSError? {
+                        let e = XcodeDeviceParserError.with("Failed to post a status on commit \(commit) of repo \(repoName) \(error.userInfo["info"]!)")
+                        completion(e)
+                        return
+                    }
+
+                    completion(nil)
+                }
 
                 if let comment = newStatus.comment {
                     let notifierNotification = NotifierNotification(comment: comment,
@@ -67,19 +79,6 @@ extension StandardSyncer {
                         })
                     }
                 }
-
-                // Update commit status
-                self._sourceServer.postStatusOfCommit(commit: commit, status: newStatus.status, repo: repoName) { (_, error) -> Void in
-
-                    if let error = error as NSError? {
-                        let e = XcodeDeviceParserError.with("Failed to post a status on commit \(commit) of repo \(repoName) \(error.userInfo["info"]!)")
-                        completion(e)
-                        return
-                    }
-
-                    completion(nil)
-                }
-
             } else {
                 completion(nil)
             }

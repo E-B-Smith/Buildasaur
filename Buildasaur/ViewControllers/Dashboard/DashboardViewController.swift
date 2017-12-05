@@ -227,33 +227,34 @@ extension DashboardViewController: NSTableViewDataSource {
     }
 
     func bindTextView(_ view: NSTableCellView, column: Column, viewModel: SyncerViewModel) {
-        let update: (NSTextField, String) -> Void = { (textField, text) in
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            let update: (NSTextField, String) -> Void = { (textField, text) in
                 textField.stringValue = text
             }
-        }
-        switch column {
-        case .Status:
-            view.textField!.stringValue = viewModel.status
-            viewModel.onStatusChanged = { status in
-                update(view.textField!, status)
+
+            switch column {
+            case .Status:
+                view.textField!.stringValue = viewModel.status
+                viewModel.onStatusChanged = { status in
+                    update(view.textField!, status)
+                }
+            case .XCSHost:
+                view.textField!.stringValue = viewModel.host
+                viewModel.onHostChanged = { host in
+                    update(view.textField!, host)
+                }
+            case .ProjectName:
+                view.textField!.stringValue = viewModel.projectName
+                viewModel.onProjectNameChanged = { projectName in
+                    update(view.textField!, projectName)
+                }
+            case .BuildTemplate:
+                view.textField!.stringValue = viewModel.buildTemplateName
+                viewModel.onBuildTemplateNameChanged = { buildTemplateName in
+                    update(view.textField!, buildTemplateName)
+                }
+            default: break
             }
-        case .XCSHost:
-            view.textField!.stringValue = viewModel.host
-            viewModel.onHostChanged = { host in
-                update(view.textField!, host)
-            }
-        case .ProjectName:
-            view.textField!.stringValue = viewModel.projectName
-            viewModel.onProjectNameChanged = { projectName in
-                update(view.textField!, projectName)
-            }
-        case .BuildTemplate:
-            view.textField!.stringValue = viewModel.buildTemplateName
-            viewModel.onBuildTemplateNameChanged = { buildTemplateName in
-                update(view.textField!, buildTemplateName)
-            }
-        default: break
         }
     }
 
