@@ -50,9 +50,9 @@ extension SyncPair {
             }
 
             switch status.status.state {
-            case .NoState, .Pending, .Success:
+            case .NoState, .Pending:
                 updateCommitStatusIfNecessary(nil)
-            case .Failure, .Error:
+            case .Success, .Failure, .Error:
                 if let lastIntegration = actions.lastIntegration {
                     self.getIntegrationIssues(integration: lastIntegration) { (integrationIssues, error) in
                         if error != nil {

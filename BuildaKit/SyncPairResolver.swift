@@ -139,7 +139,9 @@ public class SyncPairResolver {
                 integrationsToCancel: integrationsToCancel + (actions.integrationsToCancel ?? []),
                 statusToSet: actions.statusToSet,
                 startNewIntegrationBot: actions.startNewIntegrationBot ?? (startNewIntegration ? bot : nil),
-                lastIntegration: integrations.last
+                lastIntegration: integrations.sorted(by: { (i1, i2) -> Bool in
+                    return i1.id < i2.id
+                }).last
             )
     }
 

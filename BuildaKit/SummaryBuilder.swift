@@ -131,14 +131,14 @@ class SummaryBuilder {
 
         let warningCount = buildResultSummary.warningCount
         let testsCount = buildResultSummary.testsCount
-        self.lines.append(self.resultString + "All \(testsCount) tests passed, but please **fix \(warningCount) " + "warning".pluralizeStringIfNecessary(warningCount) + "**.")
+        self.lines.append(self.resultString + "All \(testsCount) tests passed with **\(warningCount) " + "warning".pluralizeStringIfNecessary(warningCount) + "**.")
     }
 
     func appendAnalyzerWarnings(buildResultSummary: BuildResultSummary) {
 
         let analyzerWarningCount = buildResultSummary.analyzerWarningCount
         let testsCount = buildResultSummary.testsCount
-        self.lines.append(self.resultString + "All \(testsCount) tests passed, but please **fix \(analyzerWarningCount) " + "analyzer warning".pluralizeStringIfNecessary(analyzerWarningCount) + "**.")
+        self.lines.append(self.resultString + "All \(testsCount) tests passed with **\(analyzerWarningCount) " + "analyzer warning".pluralizeStringIfNecessary(analyzerWarningCount) + "**.")
     }
 
     func appendWarningsAndAnalyzerWarnings(buildResultSummary: BuildResultSummary) {
@@ -146,7 +146,7 @@ class SummaryBuilder {
         let warningCount = buildResultSummary.warningCount
         let analyzerWarningCount = buildResultSummary.analyzerWarningCount
         let testsCount = buildResultSummary.testsCount
-        self.lines.append(self.resultString + "All \(testsCount) tests passed, but please **fix \(warningCount) " + "warning".pluralizeStringIfNecessary(warningCount) + "** and **\(analyzerWarningCount) " + "analyzer warning".pluralizeStringIfNecessary(analyzerWarningCount) + "**.")
+        self.lines.append(self.resultString + "All \(testsCount) tests passed with **\(warningCount) " + "warning".pluralizeStringIfNecessary(warningCount) + "** and **\(analyzerWarningCount) " + "analyzer warning".pluralizeStringIfNecessary(analyzerWarningCount) + "**.")
     }
 
     func appendCodeCoverage(buildResultSummary: BuildResultSummary) {

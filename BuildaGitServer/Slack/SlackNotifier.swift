@@ -28,6 +28,7 @@ private extension String {
 public class SlackNotifier: Notifier {
     private let webhookURL: URL
     private let session: URLSession
+    private var sentNotification: [String] = []
 
     public init(webhookURL: URL) {
         self.webhookURL = webhookURL
@@ -36,6 +37,10 @@ public class SlackNotifier: Notifier {
     }
 
     public func postCommentOnIssue(notification: NotifierNotification, completion: @escaping (_ comment: CommentType?, _ error: Error?) -> Void) {
+        if self.sentNotification.contains(notification.comment) {
+            return
+        }
+
         let color: String
         switch notification.status.state {
         case .Error, .Failure:
@@ -80,11 +85,13 @@ public class SlackNotifier: Notifier {
         urlRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = body
 
-        self.session.dataTask(with: urlRequest as URLRequest, completionHandler: { (data, response, error) in
+        self.session.dataTask(with: urlRequest as URLRequest, completionHandler: { [weak self] (data, response, error) in
             if let response = response as? HTTPURLResponse,
                 let data = data {
                 if response.statusCode != 200 {
                     Log.error("SlackIntegration: statusCode=\(response.statusCode) data=\(data)")
+                } else {
+                    self?.sentNotification.append(notification.comment)
                 }
             } else {
                 Log.error(error!)
