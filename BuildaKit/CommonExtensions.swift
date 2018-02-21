@@ -48,14 +48,28 @@ extension Array {
 
 extension Array {
 
-    public func mapVoidAsync(transformAsync: @escaping (_ item: Element, _ itemCompletion: @escaping () -> Void) -> Void, completion: @escaping () -> Void) {
-        self.mapAsync(transformAsync: transformAsync as! ((Element, (()) -> Void) -> Void), completion: { (_) -> Void in
+    public func mapVoidAsync(
+        transformAsync: @escaping (_ item: Element, _ itemCompletion: @escaping () -> Void) -> Void,
+        completion: @escaping () -> Void
+    ) {
+        let group = DispatchGroup()
+
+        for element in self {
+            group.enter()
+            transformAsync(element, { () -> Void in
+                group.leave()
+            })
+        }
+
+        group.notify(queue: DispatchQueue.main) {
             completion()
-        })
+        }
     }
 
-    public func mapAsync<U>(transformAsync: (_ item: Element, _ itemCompletion: (U) -> Void) -> Void, completion: @escaping ([U]) -> Void) {
-
+    public func mapAsync<U>(
+        transformAsync: (_ item: Element, _ itemCompletion: (U) -> Void) -> Void,
+        completion: @escaping ([U]) -> Void
+    ) {
         let group = DispatchGroup()
         var returnedValueMap = [Int: U]()
 
@@ -68,7 +82,6 @@ extension Array {
         }
 
         group.notify(queue: DispatchQueue.main) {
-
             //we have all the returned values in a map, put it back into an array of Us
             var returnedValues = [U]()
             for i in 0 ..< returnedValueMap.count {
