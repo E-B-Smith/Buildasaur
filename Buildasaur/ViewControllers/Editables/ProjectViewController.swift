@@ -160,8 +160,12 @@ class ProjectViewController: ConfigEditViewController {
         self.loginButton.isHidden = alreadyHasAuth
         self.logoutButton.isHidden = !alreadyHasAuth
 
-        let showTokenField = userWantsTokenAuth && proj.workspaceMetadata?.service == .GitHub && (auth?.type == .PersonalToken || auth == nil)
+        let showTokenField = userWantsTokenAuth &&
+            proj.workspaceMetadata?.service == .GitHub &&
+            (auth?.type == .PersonalToken || auth == nil)
         self.tokenStackView.isHidden = !showTokenField
+        self.view.needsLayout = true
+        self.view.layoutSubtreeIfNeeded()
 
         guard let service = proj.workspaceMetadata?.service else { return }
 
@@ -300,6 +304,8 @@ class ProjectViewController: ConfigEditViewController {
 
             //we have been authenticated, hooray!
             self.authenticator = auth
+            self.goNextIfPossible()
+            self.updateNextAllowed()
         }
     }
 

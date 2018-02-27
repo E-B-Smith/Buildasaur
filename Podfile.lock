@@ -2,13 +2,13 @@ PODS:
   - Alamofire (4.5.1)
   - BuildaUtils (0.4.2):
     - SwiftSafe (~> 2.0.1)
-  - Crashlytics (3.9.3):
-    - Fabric (~> 1.7.2)
+  - Crashlytics (3.10.0):
+    - Fabric (~> 1.7.3)
   - CryptoSwift (0.7.2)
   - DVR (1.1.0)
   - ekgclient (0.3.3):
     - Alamofire (~> 4.5.1)
-  - Fabric (1.7.2)
+  - Fabric (1.7.5)
   - Ji (2.0.1):
     - Ji/Ji (= 2.0.1)
   - Ji/Ji (2.0.1):
@@ -16,10 +16,10 @@ PODS:
   - Ji/Ji-libxml (2.0.1)
   - KeychainAccess (3.1.0)
   - Keys (1.0.0)
-  - Nimble (7.0.2)
+  - Nimble (7.0.3)
   - OAuthSwift (1.2.0)
   - Sparkle (1.18.1)
-  - SwiftLint (0.24.0)
+  - SwiftLint (0.25.0)
   - SwiftSafe (2.0.1)
   - XcodeServerSDK (0.7.4):
     - BuildaUtils (~> 0.4.1)
@@ -46,18 +46,18 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   BuildaUtils: 0de3c12b40ece8f24277ec66c9dd2e3a3c04f19e
-  Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
+  Crashlytics: a989ef242b66605577a425733797f810bd2725eb
   CryptoSwift: cd2158be2bf639aabc63ec804707c7137c90157c
   DVR: f785f86273f7a3a94335acf44611ac2cbf5920f9
   ekgclient: f55ba63142c3545e22f98511127812c46a67828b
-  Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
+  Fabric: ae7146a5f505ea370a1e44820b4b1dc8890e2890
   Ji: 6bb602a28dd08b804158f64990e6051ed5de0110
   KeychainAccess: 94c5540b32eabf7bc32bfb976a268e8ea05fd6da
   Keys: af65e23feef2a047b3277b1ef0399f1209ef9d46
-  Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
+  Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
   OAuthSwift: 7fd6855b8e4d58eb5a30d156ea9bed7a8aecd1ca
   Sparkle: 06ea33170007c5937ee54da481b4481af98fac79
-  SwiftLint: a014c92b4664e8b13f380f8640a51bb1733778ba
+  SwiftLint: e14651157288e9e01d6e1a71db7014fb5744a8ea
   SwiftSafe: bd14d81b4e458790796e089af07ae740147dc6f3
   XcodeServerSDK: 30093232b46f5d18b797f7579ec298bee5686d68
 

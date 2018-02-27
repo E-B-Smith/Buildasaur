@@ -43,7 +43,7 @@ public class StorageUtils {
         openPanel.canChooseDirectories = false
         openPanel.canChooseFiles = true
         openPanel.allowsMultipleSelection = false
-        openPanel.allowedFileTypes = ["", "pub"]
+        openPanel.allowedFileTypes = nil
         openPanel.title = "Select your \(publicOrPrivate) SSH key"
         openPanel.showsHiddenFiles = true
 

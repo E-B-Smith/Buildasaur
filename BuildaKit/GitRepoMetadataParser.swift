@@ -117,18 +117,29 @@ class GitRepoMetadataParser: SourceControlFileParser {
             let all = [cd, script].joined(separator: "\n")
             let response = Script.runTemporaryScript(all)
             if response.terminationStatus != 0 {
-                throw XcodeDeviceParserError.with("Parsing git repo metadata failed, executing \"\(all)\", status: \(response.terminationStatus), output: \(response.standardOutput), error: \(response.standardError)")
+                throw XcodeDeviceParserError.with(
+                    "Parsing git repo metadata failed, executing \"\(all)\", " +
+                    "status: \(response.terminationStatus), " +
+                    "output: \(response.standardOutput), " +
+                    "error: \(response.standardError)"
+                )
             }
             return response.standardOutput
         }
 
-        let origin = try self.parseOrigin(run: run)
-        let projectName = try self.parseProjectName(url: url)
-        let projectPath = try self.parseProjectPath(url: url, run: run)
-        let projectWCCName = try self.parseProjectWCCName(url: url, projectPath: projectPath)
-        let projectWCCIdentifier = try self.parseProjectWCCIdentifier(projectUrl: origin)
+        let origin = try self.parseOrigin(run: run).trim()
+        let projectName = try self.parseProjectName(url: url).trim()
+        let projectPath = try self.parseProjectPath(url: url, run: run).trim()
+        let projectWCCName = try self.parseProjectWCCName(url: url, projectPath: projectPath).trim()
+        let projectWCCIdentifier = try self.parseProjectWCCIdentifier(projectUrl: origin).trim()
 
-        return try WorkspaceMetadata(projectName: projectName, projectPath: projectPath, projectWCCIdentifier: projectWCCIdentifier, projectWCCName: projectWCCName, projectURLString: origin)
+        return try WorkspaceMetadata(
+            projectName: projectName,
+            projectPath: projectPath,
+            projectWCCIdentifier: projectWCCIdentifier,
+            projectWCCName: projectWCCName,
+            projectURLString: origin
+        )
     }
 }
 
@@ -139,6 +150,6 @@ extension String {
     }
 
     func trim() -> String {
-        return self.trimmingCharacters(in: .whitespaces)
+        return self.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
